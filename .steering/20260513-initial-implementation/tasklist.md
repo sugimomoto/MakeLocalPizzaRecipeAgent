@@ -224,7 +224,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-007 prettier
 - [x] T-008 vitest
 - [x] T-009 lefthook
-- [ ] T-010 gitignore 他
+- [x] T-010 gitignore 他
 - [ ] T-011 git init + push
 
 ### Phase 2: デザインシステム (6)

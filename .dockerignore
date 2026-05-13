@@ -1,0 +1,51 @@
+# Build/dist artifacts
+node_modules
+.next
+out
+build
+dist
+coverage
+*.tsbuildinfo
+
+# Source control / CI / Editor
+.git
+.github
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# Docs / 設計 / Steering (本番イメージには不要)
+docs
+.steering
+.claude
+.devcontainer
+design
+
+# Test / Dev only
+tests
+playwright-report
+test-results
+*.log
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Python (Web Dockerfile では含めない)
+__pycache__
+.venv
+venv
+.pytest_cache
+.ruff_cache
+.mypy_cache
+
+# Terraform
+.terraform
+*.tfstate
+*.tfvars
+
+# README / CLAUDE.md は image に含めない
+README.md
+CLAUDE.md
