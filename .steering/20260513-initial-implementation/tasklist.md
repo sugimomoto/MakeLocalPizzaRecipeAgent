@@ -218,7 +218,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-001 .nvmrc
 - [x] T-002 package.json 初期化
 - [x] T-003 依存インストール
-- [ ] T-004 tsconfig
+- [x] T-004 tsconfig
 - [ ] T-005 next.config
 - [ ] T-006 eslint
 - [ ] T-007 prettier
