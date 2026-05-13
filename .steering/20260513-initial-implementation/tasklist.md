@@ -215,7 +215,7 @@ requirements.md §6 完了の定義に従う。
 ## タスク一覧サマリ(チェックボックス)
 
 ### Phase 1: ブートストラップ (11)
-- [ ] T-001 .nvmrc
+- [x] T-001 .nvmrc
 - [ ] T-002 package.json 初期化
 - [ ] T-003 依存インストール
 - [ ] T-004 tsconfig
