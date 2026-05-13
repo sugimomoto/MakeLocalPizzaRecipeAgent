@@ -222,7 +222,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-005 next.config
 - [x] T-006 eslint
 - [x] T-007 prettier
-- [ ] T-008 vitest
+- [x] T-008 vitest
 - [ ] T-009 lefthook
 - [ ] T-010 gitignore 他
 - [ ] T-011 git init + push
