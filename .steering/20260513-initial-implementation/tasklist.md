@@ -220,7 +220,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-003 依存インストール
 - [x] T-004 tsconfig
 - [x] T-005 next.config
-- [ ] T-006 eslint
+- [x] T-006 eslint
 - [ ] T-007 prettier
 - [ ] T-008 vitest
 - [ ] T-009 lefthook
