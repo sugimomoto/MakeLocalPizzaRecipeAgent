@@ -216,7 +216,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 1: ブートストラップ (11)
 - [x] T-001 .nvmrc
-- [ ] T-002 package.json 初期化
+- [x] T-002 package.json 初期化
 - [ ] T-003 依存インストール
 - [ ] T-004 tsconfig
 - [ ] T-005 next.config
