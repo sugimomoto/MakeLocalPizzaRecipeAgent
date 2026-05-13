@@ -219,7 +219,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-002 package.json 初期化
 - [x] T-003 依存インストール
 - [x] T-004 tsconfig
-- [ ] T-005 next.config
+- [x] T-005 next.config
 - [ ] T-006 eslint
 - [ ] T-007 prettier
 - [ ] T-008 vitest
