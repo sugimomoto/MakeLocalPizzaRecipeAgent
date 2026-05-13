@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>MakeLocalPizzaRecipe — Design Canvas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #F2E9D6; }
+  body { font-family: "Zen Kaku Gothic New", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>window.__MLPR_NO_AUTOMOUNT = true;</script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="pizza-tokens.jsx"></script>
+<script type="text/babel" src="prototype-app.jsx"></script>
+
+<script type="text/babel">
+const W = 393;
+const H = 852;
+
+const noop = () => {};
+
+function Intro() {
+  return (
+    <div style={{
+      width: 1040, padding: '24px 36px 28px', marginLeft: 60, marginBottom: 36,
+      background: '#FBF7ED', borderRadius: 4,
+      boxShadow: '0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)',
+      fontFamily: T.gothic, color: T.sumi, lineHeight: 1.7,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 6, height: 26, background: T.shu, borderRadius: 3 }}/>
+        <span style={{ fontFamily: T.mincho, fontSize: 11, color: T.shu, letterSpacing: 6 }}>静的キャンバス · 和モダン × 温かみ</span>
+      </div>
+      <div style={{ fontFamily: T.mincho, fontSize: 30, fontWeight: 600, marginTop: 10, letterSpacing: 0.5 }}>
+        MakeLocalPizzaRecipe — スマートフォン UI 提案
+      </div>
+      <div style={{ marginTop: 14, fontSize: 13.5, color: T.sumiSoft, maxWidth: 880 }}>
+        <b style={{ color: T.sumi }}>和紙・墨・朱・山吹</b>の「土地の趣」を基調に、Quick Tap 動線と詳細・記録までを 7 画面で整理しました。
+        見出しは <b>明朝（Shippori Mincho B1）</b>、本文は <b>Zen Kaku Gothic New</b>。動くプロトタイプ（<code>MakeLocalPizzaRecipe Prototype.html</code>）と同じコンポーネントを使用しているため、両者の見た目は常に同期します。
+      </div>
+      <div style={{ display: 'flex', gap: 18, marginTop: 18, flexWrap: 'wrap', fontSize: 12 }}>
+        {[
+          ['和紙', '#F2E9D6'], ['生成り', '#FBF7ED'], ['墨', '#1F1A12'],
+          ['朱', '#C8412A'], ['山吹', '#DC8A2A'], ['抹茶', '#607744'], ['藍', '#3E5670'],
+        ].map(([n, c]) => (
+          <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 4, background: c, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.08)' }}/>
+            <span style={{ fontFamily: T.mincho }}>{n}</span>
+            <span style={{ fontFamily: T.mono, color: T.sumiMuted, fontSize: 11 }}>{c}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const MIYAGI = window.PREFS.find(l => l.id === 'miyagi');
+  const SAMPLE_CANDIDATES = window.buildCandidates(['seri', 'oyster', 'mozza'], true);
+  const PICKED = SAMPLE_CANDIDATES[0];
+  const SAMPLE_FEEDBACK = {
+    stars: 5,
+    axes: { '味': 5, '見た目': 4, 'ストーリー': 5, 'また作りたい': 4 },
+    worked: ['食材の組合せ', 'ストーリーがウケた', '見た目'],
+    tune: ['塩味'],
+    vibe: ['会話が弾んだ', '驚かれた', '写真に撮られた', '地元トークに発展'],
+  };
+  return (
+    <DesignCanvas>
+      <Intro/>
+      <DCSection id="flow" title="Quick Tap 動線 (2 タップで 3 案へ)" subtitle="Tap1 → Tap2 → 焼成中 → 3 案 を 1 セクションで">
+        <DCArtboard id="local" label="01 · 地元選択 (Tap1)" width={W} height={H}>
+          <LocalScreen onPick={noop}/>
+        </DCArtboard>
+        <DCArtboard id="ingredients" label="02 · 食材選択 (Tap2)" width={W} height={H}>
+          <IngredientsScreen locale={MIYAGI} onChangeLocale={noop} onNext={noop}/>
+        </DCArtboard>
+        <DCArtboard id="loading" label="03 · 焼成中 (ローディング)" width={W} height={H}>
+          <LoadingScreen onDone={noop}/>
+        </DCArtboard>
+        <DCArtboard id="candidates" label="04 · 候補 3 案 (Tap3)" width={W} height={H}>
+          <CandidatesScreen candidates={SAMPLE_CANDIDATES} onPick={noop} onReroll={noop} onChangeIngredients={noop}/>
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="detail" title="詳細・記録・振り返り" subtitle="決定後の動線 — レシピ詳細・フィードバック・ピザ帳">
+        <DCArtboard id="detail" label="05 · レシピ詳細" width={W} height={H}>
+          <DetailScreen candidate={PICKED} locale={MIYAGI} onBack={noop} onCook={noop} onSave={noop}/>
+        </DCArtboard>
+        <DCArtboard id="feedback" label="06 · 作ってみた記録" width={W} height={H}>
+          <FeedbackScreen candidate={PICKED} onSubmit={noop} onBack={noop}/>
+        </DCArtboard>
+        <DCArtboard id="saved" label="07 · ピザ帳 (保存一覧)" width={W} height={H}>
+          <SavedScreen feedback={SAMPLE_FEEDBACK} candidate={PICKED} onAgain={noop}/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

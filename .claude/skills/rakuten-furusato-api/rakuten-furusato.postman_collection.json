@@ -1,0 +1,588 @@
+{
+  "info": {
+    "name": "Rakuten Furusato API (IchibaItem/Search)",
+    "_postman_id": "f7a9b3d5-2e8c-4d11-9f3e-6b4c8d7a1e90",
+    "description": "楽天 Web Service の IchibaItem/Search API（ふるさと納税向け）を試すための Collection。実証ベース（2026-05 検証）。\n\n## エンドポイント方針\n- **新仕様 `openapi.rakuten.co.jp/ichibams/api/...` を主軸**。新規発行された UUID 形式 applicationId はこちらでしか使えない。\n- 旧仕様 `app.rakuten.co.jp/services/api/...` は数字形式の旧 applicationId 用。新規アプリでは無効化されている。\n\n## セットアップ\n1. https://webservice.rakuten.co.jp/app/create でアプリ登録 → `APPLICATION_ID`（UUID）と `ACCESS_KEY`（pk_ プレフィックス）を取得\n2. Collection の Variables タブで `APPLICATION_ID` と `ACCESS_KEY` を埋める\n3. （任意）https://affiliate.rakuten.co.jp/ で楽天アフィリエイト登録 → `AFFILIATE_ID` を貼る\n4. 各リクエストを順番に Send\n\n## レート制限\n**1 applicationId につき 1 秒に 1 リクエスト**。Postman で連打すると 429 になるので、1 つずつ間を空けて Send する。Collection Runner で連続実行する場合は Delay = 1100ms 必須。\n\n## ふるさと納税絞込の罠\n**新エンドポイントで `genreId=561023`（ふるさと納税）を指定すると count=0 が返る**。実証済み。代わりに `keyword` に「ふるさと納税」を AND 結合する戦略を採る（このコレクションのリクエストはすべてその形）。商品名に必ず「【ふるさと納税】」プレフィックスが付くので post-filter も容易。\n\n## クレジット表記\nレスポンスを使ったサービスを公開するときは「Supported by Rakuten Developers」のクレジットが必須。詳細は SKILL.md §8 参照。\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://openapi.rakuten.co.jp/ichibams/api",
+      "description": "新エンドポイントのベース URL"
+    },
+    {
+      "key": "BASE_URL_LEGACY",
+      "value": "https://app.rakuten.co.jp/services/api",
+      "description": "旧エンドポイントのベース URL（旧 applicationId 専用、新規 UUID では動かない）"
+    },
+    {
+      "key": "APPLICATION_ID",
+      "value": "",
+      "description": "Rakuten Web Service の Application ID（UUID 形式）。https://webservice.rakuten.co.jp/app/list"
+    },
+    {
+      "key": "ACCESS_KEY",
+      "value": "",
+      "description": "新エンドポイントの accessKey（pk_ プレフィックス）。アプリ詳細画面で確認"
+    },
+    {
+      "key": "AFFILIATE_ID",
+      "value": "",
+      "description": "楽天アフィリエイト ID（任意）。xxxxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 形式"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "accessKey", "type": "string" },
+      { "key": "value", "value": "{{ACCESS_KEY}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "0. Quick Start",
+      "description": "最小構成。applicationId + keyword + accessKey ヘッダだけで叩く。まずこれが 200 で返ることを確認。",
+      "item": [
+        {
+          "name": "Hello World - keyword=ピザ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ピザ&format=json&hits=3",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ピザ" },
+                { "key": "format", "value": "json" },
+                { "key": "hits", "value": "3" }
+              ]
+            },
+            "description": "**確認ポイント**:\n- HTTP 200\n- `count` が大きい数（数万）\n- `Items[0].Item.itemName` が読める\n- `Items[0].Item.itemPrice` が int で返る\n- `Items[0].Item.itemUrl` が https:// で始まる\n\nレスポンスは `Items[].Item.{...}` のラッパ形式（Postman で開いて確認）。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. ふるさと納税 基本検索（推奨パターン）",
+      "description": "`keyword` に「ふるさと納税」を AND 結合する戦略。本プロジェクトの [`rakuten_client.py`](../../../agent/src/makepizza_agent/furusato/rakuten_client.py) と同じ組合せ。\n\n**重要**: `genreId=561023` は新エンドポイントで count=0 を返すので使わない。",
+      "item": [
+        {
+          "name": "ふるさと納税 + 牡蠣（実証 293件）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 宮城 牡蠣&hits=10&format=json&field=0&availability=1&imageFlag=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 宮城 牡蠣" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0", "description": "部分一致モード" },
+                { "key": "availability", "value": "1", "description": "在庫あり" },
+                { "key": "imageFlag", "value": "1", "description": "画像あり" }
+              ]
+            },
+            "description": "実証検証で 293 件ヒット。すべて宮城県の正規返礼品（気仙沼市など）。"
+          }
+        },
+        {
+          "name": "ふるさと納税 + 蔵王 モッツァレラ（モッツァオ含む）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 蔵王 モッツァレラ&hits=10&format=json&field=0&availability=1&imageFlag=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 蔵王 モッツァレラ" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" },
+                { "key": "availability", "value": "1" },
+                { "key": "imageFlag", "value": "1" }
+              ]
+            },
+            "description": "本プロジェクトの core value（蔵王のモッツァオ）と紐づく。実証で 4 件、うち 1 件が「モッツァオ チーズギフト」。"
+          }
+        },
+        {
+          "name": "ふるさと納税 + 京都 抹茶",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 京都 抹茶&hits=10&format=json&field=0&availability=1&imageFlag=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 京都 抹茶" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" },
+                { "key": "availability", "value": "1" },
+                { "key": "imageFlag", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ふるさと納税 + 北海道 帆立",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 北海道 帆立&hits=10&format=json&field=0&availability=1&imageFlag=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 北海道 帆立" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" },
+                { "key": "availability", "value": "1" },
+                { "key": "imageFlag", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. genreId の罠（実証）",
+      "description": "新エンドポイントでは `genreId=561023`（ふるさと納税）を指定すると count=0 が返る。実証ベースで残しておく検証用フォルダ。",
+      "item": [
+        {
+          "name": "❌ genreId=561023 を指定 → count=0",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=牡蠣&genreId=561023&hits=3&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "牡蠣" },
+                { "key": "genreId", "value": "561023" },
+                { "key": "hits", "value": "3" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "**期待**: HTTP 200 だが `count: 0` が返る。新エンドポイントでは genreId=561023 が機能しない。実証済み（2026-05）。"
+          }
+        },
+        {
+          "name": "✅ genreId なし + 普通の keyword → 数万件",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=牡蠣&hits=3&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "牡蠣" },
+                { "key": "hits", "value": "3" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "比較対象: genreId 無しなら数万件返る。ふるさと納税以外も混ざる。"
+          }
+        },
+        {
+          "name": "✅ keyword に「ふるさと納税」を AND 結合（推奨）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 牡蠣&hits=3&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 牡蠣" },
+                { "key": "hits", "value": "3" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "**実証で 4,533 件**。すべて `【ふるさと納税】` プレフィックス入りの正規返礼品。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. 絞込パターン",
+      "description": "価格・在庫・画像・部分一致 などの絞込フラグ。",
+      "item": [
+        {
+          "name": "価格レンジ（10000〜30000円）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 牡蠣&minPrice=10000&maxPrice=30000&hits=10&format=json&field=0&availability=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 牡蠣" },
+                { "key": "minPrice", "value": "10000" },
+                { "key": "maxPrice", "value": "30000" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" },
+                { "key": "availability", "value": "1" }
+              ]
+            },
+            "description": "minPrice / maxPrice で寄附額の範囲指定。本プロジェクトの `max_donation_yen` 引数に対応。"
+          }
+        },
+        {
+          "name": "部分一致モード（field=0）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 せり&field=0&hits=10&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 せり" },
+                { "key": "field", "value": "0" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "**`field` の既定は 1（厳密）**。短いキーワードでは既定値で 0 件になりがち。`field=0` で部分一致。次の `field=1` リクエストとヒット数を比較。"
+          }
+        },
+        {
+          "name": "厳密一致モード（field=1、既定）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 せり&field=1&hits=10&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 せり" },
+                { "key": "field", "value": "1" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "比較用。前の `field=0` とヒット数を比べる。"
+          }
+        },
+        {
+          "name": "在庫あり + 画像あり",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 ホタテ&availability=1&imageFlag=1&hits=10&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 ホタテ" },
+                { "key": "availability", "value": "1" },
+                { "key": "imageFlag", "value": "1" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "`availability=1` で在庫あり、`imageFlag=1` で画像あり。UI 表示用途では両方推奨。"
+          }
+        },
+        {
+          "name": "除外キーワード（NGKeyword）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 牡蠣&NGKeyword=訳あり&hits=10&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 牡蠣" },
+                { "key": "NGKeyword", "value": "訳あり" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "「訳あり」を含む商品を除外。レシピ用途で B 級品を弾きたいときに。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. 並び替え（sort）",
+      "description": "`sort` で並び順指定。`+`（昇順）/ `-`（降順）+ フィールド名。",
+      "item": [
+        {
+          "name": "レビュー件数 多い順",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 チーズ&sort=-reviewCount&hits=10&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 チーズ" },
+                { "key": "sort", "value": "-reviewCount" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "人気順に近い使い方。`reviewCount` 降順。"
+          }
+        },
+        {
+          "name": "レビュー平均 高い順",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 チーズ&sort=-reviewAverage&hits=10&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 チーズ" },
+                { "key": "sort", "value": "-reviewAverage" },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "品質順に近い。低レビュー数の高評価商品も混じるので注意。"
+          }
+        },
+        {
+          "name": "寄附額 安い順",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=ふるさと納税 チーズ&sort=%2BitemPrice&hits=10&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 チーズ" },
+                {
+                  "key": "sort",
+                  "value": "+itemPrice",
+                  "description": "URL では %2B にエンコード必要（Postman は自動）"
+                },
+                { "key": "hits", "value": "10" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "`+itemPrice` で寄附額昇順。`+` は URL エンコードが必要だが Postman が自動でやる。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. アフィリエイト連携",
+      "description": "affiliateId を付けるとレスポンスに `affiliateUrl` / `affiliateRate` / `shopAffiliateUrl` が追加される。",
+      "item": [
+        {
+          "name": "affiliateId 付きで検索",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&affiliateId={{AFFILIATE_ID}}&keyword=ふるさと納税 牡蠣&hits=5&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "affiliateId", "value": "{{AFFILIATE_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 牡蠣" },
+                { "key": "hits", "value": "5" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "**確認ポイント**:\n- `Items[0].Item.affiliateUrl` が `https://hb.afl.rakuten.co.jp/...` 形式\n- `Items[0].Item.affiliateRate` に料率（%）が入る\n- `Items[0].Item.shopAffiliateUrl` も追加される（新仕様）"
+          }
+        },
+        {
+          "name": "アフィリエイト料率レンジ",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&affiliateId={{AFFILIATE_ID}}&keyword=ふるさと納税 チーズ&minAffiliateRate=2.0&hits=5&format=json&field=0",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "affiliateId", "value": "{{AFFILIATE_ID}}" },
+                { "key": "keyword", "value": "ふるさと納税 チーズ" },
+                { "key": "minAffiliateRate", "value": "2.0" },
+                { "key": "hits", "value": "5" },
+                { "key": "format", "value": "json" },
+                { "key": "field", "value": "0" }
+              ]
+            },
+            "description": "料率 2.0% 以上の商品のみ。料率最適化したい場合に。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. ジャンル / タグ検索 API",
+      "description": "IchibaItem/Search 以外の補助 API。新エンドポイントで使えるか要検証（旧エンドポイント形式で残す）。",
+      "item": [
+        {
+          "name": "GenreSearch（ふるさと納税の子ジャンル）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL_LEGACY}}/IchibaGenre/Search/20140222?applicationId={{APPLICATION_ID}}&genreId=561023&format=json",
+              "host": ["{{BASE_URL_LEGACY}}"],
+              "path": ["IchibaGenre", "Search", "20140222"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "genreId", "value": "561023" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "旧エンドポイントの GenreSearch。**UUID 形式 applicationId では HTTP 400 になる可能性が高い**（旧 applicationId 用 API）。新エンドポイントに対応する GenreSearch があるかは要追加調査。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. エラー再現",
+      "description": "意図的にエラーを起こしてレスポンス形式を確認する。",
+      "item": [
+        {
+          "name": "401 - accessKey なし",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "accessKey", "value": "", "type": "text", "disabled": true }],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=牡蠣&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "牡蠣" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "Collection auth を上書きで無効化したリクエスト。**期待**: 401 or 403。新エンドポイントは accessKey ヘッダ必須。"
+          }
+        },
+        {
+          "name": "wrong_parameter（applicationId 不正）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId=invalid&keyword=牡蠣&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "invalid" },
+                { "key": "keyword", "value": "牡蠣" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "**期待**: HTTP 400 + `{\"error\": \"wrong_parameter\", \"error_description\": \"specify valid applicationId\"}` 系。"
+          }
+        },
+        {
+          "name": "wrong_parameter（hits 範囲外）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=牡蠣&hits=99&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "牡蠣" },
+                { "key": "hits", "value": "99" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "**期待**: HTTP 400。hits は 1〜30。"
+          }
+        },
+        {
+          "name": "ヒット 0 件（404 ではない）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/IchibaItem/Search/20260401?applicationId={{APPLICATION_ID}}&keyword=zzzzqqxxxnonexistent12345&format=json",
+              "host": ["{{BASE_URL}}"],
+              "path": ["IchibaItem", "Search", "20260401"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "zzzzqqxxxnonexistent12345" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "**期待**: HTTP 200 + `{\"count\": 0, \"Items\": []}`。ヒット 0 件は 404 ではなく **正常レスポンスで count: 0** が返る。"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. 旧エンドポイント（参考・新規発行 ID では動かない）",
+      "description": "旧 `app.rakuten.co.jp` を試す参考用。**新規発行された UUID 形式 applicationId では HTTP 400 wrong_parameter が返る**ことが実証済み。古いアプリ ID を持っている場合のみ使える。",
+      "item": [
+        {
+          "name": "旧エンドポイント（UUID applicationId → 400）",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL_LEGACY}}/IchibaItem/Search/20220601?applicationId={{APPLICATION_ID}}&keyword=ピザ&format=json&hits=3",
+              "host": ["{{BASE_URL_LEGACY}}"],
+              "path": ["IchibaItem", "Search", "20220601"],
+              "query": [
+                { "key": "applicationId", "value": "{{APPLICATION_ID}}" },
+                { "key": "keyword", "value": "ピザ" },
+                { "key": "format", "value": "json" },
+                { "key": "hits", "value": "3" }
+              ]
+            },
+            "description": "**期待**: HTTP 400 `wrong_parameter` (specify valid applicationId)。新エンドポイント用 UUID では弾かれる。"
+          }
+        }
+      ]
+    }
+  ]
+}

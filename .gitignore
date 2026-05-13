@@ -1,0 +1,32 @@
+# OS / Editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Claude Code 内部状態
+.claude/.DS_Store
+.claude/scheduled_tasks.lock
+.claude/projects/
+
+# Node / Next.js / pnpm
+node_modules/
+.pnpm-store/
+.next/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# 生成データ
+src/data/ingredients.generated.json
