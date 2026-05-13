@@ -5,7 +5,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "allowJs": false,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -46,7 +46,8 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "*.config.ts",
-    "*.config.mjs"
+    "*.config.mjs",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", ".next", "out", "dist", "coverage"]
 }
