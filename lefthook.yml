@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: '*.{ts,tsx,js,mjs}'
+      run: pnpm eslint {staged_files}
+    prettier:
+      glob: '*.{ts,tsx,js,mjs,json,md,css,yml,yaml}'
+      run: pnpm prettier --check {staged_files}
+    typecheck:
+      glob: '*.{ts,tsx}'
+      run: pnpm typecheck
+    gitleaks:
+      run: gitleaks protect --staged --redact --no-banner
