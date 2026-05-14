@@ -232,7 +232,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-022 washi-noise.css
 - [x] T-023 next/font
 - [x] T-024 globals.css
-- [ ] T-025 WashiTexture
+- [x] T-025 WashiTexture
 - [ ] T-026 PizzaDisk
 
 ### Phase 3: ドメイン・スキーマ (4)
