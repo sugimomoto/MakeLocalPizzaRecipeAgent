@@ -1,0 +1,68 @@
+/**
+ * globals.css — アプリ全体に適用するベース CSS
+ * - tokens.css (CSS 変数) と washi-noise.css (テクスチャ) を import
+ * - 最小限のリセット
+ * - body デフォルト (フォント / 配色 / ベース余白)
+ */
+
+@import url('../src/styles/tokens.css');
+@import url('../src/styles/washi-noise.css');
+
+/* ── Reset (最小) ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100dvh;
+  color: var(--mlpr-sumi);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  /* 和紙背景は <body class="mlpr-washi-noise mlpr-washi-noise--canvas"> 経由で適用 */
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 0.02em;
+}
+
+p {
+  margin: 0;
+  color: var(--mlpr-sumi-soft);
+}
+
+a {
+  color: var(--mlpr-shu);
+  text-decoration-color: color-mix(in srgb, var(--mlpr-shu) 40%, transparent);
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--mlpr-font-mono);
+}
