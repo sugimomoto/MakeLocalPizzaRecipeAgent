@@ -228,7 +228,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-011 git init + push
 
 ### Phase 2: デザインシステム (6)
-- [ ] T-021 tokens.css
+- [x] T-021 tokens.css
 - [ ] T-022 washi-noise.css
 - [ ] T-023 next/font
 - [ ] T-024 globals.css

@@ -1,0 +1,49 @@
+/**
+ * tokens.css — design/pizza-tokens.jsx の T オブジェクトを CSS 変数化
+ * 命名: --mlpr-<key を kebab-case 化>
+ * 変更時は design/pizza-tokens.jsx と整合させる。
+ */
+
+:root {
+  /* ── Surfaces (washi paper family) ───────────────────────────────── */
+  --mlpr-washi: #f2e9d6; /* canvas background */
+  --mlpr-washi-soft: #f7f0de;
+  --mlpr-washi-deep: #e8ddc4;
+  --mlpr-kinari: #fbf7ed; /* card / sheet */
+
+  /* ── Ink (text) ──────────────────────────────────────────────────── */
+  --mlpr-sumi: #1f1a12; /* headline */
+  --mlpr-sumi-soft: #5a4e3e; /* body */
+  --mlpr-sumi-muted: #928571; /* caption */
+  --mlpr-hairline: rgba(31, 26, 18, 0.1);
+
+  /* ── Accents ─────────────────────────────────────────────────────── */
+  --mlpr-shu: #c8412a; /* vermilion (primary) */
+  --mlpr-shu-deep: #9f3220;
+  --mlpr-shu-pale: #f2d9cc;
+  --mlpr-yamabuki: #dc8a2a; /* warmth */
+  --mlpr-matcha: #607744; /* greens / vegetable */
+  --mlpr-ai: #3e5670; /* indigo (deep info) */
+  --mlpr-kogane: #be934a; /* gold (premium) */
+  --mlpr-mokushi: #8b5a2b; /* wood */
+
+  /* ── Strategy colors (Exploit / Tune / Explore) ──────────────────── */
+  --mlpr-exploit-ink: #9f3220; /* 王道 */
+  --mlpr-exploit-bg: #f4e2d9;
+  --mlpr-tune-ink: #8a5a1f; /* 一歩外す */
+  --mlpr-tune-bg: #f4e5cd;
+  --mlpr-explore-ink: #3e5670; /* 大冒険 */
+  --mlpr-explore-bg: #dde2eb;
+
+  /* ── Typography (font CSS 変数は T-023 / next/font 側で上書き) ──── */
+  --mlpr-font-mincho: 'Shippori Mincho B1', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --mlpr-font-gothic:
+    'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  --mlpr-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ── Layout / spacing 補助 ───────────────────────────────────────── */
+  --mlpr-radius-sm: 8px;
+  --mlpr-radius-md: 12px;
+  --mlpr-radius-lg: 20px;
+  --mlpr-radius-pill: 999px;
+}
