@@ -230,7 +230,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 2: デザインシステム (6)
 - [x] T-021 tokens.css
 - [x] T-022 washi-noise.css
-- [ ] T-023 next/font
+- [x] T-023 next/font
 - [x] T-024 globals.css
 - [ ] T-025 WashiTexture
 - [ ] T-026 PizzaDisk
