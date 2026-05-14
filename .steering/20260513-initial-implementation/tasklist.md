@@ -233,7 +233,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-023 next/font
 - [x] T-024 globals.css
 - [x] T-025 WashiTexture
-- [ ] T-026 PizzaDisk
+- [x] T-026 PizzaDisk
 
 ### Phase 3: ドメイン・スキーマ (4)
 - [ ] T-031 Locale 型
