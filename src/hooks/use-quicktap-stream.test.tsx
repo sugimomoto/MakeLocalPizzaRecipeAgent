@@ -1,9 +1,9 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useQuickTapStream } from './use-quicktap-stream';
-
 import { encodeNdjsonStream } from '@/lib/agent/stream';
+
+import { useQuickTapStream } from './use-quicktap-stream';
 
 import type { StreamEvent } from '@/domain/schemas';
 

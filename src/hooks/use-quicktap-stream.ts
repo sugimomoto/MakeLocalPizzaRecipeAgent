@@ -16,9 +16,9 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { decodeNdjsonStream } from '@/lib/agent/stream';
 
-import type { GenerateCandidatesInput } from '@/lib/agent/client';
 import type { Strategy } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
+import type { GenerateCandidatesInput } from '@/lib/agent/client';
 
 export type PartialCandidate = {
   candidateId: string;

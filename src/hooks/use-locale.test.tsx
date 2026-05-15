@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { useLocale } from './use-locale';
-
 import { LOCALE_STORAGE_KEY, writeLocale } from '@/lib/localstorage/locale';
+
+import { useLocale } from './use-locale';
 
 describe('useLocale', () => {
   beforeEach(() => {
