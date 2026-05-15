@@ -244,7 +244,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 4: ライブラリ層 (6)
 - [x] T-041 logger
 - [x] T-042 withSpan
-- [ ] T-043 localStorage locale
+- [x] T-043 localStorage locale
 - [ ] T-044 guest session id
 - [ ] T-045 http error handler
 - [ ] T-046 withAuthOptional
