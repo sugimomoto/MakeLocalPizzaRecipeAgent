@@ -264,7 +264,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-071 /api/health
 - [x] T-072 /api/locales
 - [x] T-073 /api/locales/[id]/ingredients
-- [ ] T-074 POST /api/quicktap/sessions
+- [x] T-074 POST /api/quicktap/sessions
 - [ ] T-075 POST reroll
 
 ### Phase 8: フック・ストア (3)
