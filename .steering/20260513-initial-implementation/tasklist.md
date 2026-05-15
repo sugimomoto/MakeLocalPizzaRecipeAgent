@@ -256,7 +256,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 6: 静的データ (4)
 - [x] T-061 ingredients.yaml
-- [ ] T-062 build script
+- [x] T-062 build script
 - [ ] T-063 prebuild フック
 - [ ] T-064 .gitignore 判断
 

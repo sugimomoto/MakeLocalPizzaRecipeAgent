@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "prebuild": "node scripts/build-ingredient-data.mjs",
+    "prebuild": "node --experimental-strip-types --no-warnings=ExperimentalWarning scripts/build-ingredient-data.ts",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -20,7 +20,7 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build:data": "node scripts/build-ingredient-data.mjs"
+    "build:data": "node --experimental-strip-types --no-warnings=ExperimentalWarning scripts/build-ingredient-data.ts"
   },
   "dependencies": {
     "next": "^16.2.6",
