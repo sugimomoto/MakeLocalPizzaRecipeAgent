@@ -268,7 +268,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-075 POST reroll
 
 ### Phase 8: フック・ストア (3)
-- [ ] T-081 use-locale
+- [x] T-081 use-locale
 - [ ] T-082 use-quicktap-stream
 - [ ] T-083 quicktap store
 
