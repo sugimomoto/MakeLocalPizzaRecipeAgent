@@ -270,7 +270,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 8: フック・ストア (3)
 - [x] T-081 use-locale
 - [x] T-082 use-quicktap-stream
-- [ ] T-083 quicktap store
+- [x] T-083 quicktap store
 
 ### Phase 9: UI コンポーネント (9)
 - [ ] T-091 Button
