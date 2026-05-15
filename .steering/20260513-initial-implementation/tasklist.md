@@ -261,7 +261,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-064 .gitignore 判断
 
 ### Phase 7: BFF API (5)
-- [ ] T-071 /api/health
+- [x] T-071 /api/health
 - [ ] T-072 /api/locales
 - [ ] T-073 /api/locales/[id]/ingredients
 - [ ] T-074 POST /api/quicktap/sessions
