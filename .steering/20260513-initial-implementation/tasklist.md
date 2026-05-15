@@ -257,7 +257,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 6: 静的データ (4)
 - [x] T-061 ingredients.yaml
 - [x] T-062 build script
-- [ ] T-063 prebuild フック
+- [x] T-063 prebuild フック
 - [ ] T-064 .gitignore 判断
 
 ### Phase 7: BFF API (5)
