@@ -251,7 +251,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 5: Agent モック (3)
 - [x] T-051 NDJSON stream helper
-- [ ] T-052 AgentClient interface
+- [x] T-052 AgentClient interface
 - [ ] T-053 mock-candidates
 
 ### Phase 6: 静的データ (4)
