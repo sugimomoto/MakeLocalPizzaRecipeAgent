@@ -1,0 +1,227 @@
+# =============================================================================
+# ingredients.yaml — 地元食材データの正本 (Slice 1: 3 都道府県 × 10 件)
+# =============================================================================
+# 構造は src/domain/locale.ts (Locale) + src/domain/ingredient.ts (Ingredient) と一致。
+# scripts/build-ingredient-data.mjs が読み込み、Zod 検証して
+# src/data/ingredients.generated.json を生成する。
+#
+# 値追加・編集時は scripts の Zod スキーマも参照すること。
+# 後続スライス (5: 楽天連動) で searchQuery を検索キーとして使う。
+# =============================================================================
+
+locales:
+  # ───────────────────────────────────────────────────────────────────────────
+  # 宮城県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: miyagi
+    prefecture: 宮城県
+    prefectureCode: JP-04
+    region: tohoku
+    cities:
+      - { id: sendai, name: 仙台市 }
+      - { id: ishinomaki, name: 石巻市 }
+    ingredients:
+      - id: miyagi-seri
+        name: せり(根付き)
+        searchQuery: せり 宮城
+        category: vegetable
+        seasons: [winter, spring]
+        story: 一関の山あいで掘り起こされる、根まで食べる宮城の冬野菜
+      - id: miyagi-oyster
+        name: 牡蠣
+        searchQuery: 牡蠣 宮城
+        category: seafood
+        seasons: [winter]
+        story: 松島湾の旨味を凝縮、生でも蒸しても主役級
+      - id: miyagi-silver-salmon
+        name: 銀ザケ
+        searchQuery: 銀鮭 宮城
+        category: seafood
+        seasons: [autumn]
+        story: 三陸沖の養殖、脂のりと身のしっかり感が一級
+      - id: miyagi-sendai-beef
+        name: 仙台牛
+        searchQuery: 仙台牛
+        category: meat
+        seasons: [all-year]
+        story: 黒毛和牛の最高位 A5 等級、霜降りと赤身の均衡
+      - id: miyagi-sasanishiki
+        name: ササニシキ
+        searchQuery: ササニシキ 宮城
+        category: grain
+        seasons: [autumn]
+        story: 宮城が誇る寿司米の名品、軽やかな食感
+      - id: miyagi-sasakamaboco
+        name: 笹かまぼこ
+        searchQuery: 笹かまぼこ 仙台
+        category: seafood
+        seasons: [all-year]
+        story: 仙台名物、白身魚のすり身を笹形に焼き上げた郷土の味
+      - id: miyagi-shark-fin
+        name: ふかひれ
+        searchQuery: ふかひれ 気仙沼
+        category: seafood
+        seasons: [all-year]
+        story: 気仙沼港水揚げ、ゼラチン質の旨味は唯一無二
+      - id: miyagi-shirasu
+        name: 北限のしらす
+        searchQuery: しらす 宮城
+        category: seafood
+        seasons: [summer]
+        story: 三陸沖の冷たい海で育った繊細なしらす
+      - id: miyagi-hoya
+        name: ホヤ
+        searchQuery: ホヤ 三陸
+        category: seafood
+        seasons: [summer]
+        story: 三陸の夏を告げる海のパイナップル、塩気と甘味の波
+      - id: miyagi-aburafu
+        name: 油麩
+        searchQuery: 油麩 宮城
+        category: grain
+        seasons: [all-year]
+        story: 仙台北部の郷土食材、出汁を吸って生まれる肉感
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 長野県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: nagano
+    prefecture: 長野県
+    prefectureCode: JP-20
+    region: chubu
+    cities:
+      - { id: nagano-city, name: 長野市 }
+      - { id: matsumoto, name: 松本市 }
+    ingredients:
+      - id: nagano-shinshu-salmon
+        name: 信州サーモン
+        searchQuery: 信州サーモン
+        category: seafood
+        seasons: [all-year]
+        story: 信州が育てる淡水サーモン、川魚らしい清廉な脂
+      - id: nagano-zuiki
+        name: ずいき
+        searchQuery: ずいき 長野
+        category: vegetable
+        seasons: [summer, autumn]
+        story: 里芋の茎、シャキッと食感と独特の風味で和洋どちらにも
+      - id: nagano-nozawana
+        name: 野沢菜
+        searchQuery: 野沢菜 長野
+        category: vegetable
+        seasons: [winter]
+        story: 信州を代表する漬菜、塩気と発酵の旨味
+      - id: nagano-shinshu-soba
+        name: 信州そば
+        searchQuery: 信州そば 長野
+        category: grain
+        seasons: [all-year]
+        story: 標高高地が育てる香り高いそば、粉も麺もピザ生地に応用可
+      - id: nagano-apple
+        name: りんご(シナノスイート)
+        searchQuery: シナノスイート 長野
+        category: fruit
+        seasons: [autumn]
+        story: 信州生まれの蜜入り品種、甘さと酸味の好バランス
+      - id: nagano-kyoho
+        name: 巨峰
+        searchQuery: 巨峰 長野
+        category: fruit
+        seasons: [autumn]
+        story: 中野市・須坂市の名産、濃い果汁と上品な皮の渋味
+      - id: nagano-shinshu-beef
+        name: 信州牛
+        searchQuery: 信州牛
+        category: meat
+        seasons: [all-year]
+        story: アルプスの清流と牧草で育つ、きめ細やかな赤身
+      - id: nagano-anzu
+        name: 杏
+        searchQuery: 杏 千曲
+        category: fruit
+        seasons: [summer]
+        story: 千曲市・更埴の杏、甘酸の凝縮感はジャムでもピザでも主役
+      - id: nagano-enoki
+        name: えのき
+        searchQuery: えのき 長野
+        category: vegetable
+        seasons: [all-year]
+        story: 全国シェア 6 割の長野のきのこ王、軽やかな旨味
+      - id: nagano-azumino-wasabi
+        name: 安曇野わさび
+        searchQuery: 安曇野 わさび
+        category: vegetable
+        seasons: [all-year]
+        story: 安曇野の名水で育つ、爽やかな辛味と甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 高知県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kochi
+    prefecture: 高知県
+    prefectureCode: JP-39
+    region: shikoku
+    cities:
+      - { id: kochi-city, name: 高知市 }
+      - { id: shimanto, name: 四万十市 }
+    ingredients:
+      - id: kochi-yuzu
+        name: 柚子
+        searchQuery: 柚子 高知
+        category: fruit
+        seasons: [winter]
+        story: 高知が全国シェア 5 割超を誇る香り高い柑橘、皮も果汁も
+      - id: kochi-katsuo
+        name: 鰹(初鰹/戻り鰹)
+        searchQuery: 鰹 高知
+        category: seafood
+        seasons: [spring, autumn]
+        story: 一本釣りの誇り、初鰹のさっぱり感と戻り鰹の脂の二段構成
+      - id: kochi-buntan
+        name: 文旦(土佐文旦)
+        searchQuery: 土佐文旦 高知
+        category: fruit
+        seasons: [winter, spring]
+        story: 厚い皮の中に粒立つ果肉、ほろ苦さと爽やかな甘味
+      - id: kochi-aonori
+        name: 四万十川の青のり
+        searchQuery: 四万十 青のり
+        category: seafood
+        seasons: [winter]
+        story: 清流四万十川で育つ、香り立つ磯の風
+      - id: kochi-myoga
+        name: 茗荷
+        searchQuery: 茗荷 高知
+        category: vegetable
+        seasons: [summer]
+        story: 全国シェア 9 割、すっきりした香気と軽い辛味
+      - id: kochi-nira
+        name: ニラ
+        searchQuery: ニラ 高知
+        category: vegetable
+        seasons: [winter]
+        story: 全国出荷量上位、肉厚で甘味のあるニラ
+      - id: kochi-tosa-jiro
+        name: 土佐ジロー(地鶏)
+        searchQuery: 土佐ジロー
+        category: meat
+        seasons: [all-year]
+        story: 高知の地鶏、歯ごたえと旨味の濃さは別格
+      - id: kochi-saba
+        name: 鯖(清水サバ)
+        searchQuery: 清水サバ 高知
+        category: seafood
+        seasons: [autumn]
+        story: 土佐清水の一本釣りサバ、脂と身締まりの均衡
+      - id: kochi-sansho
+        name: 山椒
+        searchQuery: 山椒 高知
+        category: vegetable
+        seasons: [summer]
+        story: 嶺北地域の山椒、痺れと爽やかな香りでアクセントに
+      - id: kochi-shoga
+        name: 新生姜
+        searchQuery: 新生姜 高知
+        category: vegetable
+        seasons: [summer]
+        story: 全国シェア圧倒的 1 位、瑞々しい辛味とほのかな甘味

@@ -255,7 +255,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-053 mock-candidates
 
 ### Phase 6: 静的データ (4)
-- [ ] T-061 ingredients.yaml
+- [x] T-061 ingredients.yaml
 - [ ] T-062 build script
 - [ ] T-063 prebuild フック
 - [ ] T-064 .gitignore 判断
