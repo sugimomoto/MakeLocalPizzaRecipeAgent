@@ -258,7 +258,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-061 ingredients.yaml
 - [x] T-062 build script
 - [x] T-063 prebuild フック
-- [ ] T-064 .gitignore 判断
+- [x] T-064 .gitignore 判断
 
 ### Phase 7: BFF API (5)
 - [ ] T-071 /api/health
