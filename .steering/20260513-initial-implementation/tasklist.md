@@ -262,7 +262,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 7: BFF API (5)
 - [x] T-071 /api/health
-- [ ] T-072 /api/locales
+- [x] T-072 /api/locales
 - [ ] T-073 /api/locales/[id]/ingredients
 - [ ] T-074 POST /api/quicktap/sessions
 - [ ] T-075 POST reroll
