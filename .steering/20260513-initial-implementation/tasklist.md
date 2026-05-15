@@ -239,7 +239,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-031 Locale 型
 - [x] T-032 Ingredient 型
 - [x] T-033 Candidate / Strategy 型
-- [ ] T-034 NDJSON Zod スキーマ
+- [x] T-034 NDJSON Zod スキーマ
 
 ### Phase 4: ライブラリ層 (6)
 - [ ] T-041 logger
