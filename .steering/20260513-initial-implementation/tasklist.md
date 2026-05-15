@@ -250,7 +250,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-046 withAuthOptional
 
 ### Phase 5: Agent モック (3)
-- [ ] T-051 NDJSON stream helper
+- [x] T-051 NDJSON stream helper
 - [ ] T-052 AgentClient interface
 - [ ] T-053 mock-candidates
 
