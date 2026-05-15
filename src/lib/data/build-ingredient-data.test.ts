@@ -10,7 +10,6 @@ import { describe, expect, it } from 'vitest';
 import {
   IngredientsSourceSchema,
   parseIngredientsYaml,
-  // eslint-disable-next-line import/no-restricted-paths -- scripts ディレクトリは layer 制約の対象外
 } from '../../../scripts/build-ingredient-data';
 
 const PROJECT_ROOT = resolve(__dirname, '../../..');
