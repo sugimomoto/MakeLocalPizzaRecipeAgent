@@ -245,7 +245,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-041 logger
 - [x] T-042 withSpan
 - [x] T-043 localStorage locale
-- [ ] T-044 guest session id
+- [x] T-044 guest session id
 - [ ] T-045 http error handler
 - [ ] T-046 withAuthOptional
 
