@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { POST } from './route';
-
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+
+import { POST } from './route';
 
 import type { StreamEvent } from '@/domain/schemas';
 
