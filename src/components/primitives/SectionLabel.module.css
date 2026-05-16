@@ -1,0 +1,27 @@
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+.jp {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 0.3em;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: var(--mlpr-hairline);
+}
+
+.count {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+}

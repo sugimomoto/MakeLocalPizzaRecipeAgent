@@ -331,7 +331,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 14: デザインポリッシュ (8)
 - [x] T-141 47 都道府県データ
 - [x] T-142 ScreenHero primitive
-- [ ] T-143 SectionLabel primitive
+- [x] T-143 SectionLabel primitive
 - [ ] T-144 RegionRail
 - [ ] T-145 PrefectureTile
 - [ ] T-146 /local リファクタ
