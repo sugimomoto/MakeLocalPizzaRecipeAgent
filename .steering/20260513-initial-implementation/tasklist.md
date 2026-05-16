@@ -296,7 +296,7 @@ requirements.md §6 完了の定義に従う。
 - [ ] T-113 受け入れ手動確認 + スクリーンショット
 
 ### Phase 12: CI・ドキュメント (5)
-- [ ] T-121 ci.yml
+- [x] T-121 ci.yml
 - [ ] T-122 ブランチ保護
 - [ ] T-123 Dockerfile
 - [ ] T-124 README ドラフト
