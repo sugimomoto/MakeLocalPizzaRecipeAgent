@@ -140,7 +140,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 1: Python 初期化 (5)
 - [x] T-201 devcontainer 確認
 - [x] T-202 pyproject.toml
-- [ ] T-203 uv.lock
+- [x] T-203 uv.lock
 - [ ] T-204 FastAPI Hello
 - [ ] T-205 python .gitignore
 
