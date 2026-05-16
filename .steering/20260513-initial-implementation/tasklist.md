@@ -291,7 +291,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-105 not-found
 
 ### Phase 11: テスト補完 (3)
-- [ ] T-111 playwright config 雛形
+- [x] T-111 playwright config 雛形
 - [ ] T-112 smoke spec
 - [ ] T-113 受け入れ手動確認 + スクリーンショット
 
