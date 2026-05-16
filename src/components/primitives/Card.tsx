@@ -15,7 +15,7 @@ export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 type BaseProps = {
   padding?: CardPadding;
   elevated?: boolean;
-  className?: string;
+  className?: string | undefined;
   children?: ReactNode;
 };
 
