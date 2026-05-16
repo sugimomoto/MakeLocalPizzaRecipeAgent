@@ -66,6 +66,26 @@ export default tseslint.config(
         'warn',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
+      // 本番コードに console.log を残さない (warn/error は許容)
+      'no-console': ['error', { allow: ['warn', 'error'] }],
     },
+  },
+
+  // logger は console を「sink」として正規に使うため、no-console を無効化
+  {
+    files: ['src/lib/observability/logger.ts'],
+    rules: { 'no-console': 'off' },
+  },
+
+  // CLI スクリプト (scripts/) は標準出力で進捗を出すため console.log を許容
+  {
+    files: ['scripts/**/*.{ts,mjs,js}'],
+    rules: { 'no-console': 'off' },
+  },
+
+  // テストファイルは debug 出力で console.log/info を使うことがある
+  {
+    files: ['**/*.{test,spec}.{ts,tsx,js,mjs}', 'tests/**/*.{ts,tsx}'],
+    rules: { 'no-console': 'off' },
   },
 );
