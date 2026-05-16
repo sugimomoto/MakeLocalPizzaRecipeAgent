@@ -335,7 +335,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-144 RegionRail
 - [x] T-145 PrefectureTile
 - [x] T-146 /local リファクタ
-- [ ] T-147 /ingredients リファクタ
+- [x] T-147 /ingredients リファクタ
 - [ ] T-148 /candidates リファクタ
 
 ### Phase 13: 受け入れ最終 (8)
