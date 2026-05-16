@@ -1,0 +1,96 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--mlpr-sumi);
+  flex: 1;
+}
+
+.titleSkeleton,
+.conceptSkeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(31, 26, 18, 0.06) 0%,
+    rgba(31, 26, 18, 0.02) 50%,
+    rgba(31, 26, 18, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.titleSkeleton {
+  height: 22px;
+  width: 60%;
+}
+
+.conceptSkeleton {
+  height: 16px;
+  width: 90%;
+}
+
+@keyframes skeletonPulse {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.concept {
+  margin: 0;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--mlpr-sumi-soft);
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.why {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mlpr-sumi-muted);
+  border-top: 1px solid var(--mlpr-hairline);
+  padding-top: 10px;
+}
+
+.doneIndicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mlpr-matcha);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titleSkeleton,
+  .conceptSkeleton {
+    animation: none;
+  }
+}

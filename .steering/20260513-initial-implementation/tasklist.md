@@ -277,7 +277,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-092 Chip
 - [x] T-093 Card
 - [x] T-094 StrategySeal
-- [ ] T-095 CandidateCard
+- [x] T-095 CandidateCard
 - [ ] T-096 SeasonTab + CategoryTab
 - [ ] T-097 IngredientCard
 - [ ] T-098 PrefectureGrid + RegionChip
