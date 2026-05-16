@@ -138,7 +138,7 @@ requirements.md §6 完了の定義に従う。
 ## タスク一覧サマリ (チェックボックス)
 
 ### Phase 1: Python 初期化 (5)
-- [ ] T-201 devcontainer 確認
+- [x] T-201 devcontainer 確認
 - [ ] T-202 pyproject.toml
 - [ ] T-203 uv.lock
 - [ ] T-204 FastAPI Hello
