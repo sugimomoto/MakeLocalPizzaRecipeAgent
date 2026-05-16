@@ -1,0 +1,36 @@
+.hero {
+  padding: 12px 24px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 11px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.6em;
+  font-weight: 500;
+}
+
+.eyebrow.sumi {
+  color: var(--mlpr-sumi-muted);
+}
+
+.title {
+  margin: 4px 0 0;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+.sub {
+  margin: 6px 0 0;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.6;
+}
