@@ -1,0 +1,25 @@
+.seal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  user-select: none;
+}
+
+.jp {
+  display: block;
+}
+
+.en {
+  margin-top: 4px;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 600;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+}

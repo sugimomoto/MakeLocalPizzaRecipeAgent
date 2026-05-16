@@ -276,7 +276,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-091 Button
 - [x] T-092 Chip
 - [x] T-093 Card
-- [ ] T-094 StrategySeal
+- [x] T-094 StrategySeal
 - [ ] T-095 CandidateCard
 - [ ] T-096 SeasonTab + CategoryTab
 - [ ] T-097 IngredientCard
