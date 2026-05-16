@@ -287,7 +287,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-101 HomeRedirector
 - [x] T-102 /local
 - [x] T-103 /ingredients
-- [ ] T-104 /candidates/[sessionId]
+- [x] T-104 /candidates/[sessionId]
 - [ ] T-105 not-found
 
 ### Phase 11: テスト補完 (3)
