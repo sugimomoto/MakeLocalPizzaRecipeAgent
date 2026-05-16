@@ -148,7 +148,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-211 Locale
 - [x] T-212 Ingredient
 - [x] T-213 Candidate
-- [ ] T-214 StreamEvent
+- [x] T-214 StreamEvent
 
 ### Phase 3: ライブラリ (4)
 - [ ] T-221 settings
