@@ -13,8 +13,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { BakingAnimation } from '@/components/loading/BakingAnimation';
 import { CandidateCard } from '@/components/candidate/CandidateCard';
+import { BakingAnimation } from '@/components/loading/BakingAnimation';
 import { Button } from '@/components/primitives/Button';
 import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
 
