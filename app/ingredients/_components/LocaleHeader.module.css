@@ -1,0 +1,34 @@
+.header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--mlpr-radius-pill);
+  border: 1px solid var(--mlpr-hairline);
+  background: var(--mlpr-kinari);
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.header:hover {
+  background: var(--mlpr-washi-soft);
+}
+
+.pin {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.chevron {
+  font-size: 11px;
+  color: var(--mlpr-sumi-muted);
+}
+
+.empty {
+  color: var(--mlpr-sumi-muted);
+  font-style: italic;
+}

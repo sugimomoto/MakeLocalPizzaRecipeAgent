@@ -20,11 +20,18 @@ import { isInSeason } from '@/domain/ingredient';
 import { useLocale } from '@/hooks/use-locale';
 import { useQuickTapStore } from '@/stores/quicktap';
 
+import { LocaleHeader } from './LocaleHeader';
+
 import type { Ingredient, IngredientCategory, Season } from '@/domain/ingredient';
+import type { Locale } from '@/domain/locale';
 
 type IngredientsResponse = {
   localeId: string;
   ingredients: Ingredient[];
+};
+
+type LocalesResponse = {
+  locales: Locale[];
 };
 
 export const PENDING_SESSION_KEY = 'mlpr.pendingSession.v1';
@@ -42,6 +49,7 @@ export function IngredientSelectClient() {
   const { selectedIngredients, toggle } = useQuickTapStore();
 
   const [ingredients, setIngredients] = useState<Ingredient[] | null>(null);
+  const [locales, setLocales] = useState<Locale[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [season, setSeason] = useState<Season | null>(null);
   const [category, setCategory] = useState<IngredientCategory | null>(null);
@@ -52,6 +60,25 @@ export function IngredientSelectClient() {
       router.replace('/local');
     }
   }, [isHydrated, localeId, router]);
+
+  // 都道府県一覧 (LocaleHeader 表示名用)
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/locales')
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return (await res.json()) as LocalesResponse;
+      })
+      .then((data) => {
+        if (!cancelled) setLocales(data.locales);
+      })
+      .catch(() => {
+        // header 表示が崩れるだけなので silent
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 食材を fetch
   useEffect(() => {
@@ -114,6 +141,7 @@ export function IngredientSelectClient() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <LocaleHeader localeId={localeId} locales={locales} />
       <SeasonTab value={season} onChange={setSeason} />
       <CategoryTab value={category} onChange={setCategory} />
 
