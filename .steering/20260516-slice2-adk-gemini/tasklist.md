@@ -146,7 +146,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 2: ドメイン (4)
 - [x] T-211 Locale
-- [ ] T-212 Ingredient
+- [x] T-212 Ingredient
 - [ ] T-213 Candidate
 - [ ] T-214 StreamEvent
 
