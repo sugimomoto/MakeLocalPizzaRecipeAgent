@@ -299,7 +299,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-121 ci.yml
 - [ ] T-122 ブランチ保護
 - [x] T-123 Dockerfile
-- [ ] T-124 README ドラフト
+- [x] T-124 README ドラフト
 - [ ] T-125 tasklist の ✓ 更新
 
 ### Phase 13: 受け入れ最終 (8)
