@@ -274,7 +274,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 9: UI コンポーネント (9)
 - [x] T-091 Button
-- [ ] T-092 Chip
+- [x] T-092 Chip
 - [ ] T-093 Card
 - [ ] T-094 StrategySeal
 - [ ] T-095 CandidateCard

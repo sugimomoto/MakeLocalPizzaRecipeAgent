@@ -1,0 +1,71 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: var(--mlpr-radius-pill);
+  border: 1px solid var(--mlpr-hairline);
+  background: rgba(31, 26, 18, 0.04);
+  color: var(--mlpr-sumi);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.size-sm {
+  padding: 4px 9px;
+  font-size: 11px;
+}
+.size-md {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* tones (passive) */
+.tone-default {
+  background: rgba(31, 26, 18, 0.04);
+  border-color: var(--mlpr-hairline);
+  color: var(--mlpr-sumi);
+}
+.tone-shu {
+  background: var(--mlpr-shu-pale);
+  border-color: rgba(200, 65, 42, 0.22);
+  color: var(--mlpr-shu-deep);
+}
+.tone-matcha {
+  background: rgba(96, 119, 68, 0.12);
+  border-color: rgba(96, 119, 68, 0.25);
+  color: #3f5028;
+}
+.tone-yamabuki {
+  background: rgba(220, 138, 42, 0.14);
+  border-color: rgba(220, 138, 42, 0.3);
+  color: #7a4c16;
+}
+.tone-ai {
+  background: rgba(62, 86, 112, 0.1);
+  border-color: rgba(62, 86, 112, 0.22);
+  color: var(--mlpr-ai);
+}
+.tone-ghost {
+  background: transparent;
+  border-color: var(--mlpr-hairline);
+  color: var(--mlpr-sumi-soft);
+}
+
+/* selected wins */
+.selected {
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-sumi);
+}
