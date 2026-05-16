@@ -281,7 +281,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-096 SeasonTab + CategoryTab
 - [x] T-097 IngredientCard
 - [x] T-098 PrefectureGrid + RegionChip
-- [ ] T-099 BakingAnimation
+- [x] T-099 BakingAnimation
 
 ### Phase 10: 画面実装 (5)
 - [ ] T-101 HomeRedirector

@@ -1,0 +1,105 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 32px;
+}
+
+.oven {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 6px 16px rgba(31, 26, 18, 0.15));
+}
+
+.disk {
+  width: 200px;
+  height: 200px;
+  animation: bakingPulse 2.4s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+.heat {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(220, 138, 42, 0.35) 0%,
+    rgba(200, 65, 42, 0.18) 35%,
+    transparent 70%
+  );
+  animation: heatPulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.label {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  color: var(--mlpr-sumi-soft);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.dots::after {
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  content: '';
+  animation: dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes bakingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes heatPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes dots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '・';
+  }
+  50% {
+    content: '・・';
+  }
+  75% {
+    content: '・・・';
+  }
+  100% {
+    content: '';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disk,
+  .heat,
+  .dots::after {
+    animation: none;
+  }
+  .heat {
+    opacity: 0.6;
+  }
+}
