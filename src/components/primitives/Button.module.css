@@ -1,0 +1,78 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+  border-radius: var(--mlpr-radius-md);
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Sizes */
+.size-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.size-md {
+  padding: 10px 18px;
+  font-size: 14px;
+}
+.size-lg {
+  padding: 14px 26px;
+  font-size: 16px;
+}
+
+/* Variants */
+.variant-shu {
+  background: var(--mlpr-shu);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-shu-deep);
+  box-shadow: 0 1px 0 var(--mlpr-shu-deep);
+}
+.variant-shu:hover:not(:disabled) {
+  background: var(--mlpr-shu-deep);
+}
+
+.variant-yamabuki {
+  background: var(--mlpr-yamabuki);
+  color: var(--mlpr-kinari);
+  border-color: color-mix(in srgb, var(--mlpr-yamabuki) 70%, var(--mlpr-sumi) 30%);
+}
+.variant-yamabuki:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--mlpr-yamabuki) 85%, var(--mlpr-sumi) 15%);
+}
+
+.variant-ai {
+  background: var(--mlpr-ai);
+  color: var(--mlpr-kinari);
+  border-color: color-mix(in srgb, var(--mlpr-ai) 70%, var(--mlpr-sumi) 30%);
+}
+.variant-ai:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--mlpr-ai) 88%, var(--mlpr-sumi) 12%);
+}
+
+.variant-ghost {
+  background: transparent;
+  color: var(--mlpr-sumi);
+  border-color: var(--mlpr-hairline);
+}
+.variant-ghost:hover:not(:disabled) {
+  background: rgba(31, 26, 18, 0.04);
+}
