@@ -298,7 +298,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 12: CI・ドキュメント (5)
 - [x] T-121 ci.yml
 - [ ] T-122 ブランチ保護
-- [ ] T-123 Dockerfile
+- [x] T-123 Dockerfile
 - [ ] T-124 README ドラフト
 - [ ] T-125 tasklist の ✓ 更新
 
