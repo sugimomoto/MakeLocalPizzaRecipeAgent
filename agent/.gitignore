@@ -1,0 +1,27 @@
+# Python (agent/ ローカル)
+# ルート .gitignore で既にカバーされているが、agent/ 単独でクローンされたケースのため明示。
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# venv (uv)
+.venv/
+
+# uv の HTTP キャッシュ (devcontainer mount 領域は触らない)
+# Tests / Type / Lint cache
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Build / distribution
+*.egg-info/
+dist/
+build/
