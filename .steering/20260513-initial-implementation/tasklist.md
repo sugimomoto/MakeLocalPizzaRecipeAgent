@@ -292,7 +292,7 @@ requirements.md §6 完了の定義に従う。
 
 ### Phase 11: テスト補完 (3)
 - [x] T-111 playwright config 雛形
-- [ ] T-112 smoke spec
+- [x] T-112 smoke spec
 - [ ] T-113 受け入れ手動確認 + スクリーンショット
 
 ### Phase 12: CI・ドキュメント (5)
