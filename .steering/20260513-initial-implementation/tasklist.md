@@ -280,7 +280,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-095 CandidateCard
 - [x] T-096 SeasonTab + CategoryTab
 - [x] T-097 IngredientCard
-- [ ] T-098 PrefectureGrid + RegionChip
+- [x] T-098 PrefectureGrid + RegionChip
 - [ ] T-099 BakingAnimation
 
 ### Phase 10: 画面実装 (5)

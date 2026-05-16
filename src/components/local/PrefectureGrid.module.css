@@ -1,0 +1,87 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.regionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.regionLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--mlpr-sumi-soft);
+  letter-spacing: 0.04em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 6px;
+}
+
+.tile {
+  padding: 10px 8px;
+  border-radius: var(--mlpr-radius-md);
+  border: 1px solid var(--mlpr-hairline);
+  background: var(--mlpr-kinari);
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    border-color 0.12s ease,
+    transform 0.08s ease;
+}
+
+.tile:hover {
+  background: var(--mlpr-washi-soft);
+  border-color: color-mix(in srgb, var(--mlpr-sumi) 18%, transparent);
+}
+
+.tile:active {
+  transform: translateY(1px);
+}
+
+.selected {
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-sumi);
+}
+
+.empty {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 13px;
+  color: var(--mlpr-sumi-muted);
+  padding: 8px 0;
+}
+
+/* RegionChip */
+.regionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--mlpr-radius-pill);
+  border: 1px solid var(--mlpr-hairline);
+  background: rgba(31, 26, 18, 0.04);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+}
+
+.regionChipActive {
+  background: var(--mlpr-shu);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-shu-deep);
+}
