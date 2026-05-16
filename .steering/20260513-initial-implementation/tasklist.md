@@ -279,7 +279,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-094 StrategySeal
 - [x] T-095 CandidateCard
 - [x] T-096 SeasonTab + CategoryTab
-- [ ] T-097 IngredientCard
+- [x] T-097 IngredientCard
 - [ ] T-098 PrefectureGrid + RegionChip
 - [ ] T-099 BakingAnimation
 
