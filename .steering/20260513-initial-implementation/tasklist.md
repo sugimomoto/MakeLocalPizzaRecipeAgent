@@ -286,7 +286,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 10: 画面実装 (5)
 - [x] T-101 HomeRedirector
 - [x] T-102 /local
-- [ ] T-103 /ingredients
+- [x] T-103 /ingredients
 - [ ] T-104 /candidates/[sessionId]
 - [ ] T-105 not-found
 
