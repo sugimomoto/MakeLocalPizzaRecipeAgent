@@ -1,0 +1,43 @@
+.rail {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--mlpr-hairline);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* スクロールバーを目立たせない (横スクロールの視覚ノイズを抑える) */
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail {
+  scrollbar-width: none;
+}
+
+.chip {
+  padding: 5px 11px;
+  border-radius: var(--mlpr-radius-pill);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: 1px solid var(--mlpr-hairline);
+  background: transparent;
+  color: var(--mlpr-sumi-soft);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.chip:hover:not(.active) {
+  background: rgba(31, 26, 18, 0.04);
+}
+
+.active {
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-sumi);
+}
