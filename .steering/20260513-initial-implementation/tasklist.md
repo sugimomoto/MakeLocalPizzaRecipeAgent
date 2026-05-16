@@ -329,7 +329,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-125 tasklist の ✓ 更新
 
 ### Phase 14: デザインポリッシュ (8)
-- [ ] T-141 47 都道府県データ
+- [x] T-141 47 都道府県データ
 - [ ] T-142 ScreenHero primitive
 - [ ] T-143 SectionLabel primitive
 - [ ] T-144 RegionRail
