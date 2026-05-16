@@ -9,9 +9,8 @@
 
 import { REGIONS } from '@/domain/locale';
 
-import { RegionChip } from './RegionChip';
-
 import styles from './PrefectureGrid.module.css';
+import { RegionChip } from './RegionChip';
 
 import type { Locale, Region } from '@/domain/locale';
 

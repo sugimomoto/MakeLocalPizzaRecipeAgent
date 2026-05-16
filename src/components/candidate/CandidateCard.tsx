@@ -11,9 +11,8 @@
 import { Card } from '@/components/primitives/Card';
 import { Chip } from '@/components/primitives/Chip';
 
-import { StrategySeal } from './StrategySeal';
-
 import styles from './CandidateCard.module.css';
+import { StrategySeal } from './StrategySeal';
 
 import type { PartialCandidate } from '@/hooks/use-quicktap-stream';
 
