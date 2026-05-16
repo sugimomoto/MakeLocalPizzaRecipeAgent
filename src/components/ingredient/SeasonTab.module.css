@@ -1,0 +1,42 @@
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--mlpr-radius-pill);
+  border: 1px solid var(--mlpr-hairline);
+  background: rgba(31, 26, 18, 0.04);
+  color: var(--mlpr-sumi);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.tab:hover {
+  background: rgba(31, 26, 18, 0.07);
+}
+
+.active {
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-sumi);
+}
+
+.icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+}
