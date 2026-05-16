@@ -145,7 +145,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-205 python .gitignore
 
 ### Phase 2: ドメイン (4)
-- [ ] T-211 Locale
+- [x] T-211 Locale
 - [ ] T-212 Ingredient
 - [ ] T-213 Candidate
 - [ ] T-214 StreamEvent
