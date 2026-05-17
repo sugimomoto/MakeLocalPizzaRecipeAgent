@@ -4,12 +4,16 @@ import type { ReactNode } from 'react';
 
 import './globals.css';
 
+// 日本語 Google Fonts は subset 数が膨大 (漢字を細分割) で preload を全 subset 分発行すると
+// 数百〜数千の woff2 link を生成してハイドレーションが詰まる。
+// 必要な weight のみ + preload: false で lazy load させる (display: 'swap' で system font 即表示)。
+
 const shipporiMincho = Shippori_Mincho_B1({
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '600'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--mlpr-font-mincho',
-  preload: true,
+  preload: false,
 });
 
 const zenKakuGothic = Zen_Kaku_Gothic_New({
@@ -17,7 +21,7 @@ const zenKakuGothic = Zen_Kaku_Gothic_New({
   subsets: ['latin'],
   display: 'swap',
   variable: '--mlpr-font-gothic',
-  preload: true,
+  preload: false,
 });
 
 const jetBrainsMono = JetBrains_Mono({
