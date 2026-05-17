@@ -1,14 +1,17 @@
-"""image_agent — 候補 1 件分の Imagen プロンプト構築と data URI 化。
+"""image_agent — 候補 1 件分の Imagen プロンプト構築 + Storage put。
 
-- ImagenClient (Vertex / Mock) を呼び、PNG bytes → base64 data URI に変換
+- ImagenClient (Vertex / Mock) を呼んで PNG bytes を得る
+- 得た PNG bytes を StorageClient (Firebase Storage / Mock) に put し URL を返す
 - 画像専用プロンプトは食材・地域・スタイルを盛り込む
+
+Slice 3 までは base64 data URI を NDJSON 1 行に乗せていたが (~5MB/行)、
+Slice 4 で GCS URL に切替 (~数百 B/行)。
 """
 
 from __future__ import annotations
 
-import base64
-
 from ..lib.settings import get_settings
+from ..lib.storage import StorageClient
 from .imagen_client import ImagenClient
 
 
@@ -31,12 +34,14 @@ def build_image_prompt(*, candidate_title: str, key_ingredients: list[str], pref
 async def run_image_for_candidate(
     *,
     client: ImagenClient,
+    storage: StorageClient,
+    candidate_id: str,
     candidate_title: str,
     key_ingredients: list[str],
     prefecture: str,
     model: str | None = None,
 ) -> str:
-    """Imagen を 1 回呼んで data:image/png;base64,... 形式の URI を返す。"""
+    """Imagen を 1 回呼んで PNG を Storage に put し、URL を返す。"""
     effective_model = model or get_settings().imagen_model
     prompt = build_image_prompt(
         candidate_title=candidate_title,
@@ -44,5 +49,6 @@ async def run_image_for_candidate(
         prefecture=prefecture,
     )
     png_bytes = await client.generate_image(model=effective_model, prompt=prompt)
-    b64 = base64.b64encode(png_bytes).decode("ascii")
-    return f"data:image/png;base64,{b64}"
+    # StorageClient.upload_image は同期実装 (google-cloud-storage SDK が同期)
+    # asyncio コンテキスト内だが put 時間は数百 ms 程度なのでブロックしてよい
+    return storage.upload_image(candidate_id, png_bytes)

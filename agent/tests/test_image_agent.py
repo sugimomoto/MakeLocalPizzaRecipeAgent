@@ -1,14 +1,14 @@
-"""agents/image_agent.py のテスト — プロンプト + data URI 変換。"""
+"""agents/image_agent.py のテスト — プロンプト + GCS put → URL。"""
 
 from __future__ import annotations
 
-import base64
 from unittest.mock import AsyncMock
 
 import pytest
 
 from makelocal_agent.agents.image_agent import build_image_prompt, run_image_for_candidate
 from makelocal_agent.agents.imagen_client import MockImagenClient
+from makelocal_agent.lib.storage import MockStorageClient
 
 
 class TestBuildImagePrompt:
@@ -31,30 +31,37 @@ class TestBuildImagePrompt:
 
 class TestRunImageForCandidate:
     @pytest.mark.asyncio
-    async def test_returns_data_uri_with_png_payload(self) -> None:
-        client = MockImagenClient()
-        uri = await run_image_for_candidate(
-            client=client,
+    async def test_returns_storage_url(self) -> None:
+        imagen = MockImagenClient()
+        storage = MockStorageClient()
+        url = await run_image_for_candidate(
+            client=imagen,
+            storage=storage,
+            candidate_id="c_test",
             candidate_title="t",
             key_ingredients=["牡蠣"],
             prefecture="宮城県",
         )
-        assert uri.startswith("data:image/png;base64,")
-        payload = uri.split(",", 1)[1]
-        decoded = base64.b64decode(payload)
-        assert decoded.startswith(b"\x89PNG\r\n\x1a\n")
+        # MockStorageClient は決定論的 URL を返す
+        assert url == "https://mock-storage.local/recipes/c_test.png"
+        # 実際に PNG bytes が put されたことを履歴で検証
+        assert "c_test" in storage.calls
+        assert storage.calls["c_test"].startswith(b"\x89PNG\r\n\x1a\n")
 
     @pytest.mark.asyncio
-    async def test_passes_model_and_prompt_to_client(self) -> None:
-        spy = AsyncMock()
-        spy.generate_image = AsyncMock(return_value=b"\x89PNG\r\n\x1a\nfake")
+    async def test_passes_model_and_prompt_to_imagen(self) -> None:
+        imagen_spy = AsyncMock()
+        imagen_spy.generate_image = AsyncMock(return_value=b"\x89PNG\r\n\x1a\nfake")
+        storage = MockStorageClient()
         await run_image_for_candidate(
-            client=spy,
+            client=imagen_spy,
+            storage=storage,
+            candidate_id="c_x",
             candidate_title="松島の牡蠣ピザ",
             key_ingredients=["牡蠣"],
             prefecture="宮城県",
             model="imagen-4.0-generate-001",
         )
-        kwargs = spy.generate_image.call_args.kwargs
+        kwargs = imagen_spy.generate_image.call_args.kwargs
         assert kwargs["model"] == "imagen-4.0-generate-001"
         assert "松島の牡蠣ピザ" in kwargs["prompt"]

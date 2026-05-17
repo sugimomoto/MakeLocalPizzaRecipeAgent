@@ -13,10 +13,13 @@ from makelocal_agent.deps import (
     MockLlmClient,
     reset_imagen_client_for_testing,
     reset_llm_client_for_testing,
+    reset_storage_client_for_testing,
     set_imagen_client_for_testing,
     set_llm_client_for_testing,
+    set_storage_client_for_testing,
 )
 from makelocal_agent.lib.settings import reset_settings_for_testing
+from makelocal_agent.lib.storage import MockStorageClient
 from makelocal_agent.main import app
 from makelocal_agent.routes.candidates import _reset_repo_for_testing
 
@@ -30,8 +33,10 @@ def _setup(monkeypatch: pytest.MonkeyPatch) -> None:
     reset_settings_for_testing()
     reset_llm_client_for_testing()
     reset_imagen_client_for_testing()
+    reset_storage_client_for_testing()
     set_llm_client_for_testing(MockLlmClient())
     set_imagen_client_for_testing(MockImagenClient())
+    set_storage_client_for_testing(MockStorageClient())
     _reset_repo_for_testing()
 
 

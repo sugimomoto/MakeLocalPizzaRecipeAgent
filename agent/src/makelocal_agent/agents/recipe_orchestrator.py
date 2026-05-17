@@ -32,6 +32,7 @@ from ..domain.stream import (
     RecipeTitleEvent,
     StreamEvent,
 )
+from ..lib.storage import StorageClient
 from .detail_agent import run_recipe_detail
 from .image_agent import run_image_for_candidate
 from .imagen_client import ImagenClient
@@ -43,6 +44,7 @@ async def generate_recipe_detail(
     *,
     llm_client: LlmClient,
     imagen_client: ImagenClient,
+    storage_client: StorageClient,
     recipe_id: str,
     locale: Locale,
     selected: list[Ingredient],
@@ -92,6 +94,8 @@ async def generate_recipe_detail(
         try:
             image_url = await run_image_for_candidate(
                 client=imagen_client,
+                storage=storage_client,
+                candidate_id=recipe_id,
                 candidate_title=candidate.title,
                 key_ingredients=candidate.keyIngredients,
                 prefecture=locale.prefecture,

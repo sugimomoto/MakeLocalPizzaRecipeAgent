@@ -22,6 +22,7 @@ from makelocal_agent.domain.stream import (
     RecipeStartEvent,
     StreamEvent,
 )
+from makelocal_agent.lib.storage import MockStorageClient
 
 
 @pytest.fixture
@@ -107,6 +108,7 @@ class TestRecipeOrchestratorHappyPath:
             generate_recipe_detail(
                 llm_client=MockLlmClient(),
                 imagen_client=MockImagenClient(),
+                storage_client=MockStorageClient(),
                 recipe_id="r_test",
                 locale=locale,
                 selected=selected,
@@ -144,6 +146,7 @@ class TestRecipeOrchestratorHappyPath:
             generate_recipe_detail(
                 llm_client=MockLlmClient(),
                 imagen_client=MockImagenClient(),
+                storage_client=MockStorageClient(),
                 recipe_id="r_test_2",
                 locale=locale,
                 selected=selected,
@@ -176,6 +179,7 @@ class TestRecipeOrchestratorImageFailure:
             generate_recipe_detail(
                 llm_client=MockLlmClient(),
                 imagen_client=_FailImagenClient(),
+                storage_client=MockStorageClient(),
                 recipe_id="r_img_fail",
                 locale=locale,
                 selected=selected,
@@ -203,6 +207,7 @@ class TestRecipeOrchestratorRecipeFailure:
             generate_recipe_detail(
                 llm_client=_FailLlmClient(),
                 imagen_client=MockImagenClient(),
+                storage_client=MockStorageClient(),
                 recipe_id="r_recipe_fail",
                 locale=locale,
                 selected=selected,

@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from ..agents.recipe_orchestrator import generate_recipe_detail
-from ..deps import get_imagen_client, get_llm_client
+from ..deps import get_imagen_client, get_llm_client, get_storage_client
 from ..domain.candidate import Candidate
 from ..lib.ndjson import encode_ndjson_stream
 from .candidates import _get_repo
@@ -56,11 +56,13 @@ async def generate_recipe(
 
     llm = get_llm_client()
     imagen = get_imagen_client()
+    storage = get_storage_client()
 
     async def gen() -> AsyncIterator[bytes]:
         events = generate_recipe_detail(
             llm_client=llm,
             imagen_client=imagen,
+            storage_client=storage,
             recipe_id=candidate_id,
             locale=locale,
             selected=selected,
