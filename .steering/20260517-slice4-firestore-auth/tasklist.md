@@ -130,21 +130,21 @@
 
 ### T-409 Firebase client singleton + Emulator connect
 
-- [ ] `pnpm add firebase`
-- [ ] `src/lib/firebase/client.ts`: initializeApp + getAuth + getFirestore + getStorage
-- [ ] `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` で 3 つの connect*Emulator を呼ぶ (HMR 安全)
-- [ ] `src/lib/firebase/client.test.ts`: env で振り分けの単体テスト (window stubbing)
+- [x] `pnpm add firebase`
+- [x] `src/lib/firebase/client.ts`: initializeApp + getAuth + getFirestore + getStorage
+- [x] `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` で 3 つの connect*Emulator を呼ぶ (HMR 安全)
+- [x] `src/lib/firebase/client.test.ts`: env で振り分けの単体テスト (window stubbing)
 - **DoC**: vitest + typecheck green
-- **commit**: `feat(slice4): add Firebase client singleton with Emulator support`
+- **commit**: `feat(slice4): add Firebase client singleton with Emulator support` (78a03b7)
 
 ### T-410 AuthProvider + useAuth フック
 
-- [ ] `src/hooks/use-auth.tsx`: Context + Provider + onAuthStateChanged 購読
-- [ ] `signInWithGoogle` / `signOut` を Provider 内で実装
-- [ ] `src/hooks/use-auth.test.tsx`: signIn → status 'authenticated' / signOut → 'unauthenticated' の遷移テスト
-- [ ] `app/layout.tsx` に AuthProvider を `<body>` 直下にラップ
+- [x] `src/hooks/use-auth.tsx`: Context + Provider + onAuthStateChanged 購読
+- [x] `signInWithGoogle` / `signOut` を Provider 内で実装
+- [x] `src/hooks/use-auth.test.tsx`: signIn → status 'authenticated' / signOut → 'unauthenticated' の遷移テスト
+- [x] `app/layout.tsx` に AuthProvider を `<body>` 直下にラップ
 - **DoC**: vitest green、AuthProvider が SSR で warning なく hydrate
-- **commit**: `feat(slice4): add AuthProvider + useAuth hook`
+- **commit**: `feat(slice4): add AuthProvider + useAuth hook` (6b3318a)
 
 → **push & CI green 確認**
 
