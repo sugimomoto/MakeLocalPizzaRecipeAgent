@@ -153,7 +153,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 3: ライブラリ (4)
 - [x] T-221 settings
 - [x] T-222 logging
-- [ ] T-223 ndjson encoder
+- [x] T-223 ndjson encoder
 - [ ] T-224 ingredients repository
 
 ### Phase 4: ADK + Orchestrator (4)
