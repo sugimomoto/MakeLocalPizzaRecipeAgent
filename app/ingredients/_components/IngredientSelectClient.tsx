@@ -258,7 +258,7 @@ export function IngredientSelectClient() {
             style={{ width: '100%' }}
           >
             {selectedIngredients.length > 0
-              ? `AIに ${selectedIngredients.length} 案つくらせる ✦`
+              ? 'AIに 3 案つくらせる ✦'
               : '食材を 1 つ以上選んでください'}
           </Button>
         </div>
