@@ -181,12 +181,12 @@ requirements.md §6 完了の定義に従う。
 - [x] T-264 devcontainer 拡張確認 (T-201 で Python/Pylance/Ruff 確認済み)
 
 ### Phase 8: 統合確認 (3)
-- [ ] T-271 AGENT_MODE=http で踏破 (※ ユーザ手動: ADC 設定 + Web/Agent 同時起動 + ブラウザ踏破)
+- [x] T-271 AGENT_MODE=http で踏破 (2026-05-17 完了 / 実 Gemini 2.5 Flash で 3 案生成確認 / 焼成→3 候補表示まで OK)
 - [x] T-272 AGENT_MODE=mock で regression (web tests 283 pass = Slice 1 と同 + α、build OK)
 - [x] T-273 tasklist ✓
 
 ### Phase 9: 受け入れ最終 (7)
-- [ ] DoD-1 機能受け入れ (※ T-271 と同じくユーザ手動)
+- [x] DoD-1 機能受け入れ (2026-05-17 完了 / AGENT_MODE=http で 5 項目すべて動作確認)
 - [x] DoD-2 Agent 受け入れ (uvicorn 起動 / /agent/health / NDJSON / 422 / ErrorEvent を test で検証)
 - [x] DoD-3 DevOps (uv sync / ruff check + format / mypy strict / pytest 90+ pass、CI Python ジョブ追加)
 - [x] DoD-4 コード品質 (ruff strict + mypy strict 全部 pass、Any 濫用なし、env var ハードコードなし)
