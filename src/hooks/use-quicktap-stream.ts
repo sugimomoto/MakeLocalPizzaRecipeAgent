@@ -97,6 +97,20 @@ function applyEvent(candidates: PartialCandidate[], event: StreamEvent): Partial
       return candidates.map((c) =>
         c.candidateId === event.candidateId ? { ...c, isDone: true } : c,
       );
+
+    // Slice 3 で追加した recipe.* / image.* は候補生成画面とは無関係なので無視。
+    // (このストリームは /api/quicktap/sessions が返す候補系のみを担当する)
+    case 'recipe.start':
+    case 'recipe.title':
+    case 'recipe.meta':
+    case 'recipe.materials':
+    case 'recipe.steps':
+    case 'recipe.story':
+    case 'recipe.done':
+    case 'image.start':
+    case 'image.ready':
+    case 'image.error':
+      return candidates;
   }
 }
 

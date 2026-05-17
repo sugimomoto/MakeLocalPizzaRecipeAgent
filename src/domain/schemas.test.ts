@@ -123,3 +123,115 @@ describe('StreamEvent type narrowing', () => {
     }
   });
 });
+
+describe('StreamEventSchema (Slice 3 recipe.* events)', () => {
+  it('parses recipe.start and recipe.done', () => {
+    expect(StreamEventSchema.parse({ type: 'recipe.start', recipeId: 'r_1' })).toMatchObject({
+      type: 'recipe.start',
+    });
+    expect(StreamEventSchema.parse({ type: 'recipe.done', recipeId: 'r_1' })).toMatchObject({
+      type: 'recipe.done',
+    });
+  });
+
+  it('parses recipe.title', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.title',
+      recipeId: 'r_1',
+      title: '松島の牡蠣と、名取のせり。',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses recipe.meta with all 4 axes', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.meta',
+      recipeId: 'r_1',
+      meta: { servings: '4 人分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses recipe.materials with at least one entry', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.materials',
+      recipeId: 'r_1',
+      materials: [{ name: '強力粉', quantity: '300g' }],
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses recipe.steps', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.steps',
+      recipeId: 'r_1',
+      steps: ['伸ばす', '乗せる', '焼く'],
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses recipe.story', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.story',
+      recipeId: 'r_1',
+      eyebrow: 'ゲストに語る',
+      headline: '海と田畑。',
+      body: '宮城の夜。',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('rejects recipe.materials with empty array', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'recipe.materials',
+      recipeId: 'r_1',
+      materials: [],
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it('rejects recipe.steps with empty array', () => {
+    const r = StreamEventSchema.safeParse({ type: 'recipe.steps', recipeId: 'r_1', steps: [] });
+    expect(r.success).toBe(false);
+  });
+
+  it('rejects recipe.* with empty recipeId', () => {
+    const r = StreamEventSchema.safeParse({ type: 'recipe.start', recipeId: '' });
+    expect(r.success).toBe(false);
+  });
+});
+
+describe('StreamEventSchema (Slice 3 image.* events)', () => {
+  it('parses image.start', () => {
+    const r = StreamEventSchema.safeParse({ type: 'image.start', recipeId: 'r_1' });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses image.ready with data URI', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'image.ready',
+      recipeId: 'r_1',
+      dataUri: 'data:image/png;base64,iVBORw0KGgo=',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('parses image.error', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'image.error',
+      recipeId: 'r_1',
+      code: 'IMAGEN_FAIL',
+      message: 'quota exceeded',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('rejects image.ready with empty dataUri', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'image.ready',
+      recipeId: 'r_1',
+      dataUri: '',
+    });
+    expect(r.success).toBe(false);
+  });
+});
