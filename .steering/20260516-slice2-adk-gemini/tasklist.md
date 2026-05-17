@@ -160,7 +160,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-231 vertex DI
 - [x] T-232 candidates_agent
 - [x] T-233 prompt builder
-- [ ] T-234 orchestrator (parallel)
+- [x] T-234 orchestrator (parallel)
 
 ### Phase 5: FastAPI ルート (4)
 - [ ] T-241 /agent/health
