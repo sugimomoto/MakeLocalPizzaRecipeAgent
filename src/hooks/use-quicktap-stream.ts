@@ -14,10 +14,10 @@
 
 import { useCallback, useReducer, useRef } from 'react';
 
+import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
 
 import type { Strategy } from '@/domain/candidate';
-import type { StreamEvent } from '@/domain/schemas';
 import type { GenerateCandidatesInput } from '@/lib/agent/client';
 
 export type PartialCandidate = {
@@ -49,12 +49,15 @@ const initialState: State = {
 
 type Action =
   | { type: 'start'; sessionId: string }
-  | { type: 'event'; event: StreamEvent }
+  | { type: 'event'; event: CandidateStreamEvent }
   | { type: 'done' }
   | { type: 'error'; error: string }
   | { type: 'reset' };
 
-function applyEvent(candidates: PartialCandidate[], event: StreamEvent): PartialCandidate[] {
+function applyEvent(
+  candidates: PartialCandidate[],
+  event: CandidateStreamEvent,
+): PartialCandidate[] {
   switch (event.type) {
     case 'session.start':
     case 'session.done':
@@ -97,20 +100,6 @@ function applyEvent(candidates: PartialCandidate[], event: StreamEvent): Partial
       return candidates.map((c) =>
         c.candidateId === event.candidateId ? { ...c, isDone: true } : c,
       );
-
-    // Slice 3 で追加した recipe.* / image.* は候補生成画面とは無関係なので無視。
-    // (このストリームは /api/quicktap/sessions が返す候補系のみを担当する)
-    case 'recipe.start':
-    case 'recipe.title':
-    case 'recipe.meta':
-    case 'recipe.materials':
-    case 'recipe.steps':
-    case 'recipe.story':
-    case 'recipe.done':
-    case 'image.start':
-    case 'image.ready':
-    case 'image.error':
-      return candidates;
   }
 }
 
@@ -175,7 +164,7 @@ async function consumeStream(
     return;
   }
   try {
-    for await (const event of decodeNdjsonStream(res.body)) {
+    for await (const event of decodeNdjsonStream(res.body, CandidateStreamEventSchema)) {
       if (abortRef.current?.signal.aborted) return;
       dispatch({ type: 'event', event });
     }

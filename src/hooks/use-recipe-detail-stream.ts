@@ -14,10 +14,10 @@
 
 import { useCallback, useReducer, useRef } from 'react';
 
+import { RecipeDetailStreamEventSchema, type RecipeDetailStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
 
 import type { RecipeMaterial, RecipeMeta, RecipeStory } from '@/domain/recipe';
-import type { StreamEvent } from '@/domain/schemas';
 import type { GenerateRecipeDetailInput } from '@/lib/agent/client';
 
 export type RecipeDetailStreamState = 'idle' | 'streaming' | 'recipeDone' | 'allDone' | 'error';
@@ -50,12 +50,12 @@ const initialState: State = {
 
 type Action =
   | { type: 'start'; recipeId: string }
-  | { type: 'event'; event: StreamEvent }
+  | { type: 'event'; event: RecipeDetailStreamEvent }
   | { type: 'done' }
   | { type: 'error'; error: string }
   | { type: 'reset' };
 
-function applyEvent(state: State, event: StreamEvent): State {
+function applyEvent(state: State, event: RecipeDetailStreamEvent): State {
   switch (event.type) {
     case 'recipe.start':
       return { ...state, recipeId: event.recipeId };
@@ -88,18 +88,6 @@ function applyEvent(state: State, event: StreamEvent): State {
       return { ...state, imageError: `${event.code}: ${event.message}` };
     case 'error':
       return { ...state, state: 'error', error: event.message };
-
-    // この hook は recipe.* / image.* のみを扱う。candidate 系は無視。
-    case 'session.start':
-    case 'session.done':
-    case 'candidate.start':
-    case 'candidate.title':
-    case 'candidate.concept':
-    case 'candidate.ingredients':
-    case 'candidate.sceneTags':
-    case 'candidate.why':
-    case 'candidate.done':
-      return state;
   }
 }
 
@@ -149,7 +137,7 @@ async function consumeStream(
     return;
   }
   try {
-    for await (const event of decodeNdjsonStream(res.body)) {
+    for await (const event of decodeNdjsonStream(res.body, RecipeDetailStreamEventSchema)) {
       if (abortRef.current?.signal.aborted) return;
       dispatch({ type: 'event', event });
     }
