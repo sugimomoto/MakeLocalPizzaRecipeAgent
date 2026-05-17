@@ -1,0 +1,106 @@
+.shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+  background: var(--mlpr-washi, #f5efe1);
+  min-height: 100vh;
+}
+
+.body {
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--mlpr-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--mlpr-sumi-muted, rgba(31, 26, 18, 0.55));
+}
+
+.title {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho, serif);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--mlpr-sumi, #1f1a12);
+}
+
+.titleSkeleton {
+  height: 26px;
+  width: 75%;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 26, 18, 0.08) 0%,
+    rgba(31, 26, 18, 0.03) 50%,
+    rgba(31, 26, 18, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.concept {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho, serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(31, 26, 18, 0.78);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.errorBox {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--mlpr-shu-pale, rgba(178, 58, 72, 0.08));
+  border: 1px solid rgba(178, 58, 72, 0.22);
+  color: var(--mlpr-shu-deep, #8a2e36);
+  font-family: var(--mlpr-font-gothic, sans-serif);
+  font-size: 13px;
+}
+
+.stickyCtas {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 20px 24px;
+  background: linear-gradient(to bottom, rgba(245, 239, 225, 0) 0%, rgba(245, 239, 225, 0.96) 35%);
+  z-index: 10;
+}
+
+.stickyInner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  gap: 10px;
+}
+
+@keyframes skeletonPulse {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
