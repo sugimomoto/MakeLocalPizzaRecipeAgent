@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HttpAgentClient } from './http-client';
 import { decodeNdjsonStream } from './stream';
 
+import type { Candidate } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
 
 function ndjsonBody(events: StreamEvent[]): ReadableStream<Uint8Array> {
@@ -99,6 +100,64 @@ describe('HttpAgentClient.generateCandidates', () => {
     const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080/' });
     await client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] });
     expect(fetchMock.mock.calls[0]![0]).toBe('http://localhost:8080/agent/generate-candidates');
+  });
+});
+
+describe('HttpAgentClient.generateRecipeDetail', () => {
+  const candidate: Candidate = {
+    candidateId: 'c_1_abcxyz',
+    strategy: 'exploit',
+    title: '松島の牡蠣ピザ',
+    concept: '海の旨味を素直に',
+    keyIngredients: ['牡蠣', 'モッツァレラ'],
+    sceneTags: ['週末家族'],
+    why: '王道',
+  };
+
+  it('POSTs to /agent/recipes/{candidateId} with full body and percent-encodes path', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () =>
+        new Response(
+          ndjsonBody([
+            { type: 'recipe.start', recipeId: 'c id with space' },
+            { type: 'recipe.done', recipeId: 'c id with space' },
+          ]),
+          { status: 200 },
+        ),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    await client.generateRecipeDetail({
+      candidateId: 'c id with space',
+      localeId: 'miyagi',
+      ingredients: ['miyagi-seri'],
+      candidate,
+      guestSessionId: 'guest_x',
+    });
+    const call = fetchMock.mock.calls[0]!;
+    expect(call[0]).toBe('http://localhost:8080/agent/recipes/c%20id%20with%20space');
+    const body = JSON.parse(String(call[1]!.body));
+    expect(body.localeId).toBe('miyagi');
+    expect(body.ingredients).toEqual(['miyagi-seri']);
+    expect(body.candidate).toEqual(candidate);
+    expect(body.guestSessionId).toBe('guest_x');
+  });
+
+  it('throws when fetch returns non-2xx', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('boom', { status: 502 })),
+    );
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    await expect(
+      client.generateRecipeDetail({
+        candidateId: 'c_1',
+        localeId: 'miyagi',
+        ingredients: ['x'],
+        candidate,
+      }),
+    ).rejects.toThrow(/Agent HTTP 502/);
   });
 });
 

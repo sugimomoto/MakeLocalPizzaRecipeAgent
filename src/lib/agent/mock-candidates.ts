@@ -14,7 +14,7 @@
 
 import { encodeNdjsonStream } from './stream';
 
-import type { AgentClient, GenerateCandidatesInput } from './client';
+import type { AgentClient, GenerateCandidatesInput, GenerateRecipeDetailInput } from './client';
 import type { Strategy } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
 
@@ -182,4 +182,80 @@ export class MockAgentClient implements AgentClient {
       ),
     );
   }
+
+  generateRecipeDetail(input: GenerateRecipeDetailInput): Promise<ReadableStream<Uint8Array>> {
+    return Promise.resolve(
+      encodeNdjsonStream(buildRecipeDetailEvents(input, { delayRange: this.delayRange })),
+    );
+  }
+}
+
+// ----- Slice 3: 詳細レシピ + 画像 Mock -------------------------------------
+
+// 1x1 透明 PNG を base64 で表現 (data URI のテスト用ペイロード)
+const MOCK_IMAGE_DATA_URI =
+  'data:image/png;base64,' +
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+async function* buildRecipeDetailEvents(
+  input: GenerateRecipeDetailInput,
+  options: { delayRange: { min: number; max: number } },
+): AsyncGenerator<StreamEvent> {
+  const { delayRange } = options;
+  const seed = hashStringToInt(input.candidateId);
+  const recipeId = input.candidateId;
+  let idx = 0;
+
+  yield { type: 'recipe.start', recipeId };
+  yield { type: 'image.start', recipeId };
+
+  // テキスト系をまず流し切る (実 Agent では Gemini 一括 → 6 件)
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield { type: 'recipe.title', recipeId, title: input.candidate.title };
+
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield {
+    type: 'recipe.meta',
+    recipeId,
+    meta: { servings: '4 人分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
+  };
+
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield {
+    type: 'recipe.materials',
+    recipeId,
+    materials: [
+      { name: '強力粉', quantity: '300g' },
+      { name: 'モッツァレラ', quantity: '200g' },
+      ...input.candidate.keyIngredients.map((k) => ({ name: k, quantity: '適量' })),
+    ],
+  };
+
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield {
+    type: 'recipe.steps',
+    recipeId,
+    steps: [
+      '生地を 30 分発酵させる',
+      `${input.candidate.keyIngredients[0] ?? '主役の食材'} を下ごしらえする`,
+      'チーズと一緒に乗せ、270°C で 8 分焼く',
+      '仕上げに香りを足して器に移す',
+    ],
+  };
+
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield {
+    type: 'recipe.story',
+    recipeId,
+    eyebrow: 'ゲストに語る',
+    headline: `「${input.candidate.title}」`,
+    body: input.candidate.why,
+  };
+
+  await delay(pseudoDelay(seed, ++idx, delayRange));
+  yield { type: 'recipe.done', recipeId };
+
+  // 画像は少し遅れて入る (実 Imagen 4 を模擬)
+  await delay(pseudoDelay(seed, ++idx, { min: delayRange.min * 2, max: delayRange.max * 2 }));
+  yield { type: 'image.ready', recipeId, dataUri: MOCK_IMAGE_DATA_URI };
 }

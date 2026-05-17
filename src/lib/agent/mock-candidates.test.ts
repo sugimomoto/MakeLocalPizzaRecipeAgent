@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { MockAgentClient } from './mock-candidates';
 import { decodeNdjsonStream } from './stream';
 
-import type { GenerateCandidatesInput } from './client';
+import type { GenerateCandidatesInput, GenerateRecipeDetailInput } from './client';
+import type { Candidate } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
 
 const FAST = { min: 0, max: 0 } as const;
@@ -117,6 +118,65 @@ describe('MockAgentClient.reroll', () => {
     const sa = a[0]?.type === 'session.start' ? a[0].sessionId : '';
     const sb = b[0]?.type === 'session.start' ? b[0].sessionId : '';
     expect(sa).not.toBe(sb);
+  });
+});
+
+describe('MockAgentClient.generateRecipeDetail', () => {
+  const candidate: Candidate = {
+    candidateId: 'c_1_abcxyz',
+    strategy: 'exploit',
+    title: '松島の牡蠣ピザ',
+    concept: '海の旨味を素直に',
+    keyIngredients: ['牡蠣', 'モッツァレラ'],
+    sceneTags: ['週末家族'],
+    why: '王道の組合せ',
+  };
+
+  const input: GenerateRecipeDetailInput = {
+    candidateId: 'c_1_abcxyz',
+    localeId: 'miyagi',
+    ingredients: ['miyagi-seri'],
+    candidate,
+  };
+
+  it('emits the full recipe.* + image.* sequence (9 events)', async () => {
+    const client = new MockAgentClient({ delayRange: FAST });
+    const events = await collect(await client.generateRecipeDetail(input));
+    // 2 (start pair) + 6 (recipe text) + 1 (image.ready) = 9
+    expect(events.length).toBe(9);
+    const types = events.map((e) => e.type);
+    expect(types).toContain('recipe.start');
+    expect(types).toContain('image.start');
+    expect(types).toContain('recipe.title');
+    expect(types).toContain('recipe.meta');
+    expect(types).toContain('recipe.materials');
+    expect(types).toContain('recipe.steps');
+    expect(types).toContain('recipe.story');
+    expect(types).toContain('recipe.done');
+    expect(types).toContain('image.ready');
+  });
+
+  it('first two events are recipe.start and image.start (any order)', async () => {
+    const client = new MockAgentClient({ delayRange: FAST });
+    const events = await collect(await client.generateRecipeDetail(input));
+    const firstTwo = new Set([events[0]?.type, events[1]?.type]);
+    expect(firstTwo).toEqual(new Set(['recipe.start', 'image.start']));
+  });
+
+  it('image.ready carries a PNG data URI', async () => {
+    const client = new MockAgentClient({ delayRange: FAST });
+    const events = await collect(await client.generateRecipeDetail(input));
+    const ready = events.find((e) => e.type === 'image.ready');
+    if (ready?.type !== 'image.ready') throw new Error('expected image.ready');
+    expect(ready.dataUri).toMatch(/^data:image\/png;base64,/);
+  });
+
+  it('recipe.title reflects the input candidate', async () => {
+    const client = new MockAgentClient({ delayRange: FAST });
+    const events = await collect(await client.generateRecipeDetail(input));
+    const title = events.find((e) => e.type === 'recipe.title');
+    if (title?.type !== 'recipe.title') throw new Error('expected recipe.title');
+    expect(title.title).toBe('松島の牡蠣ピザ');
   });
 });
 

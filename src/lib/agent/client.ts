@@ -9,6 +9,7 @@
  * 受信側は src/lib/agent/stream.ts の decodeNdjsonStream() で StreamEvent に変換。
  */
 
+import type { Candidate } from '@/domain/candidate';
 import type { IngredientId } from '@/domain/ingredient';
 import type { LocaleId } from '@/domain/locale';
 
@@ -20,7 +21,26 @@ export type GenerateCandidatesInput = {
   userId?: string;
 };
 
+/**
+ * Slice 3 で追加: 詳細レシピ + Imagen 画像生成への入力。
+ *
+ * candidateId は URL path に乗り、candidate snapshot (Slice 2 の 1 案分) は
+ * body に乗る。Slice 4 で Firestore に candidate を保存した後は candidateId
+ * だけで取り回せるが、Slice 3 ではセッションストレージ経由で client から
+ * snapshot を毎回送る。
+ */
+export type GenerateRecipeDetailInput = {
+  candidateId: string;
+  localeId: LocaleId;
+  ingredients: IngredientId[];
+  candidate: Candidate;
+  guestSessionId?: string;
+  userId?: string;
+};
+
 export interface AgentClient {
   generateCandidates(input: GenerateCandidatesInput): Promise<ReadableStream<Uint8Array>>;
   reroll(sessionId: string): Promise<ReadableStream<Uint8Array>>;
+  /** Slice 3: 詳細レシピ + Imagen 画像 NDJSON を返す。 */
+  generateRecipeDetail(input: GenerateRecipeDetailInput): Promise<ReadableStream<Uint8Array>>;
 }

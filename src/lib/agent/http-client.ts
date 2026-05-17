@@ -10,7 +10,7 @@
  * - 5xx / 4xx は Error として throw (呼び出し側 = BFF route が ApiError へ変換)
  */
 
-import type { AgentClient, GenerateCandidatesInput } from './client';
+import type { AgentClient, GenerateCandidatesInput, GenerateRecipeDetailInput } from './client';
 
 export type HttpAgentClientOptions = {
   baseUrl: string;
@@ -51,6 +51,19 @@ export class HttpAgentClient implements AgentClient {
     if (input.userId !== undefined) body.userId = input.userId;
 
     return this.postNdjson('/agent/generate-candidates', body);
+  }
+
+  async generateRecipeDetail(
+    input: GenerateRecipeDetailInput,
+  ): Promise<ReadableStream<Uint8Array>> {
+    const body: Record<string, unknown> = {
+      localeId: input.localeId,
+      ingredients: input.ingredients,
+      candidate: input.candidate,
+    };
+    if (input.guestSessionId !== undefined) body.guestSessionId = input.guestSessionId;
+    if (input.userId !== undefined) body.userId = input.userId;
+    return this.postNdjson(`/agent/recipes/${encodeURIComponent(input.candidateId)}`, body);
   }
 
   async reroll(sourceSessionId: string): Promise<ReadableStream<Uint8Array>> {
