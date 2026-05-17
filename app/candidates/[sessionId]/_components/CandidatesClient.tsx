@@ -93,7 +93,11 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const isInitialLoad = stream.candidates.length === 0 && stream.state !== 'error';
+  // 焼成中: state が idle/streaming で、まだ 1 件も完成 (isDone) していない間。
+  // 第 1 候補が isDone になったらカード一覧を表示する (Gemini の構造化出力は一括返却なので
+  // candidate.start だけで切り替えると空カードが長く見えてしまう体験を回避)。
+  const hasAnyDone = stream.candidates.some((c) => c.isDone);
+  const isInitialLoad = !hasAnyDone && stream.state !== 'error' && stream.state !== 'done';
 
   return (
     <div className={styles.shell}>
@@ -127,7 +131,7 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
             </>
           }
         />
-        {stream.candidates.length > 0 && (
+        {!isInitialLoad && stream.candidates.length > 0 && (
           <div className={styles.pagination} aria-label="候補ページネーション">
             {stream.candidates.map((c, i) => (
               <div
@@ -154,7 +158,7 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
         </div>
       )}
 
-      {stream.candidates.length > 0 && (
+      {!isInitialLoad && stream.candidates.length > 0 && (
         <div className={styles.scroll}>
           {stream.candidates.map((c, i) => (
             <div
@@ -171,7 +175,7 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
         </div>
       )}
 
-      {stream.candidates.length > 0 && (
+      {!isInitialLoad && stream.candidates.length > 0 && (
         <div className={styles.stickyDecide}>
           <div className={styles.stickyInner}>
             <Button
