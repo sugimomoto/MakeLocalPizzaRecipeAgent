@@ -157,7 +157,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-224 ingredients repository
 
 ### Phase 4: ADK + Orchestrator (4)
-- [ ] T-231 vertex DI
+- [x] T-231 vertex DI
 - [ ] T-232 candidates_agent
 - [ ] T-233 prompt builder
 - [ ] T-234 orchestrator (parallel)
