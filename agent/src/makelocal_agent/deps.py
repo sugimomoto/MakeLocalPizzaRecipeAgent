@@ -164,3 +164,46 @@ def set_imagen_client_for_testing(client: ImagenClient) -> None:
     """テストから具体的な ImagenClient を注入する。"""
     global _imagen_singleton  # noqa: PLW0603  process-wide singleton
     _imagen_singleton = client
+
+
+# ----- Slice 4: Storage クライアント (Imagen 出力先) -------------------------
+
+from .lib.storage import MockStorageClient, StorageClient  # noqa: E402
+
+_storage_singleton: StorageClient | None = None
+
+
+def get_storage_client(settings: Settings | None = None) -> StorageClient:
+    """プロセス内シングルトン。use_mock_storage または GOOGLE_CLOUD_PROJECT 未設定で Mock。
+
+    優先順位:
+    - use_mock_storage=true → MockStorageClient
+    - 同 LLM/Image が Mock → MockStorageClient (整合性のため一蓮托生)
+    - GOOGLE_CLOUD_PROJECT 未設定 → MockStorageClient
+    - それ以外 → FirebaseStorageClient (emulator_host があれば Emulator、無ければ本番 GCS)
+    """
+    global _storage_singleton  # noqa: PLW0603  process-wide singleton
+    if _storage_singleton is not None:
+        return _storage_singleton
+    s = settings or get_settings()
+    if s.use_mock_storage or s.use_mock_llm or s.use_mock_image or not s.google_cloud_project:
+        _storage_singleton = MockStorageClient()
+    else:
+        from .lib.storage import FirebaseStorageClient  # noqa: PLC0415
+
+        _storage_singleton = FirebaseStorageClient(
+            bucket_name=s.firebase_storage_bucket,
+            emulator_host=s.firebase_storage_emulator_host or None,
+        )
+    return _storage_singleton
+
+
+def reset_storage_client_for_testing() -> None:
+    global _storage_singleton  # noqa: PLW0603  process-wide singleton
+    _storage_singleton = None
+
+
+def set_storage_client_for_testing(client: StorageClient) -> None:
+    """テストから具体的な StorageClient を注入する。"""
+    global _storage_singleton  # noqa: PLW0603  process-wide singleton
+    _storage_singleton = client

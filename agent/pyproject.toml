@@ -18,6 +18,8 @@ dependencies = [
     # Google ADK + Vertex AI (Gemini 経由)
     "google-adk>=1.20.0",
     "google-cloud-aiplatform>=1.78.0",
+    # Slice 4: Firebase Storage (Emulator + 本番 GCS) に Imagen 画像を put
+    "google-cloud-storage>=2.18.0",
 ]
 
 [project.optional-dependencies]

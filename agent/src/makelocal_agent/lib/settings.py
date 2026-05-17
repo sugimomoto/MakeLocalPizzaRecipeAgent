@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     use_mock_llm: bool = False
     use_mock_image: bool = False
 
+    # Slice 4: Firebase Storage 設定 (Imagen の PNG 出力先)
+    use_mock_storage: bool = False
+    firebase_storage_bucket: str = "mlpr-local.appspot.com"
+    # 空文字なら本番 GCS、値があれば Emulator (例: "localhost:9199")
+    firebase_storage_emulator_host: str = ""
+
     # データファイルの相対パス (agent/ 起動時の cwd 基準)
     ingredients_yaml_path: str = "data/ingredients.yaml"
 

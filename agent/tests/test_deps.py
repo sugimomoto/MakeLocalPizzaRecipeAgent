@@ -10,12 +10,16 @@ from makelocal_agent.deps import (
     MockLlmClient,
     get_imagen_client,
     get_llm_client,
+    get_storage_client,
     reset_imagen_client_for_testing,
     reset_llm_client_for_testing,
+    reset_storage_client_for_testing,
     set_imagen_client_for_testing,
     set_llm_client_for_testing,
+    set_storage_client_for_testing,
 )
 from makelocal_agent.lib.settings import Settings, reset_settings_for_testing
+from makelocal_agent.lib.storage import MockStorageClient
 
 
 class _SampleOut(BaseModel):
@@ -44,6 +48,7 @@ class _NestedOut(BaseModel):
 def _reset() -> None:
     reset_llm_client_for_testing()
     reset_imagen_client_for_testing()
+    reset_storage_client_for_testing()
     reset_settings_for_testing()
 
 
@@ -137,3 +142,30 @@ class TestImagenFactory:
         custom = MockImagenClient()
         set_imagen_client_for_testing(custom)
         assert get_imagen_client() is custom
+
+
+class TestStorageFactory:
+    def test_returns_mock_when_use_mock_storage_true(self) -> None:
+        s = Settings(use_mock_storage=True, google_cloud_project="some-proj")
+        assert isinstance(get_storage_client(s), MockStorageClient)
+
+    def test_returns_mock_when_use_mock_llm_true(self) -> None:
+        s = Settings(use_mock_llm=True, google_cloud_project="some-proj")
+        assert isinstance(get_storage_client(s), MockStorageClient)
+
+    def test_returns_mock_when_use_mock_image_true(self) -> None:
+        s = Settings(use_mock_image=True, google_cloud_project="some-proj")
+        assert isinstance(get_storage_client(s), MockStorageClient)
+
+    def test_returns_mock_when_no_project(self) -> None:
+        s = Settings(google_cloud_project="")
+        assert isinstance(get_storage_client(s), MockStorageClient)
+
+    def test_returns_singleton(self) -> None:
+        s = Settings(use_mock_storage=True)
+        assert get_storage_client(s) is get_storage_client(s)
+
+    def test_set_for_testing_overrides_singleton(self) -> None:
+        custom = MockStorageClient(base_url="http://test")
+        set_storage_client_for_testing(custom)
+        assert get_storage_client() is custom
