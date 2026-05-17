@@ -1,0 +1,50 @@
+.button {
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1f1f1f;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* Google ガイドライン: Roboto。アプリ既定の和文体 (Shippori/Zen) を避ける */
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: #f8f8f8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.button:focus-visible {
+  outline: 2px solid #4285f4;
+  outline-offset: 2px;
+}
+
+.mark {
+  flex-shrink: 0;
+}
+
+.label {
+  /* Roboto が無い環境でも崩れにくいよう、行高を明示 */
+  line-height: 1;
+}
