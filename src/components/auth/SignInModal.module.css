@@ -1,0 +1,96 @@
+.dialog {
+  /* <dialog> は既定で position: absolute なので overlay 化のため固定 */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0; /* dialog のブラウザ既定 margin を削除 */
+  border: 1px solid rgba(31, 26, 18, 0.2);
+  border-radius: 20px;
+  padding: 24px 22px 22px;
+  background-color: var(--mlpr-washi);
+  /* washi ノイズはグローバルの .mlpr-washi-noise クラスを併用する側で付与する想定 */
+  width: min(360px, calc(100vw - 48px));
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.35),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+  font-family: var(--mlpr-font-gothic);
+  color: var(--mlpr-sumi);
+}
+
+.dialog::backdrop {
+  background: rgba(31, 26, 18, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--mlpr-hairline);
+  margin: 0 auto 16px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.5em;
+  text-align: center;
+}
+
+.title {
+  margin: 10px 0 0;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.body {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.7;
+  text-align: center;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.dismiss {
+  display: block;
+  margin: 12px auto 0;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12px;
+  color: var(--mlpr-sumi-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(146, 133, 113, 0.4);
+  text-underline-offset: 3px;
+}
+
+.dismiss:hover {
+  color: var(--mlpr-sumi-soft);
+  text-decoration-color: rgba(146, 133, 113, 0.7);
+}
+
+.note {
+  margin: 14px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(31, 26, 18, 0.04);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  line-height: 1.6;
+  text-align: center;
+}

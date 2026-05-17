@@ -1,6 +1,7 @@
 import { JetBrains_Mono, Shippori_Mincho_B1, Zen_Kaku_Gothic_New } from 'next/font/google';
 
 import { AuthProvider } from '@/hooks/use-auth';
+import { SignInModalProvider } from '@/hooks/use-sign-in-modal';
 import { ToastProvider } from '@/hooks/use-toast';
 
 import type { ReactNode } from 'react';
@@ -51,7 +52,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ja" className={fontClasses}>
       <body className="mlpr-washi-noise mlpr-washi-noise--canvas">
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <SignInModalProvider>{children}</SignInModalProvider>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
