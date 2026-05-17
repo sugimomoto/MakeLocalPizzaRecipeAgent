@@ -19,13 +19,21 @@ import type { PartialCandidate } from '@/hooks/use-quicktap-stream';
 export type CandidateCardProps = {
   candidate: PartialCandidate;
   onSelect?: () => void;
+  /** 候補一覧でスクロール位置が中央に来ている (= 決定ボタンが選ぶ対象) であることを示す。 */
+  isActive?: boolean;
 };
 
-export function CandidateCard({ candidate, onSelect }: CandidateCardProps) {
+export function CandidateCard({ candidate, onSelect, isActive = false }: CandidateCardProps) {
   const { title, concept, keyIngredients, sceneTags, why, isDone } = candidate;
+  const cardClass = [styles.card, isActive ? styles.cardActive : null].filter(Boolean).join(' ');
 
   const inner = (
     <>
+      {isActive && (
+        <span className={styles.activeBadge} aria-hidden="true">
+          選択中
+        </span>
+      )}
       {isDone && <span className={styles.doneIndicator} aria-label="決定可能" />}
 
       <div className={styles.header}>
@@ -69,14 +77,14 @@ export function CandidateCard({ candidate, onSelect }: CandidateCardProps) {
 
   if (onSelect) {
     return (
-      <Card asButton onClick={onSelect} elevated padding="lg" className={styles.card}>
+      <Card asButton onClick={onSelect} elevated padding="lg" className={cardClass}>
         {inner}
       </Card>
     );
   }
 
   return (
-    <Card elevated padding="lg" className={styles.card}>
+    <Card elevated padding="lg" className={cardClass}>
       {inner}
     </Card>
   );

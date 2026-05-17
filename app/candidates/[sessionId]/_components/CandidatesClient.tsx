@@ -169,7 +169,7 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
               }}
               className={styles.cardWrap}
             >
-              <CandidateCard candidate={c} />
+              <CandidateCard candidate={c} isActive={i === activeIdx} />
             </div>
           ))}
           {stream.state === 'done' && <p className={styles.tail}>── 以上、3 案 ──</p>}
@@ -179,37 +179,44 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
       {!isInitialLoad && stream.candidates.length > 0 && (
         <div className={styles.stickyDecide}>
           <div className={styles.stickyInner}>
-            <Button
-              variant="shu"
-              size="lg"
-              style={{ width: '100%' }}
-              onClick={() => {
-                const active = stream.candidates[activeIdx];
-                if (!active || !active.isDone) return;
-                const pending = readPendingSession(sessionId);
-                if (!pending || typeof window === 'undefined') return;
-                // 詳細画面 (Slice 3) は sessionStorage の PENDING_RECIPE_KEY に
-                // 候補スナップショット + localeId + ingredients を期待する。
-                const snapshot = {
-                  candidateId: active.candidateId,
-                  localeId: pending.localeId,
-                  ingredients: pending.ingredients,
-                  candidate: {
-                    candidateId: active.candidateId,
-                    strategy: active.strategy,
-                    title: active.title ?? '',
-                    concept: active.concept ?? '',
-                    keyIngredients: active.keyIngredients ?? [],
-                    sceneTags: active.sceneTags ?? [],
-                    why: active.why ?? '',
-                  },
-                };
-                window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(snapshot));
-                router.push(`/recipes/${encodeURIComponent(active.candidateId)}`);
-              }}
-            >
-              この一枚に決める →
-            </Button>
+            {(() => {
+              const active = stream.candidates[activeIdx];
+              const ready = !!active && active.isDone;
+              const label = active?.title ? `「${active.title}」に決める →` : 'この一枚に決める →';
+              return (
+                <Button
+                  variant="shu"
+                  size="lg"
+                  style={{ width: '100%' }}
+                  disabled={!ready}
+                  onClick={() => {
+                    if (!active || !active.isDone) return;
+                    const pending = readPendingSession(sessionId);
+                    if (!pending || typeof window === 'undefined') return;
+                    // 詳細画面 (Slice 3) は sessionStorage の PENDING_RECIPE_KEY に
+                    // 候補スナップショット + localeId + ingredients を期待する。
+                    const snapshot = {
+                      candidateId: active.candidateId,
+                      localeId: pending.localeId,
+                      ingredients: pending.ingredients,
+                      candidate: {
+                        candidateId: active.candidateId,
+                        strategy: active.strategy,
+                        title: active.title ?? '',
+                        concept: active.concept ?? '',
+                        keyIngredients: active.keyIngredients ?? [],
+                        sceneTags: active.sceneTags ?? [],
+                        why: active.why ?? '',
+                      },
+                    };
+                    window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(snapshot));
+                    router.push(`/recipes/${encodeURIComponent(active.candidateId)}`);
+                  }}
+                >
+                  {label}
+                </Button>
+              );
+            })()}
           </div>
         </div>
       )}
