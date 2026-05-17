@@ -154,7 +154,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-221 settings
 - [x] T-222 logging
 - [x] T-223 ndjson encoder
-- [ ] T-224 ingredients repository
+- [x] T-224 ingredients repository
 
 ### Phase 4: ADK + Orchestrator (4)
 - [ ] T-231 vertex DI
