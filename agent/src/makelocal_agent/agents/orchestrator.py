@@ -71,9 +71,7 @@ async def generate_three_candidates(
             await queue.put(CandidateTitleEvent(candidateId=candidate_id, title=out.title))
             await queue.put(CandidateConceptEvent(candidateId=candidate_id, concept=out.concept))
             await queue.put(
-                CandidateIngredientsEvent(
-                    candidateId=candidate_id, ingredients=out.keyIngredients
-                )
+                CandidateIngredientsEvent(candidateId=candidate_id, ingredients=out.keyIngredients)
             )
             await queue.put(
                 CandidateSceneTagsEvent(candidateId=candidate_id, sceneTags=out.sceneTags)

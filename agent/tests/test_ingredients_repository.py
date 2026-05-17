@@ -31,9 +31,7 @@ class TestFromYaml:
             assert len(items) == 10
 
     def test_total_ingredient_count_is_30(self, repo: IngredientsRepository) -> None:
-        total = sum(
-            len(repo.list_ingredients(loc.id) or []) for loc in repo.list_locales()
-        )
+        total = sum(len(repo.list_ingredients(loc.id) or []) for loc in repo.list_locales())
         assert total == 30
 
 

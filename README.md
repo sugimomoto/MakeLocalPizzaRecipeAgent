@@ -49,19 +49,22 @@
 git clone https://github.com/sugimomoto/MakeLocalPizzaRecipeAgent.git
 cd MakeLocalPizzaRecipeAgent
 
-# 2. 依存インストール
+# 2. Web 依存インストール
 pnpm install --frozen-lockfile
 
 # 3. lefthook (pre-commit hook) を有効化
 pnpm exec lefthook install
+
+# 4. Agent (Python) 依存インストール — Slice 2 以降
+cd agent && uv sync --extra dev && cd ..
 ```
 
-## 開発
+## 開発 — Web のみ (mock agent)
 
 ```bash
 # 開発サーバ (Turbopack 不調のため webpack を明示)
 pnpm dev
-# → http://localhost:3000
+# → http://localhost:3000  (AGENT_MODE 未設定 = mock = Python agent 不要)
 
 # テスト (Vitest)
 pnpm test
@@ -77,6 +80,36 @@ pnpm build:data
 
 # プロダクションビルド
 pnpm build
+```
+
+## 開発 — 本物の Gemini を使う (Slice 2)
+
+Python Agent と Web を 2 ターミナルで並行起動:
+
+```bash
+# ── ターミナル 1: Python Agent ──
+gcloud auth application-default login --no-launch-browser    # 初回のみ
+cd agent
+export MLPR_GOOGLE_CLOUD_PROJECT=your-project-id
+uv run uvicorn makelocal_agent.main:app --port 8080 --reload
+# http://localhost:8080/agent/health → {"ok":true}
+
+# ── ターミナル 2: Web (Next.js) ──
+AGENT_MODE=http pnpm dev
+# http://localhost:3000 (BFF が Python agent を叩く)
+```
+
+`AGENT_MODE=mock` (デフォルト) なら Slice 1 と同じ挙動 (Python 不要)。
+オフライン開発したい場合は `MLPR_USE_MOCK_LLM=true` で Python agent 側だけモック化することもできる
+(プロンプト構築・スキーマ検証ロジックは本物が走る)。
+
+## Agent 側のテスト
+
+```bash
+cd agent
+uv run pytest              # ~90 tests, Gemini はモック
+uv run ruff check .
+uv run mypy .
 ```
 
 ## API エンドポイント (Slice 1)
@@ -104,7 +137,10 @@ pnpm build
 │   ├── hooks/              # React フック
 │   ├── data/               # 生成 JSON (build:data の出力)
 │   └── styles/             # トークン CSS / テクスチャ
-├── agent/data/             # 食材 YAML (静的データの正本)
+├── agent/                  # Python ADK Agent (Slice 2: ローカル uvicorn / Slice 6: Cloud Run)
+│   ├── src/makelocal_agent/  # FastAPI + ADK + Pydantic
+│   ├── data/                 # 食材 YAML (静的データの正本、Web と共有)
+│   └── tests/
 ├── scripts/                # ビルド/データ生成スクリプト (TypeScript)
 ├── tests/e2e/              # Playwright (Slice 1 は smoke 1 本のみ)
 ├── docs/                   # 永続的ドキュメント
@@ -123,10 +159,15 @@ pnpm build
 - [リポジトリ構造定義](docs/repository-structure.md)
 - [開発ガイドライン](docs/development-guidelines.md)
 - [ユビキタス言語定義](docs/glossary.md)
-- [Slice 1 ステアリング](.steering/20260513-initial-implementation/)
+- [Slice 1 ステアリング](.steering/20260513-initial-implementation/) (縦貫スタック完成 + Phase 14 デザインポリッシュ、v0.1.0)
   - [requirements.md](.steering/20260513-initial-implementation/requirements.md)
   - [design.md](.steering/20260513-initial-implementation/design.md)
   - [tasklist.md](.steering/20260513-initial-implementation/tasklist.md)
+- [Slice 2 ステアリング](.steering/20260516-slice2-adk-gemini/) (Python ADK + Vertex Gemini)
+  - [requirements.md](.steering/20260516-slice2-adk-gemini/requirements.md)
+  - [design.md](.steering/20260516-slice2-adk-gemini/design.md)
+  - [tasklist.md](.steering/20260516-slice2-adk-gemini/tasklist.md)
+- [agent/README.md](agent/README.md) — Python サービス単独の手順
 
 ---
 

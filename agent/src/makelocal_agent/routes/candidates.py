@@ -55,7 +55,9 @@ def _resolve_inputs(
     repo = _get_repo()
     locale = repo.find_locale(req.localeId)
     if locale is None:
-        raise HTTPException(status_code=404, detail={"error": {"code": "LOCALE_NOT_FOUND", "message": req.localeId}})
+        raise HTTPException(
+            status_code=404, detail={"error": {"code": "LOCALE_NOT_FOUND", "message": req.localeId}}
+        )
 
     all_ings = repo.list_ingredients(req.localeId) or []
     by_id = {ing.id: ing for ing in all_ings}

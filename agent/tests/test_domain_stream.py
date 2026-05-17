@@ -69,9 +69,7 @@ class TestStreamEventBoundary:
 
     def test_rejects_session_start_with_empty_strategies(self) -> None:
         with pytest.raises(ValidationError):
-            parse_stream_event(
-                {"type": "session.start", "sessionId": "x", "strategies": []}
-            )
+            parse_stream_event({"type": "session.start", "sessionId": "x", "strategies": []})
 
     def test_rejects_invalid_strategy_enum(self) -> None:
         with pytest.raises(ValidationError):

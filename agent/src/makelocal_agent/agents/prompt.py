@@ -40,8 +40,7 @@ def build_prompt(
     region_jp = _REGION_LABEL.get(locale.region, locale.region)
 
     selected_lines = "\n".join(
-        f"- {ing.name}" + (f" ({ing.story})" if ing.story else "")
-        for ing in selected
+        f"- {ing.name}" + (f" ({ing.story})" if ing.story else "") for ing in selected
     )
     hint_lines = "\n".join(f"- {ing.name}" for ing in hints[:5]) if hints else "(なし)"
 

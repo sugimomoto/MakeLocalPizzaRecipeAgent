@@ -175,10 +175,10 @@ requirements.md §6 完了の定義に従う。
 - [x] T-254 .env.example
 
 ### Phase 7: 環境・CI (4)
-- [ ] T-261 python CI ジョブ
-- [ ] T-262 agent README
-- [ ] T-263 root README 追記
-- [ ] T-264 devcontainer 拡張確認
+- [x] T-261 python CI ジョブ
+- [x] T-262 agent README
+- [x] T-263 root README 追記
+- [x] T-264 devcontainer 拡張確認 (T-201 で Python/Pylance/Ruff 確認済み)
 
 ### Phase 8: 統合確認 (3)
 - [ ] T-271 AGENT_MODE=http で踏破
