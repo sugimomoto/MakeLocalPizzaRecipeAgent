@@ -21,6 +21,8 @@ export default tseslint.config(
       '.devcontainer/**',
       '.github/**',
       'public/**',
+      // Python サイド (Slice 2 以降)
+      'agent/**',
     ],
   },
 

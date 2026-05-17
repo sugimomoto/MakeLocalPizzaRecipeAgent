@@ -11,13 +11,12 @@
  *   - 400 BAD_REQUEST: パスから session id が取れない
  */
 
-import { MockAgentClient } from '@/lib/agent/mock-candidates';
+import { createAgentClient } from '@/lib/agent/factory';
 import { apiError } from '@/lib/http/error';
 import { withAuthOptional } from '@/lib/http/with-auth';
 
-const agent = new MockAgentClient(
-  process.env.NODE_ENV === 'test' ? { delayRange: { min: 0, max: 0 } } : {},
-);
+// AGENT_MODE で MockAgentClient / HttpAgentClient を切替
+const agent = createAgentClient();
 
 export const dynamic = 'force-dynamic';
 

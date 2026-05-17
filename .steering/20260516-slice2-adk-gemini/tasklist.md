@@ -169,10 +169,10 @@ requirements.md §6 完了の定義に従う。
 - [x] T-244 main wiring
 
 ### Phase 6: Web 切替 (4)
-- [ ] T-251 HttpAgentClient
-- [ ] T-252 factory
-- [ ] T-253 route 差替
-- [ ] T-254 .env.example
+- [x] T-251 HttpAgentClient
+- [x] T-252 factory
+- [x] T-253 route 差替
+- [x] T-254 .env.example
 
 ### Phase 7: 環境・CI (4)
 - [ ] T-261 python CI ジョブ

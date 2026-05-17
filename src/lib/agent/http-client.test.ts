@@ -1,0 +1,137 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { HttpAgentClient } from './http-client';
+import { decodeNdjsonStream } from './stream';
+
+import type { StreamEvent } from '@/domain/schemas';
+
+function ndjsonBody(events: StreamEvent[]): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const e of events) {
+        controller.enqueue(encoder.encode(`${JSON.stringify(e)}\n`));
+      }
+      controller.close();
+    },
+  });
+}
+
+const SAMPLE: StreamEvent[] = [
+  { type: 'session.start', sessionId: 'sess_x', strategies: ['exploit', 'tune', 'explore'] },
+  { type: 'session.done', sessionId: 'sess_x' },
+];
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+describe('HttpAgentClient.generateCandidates', () => {
+  it('POSTs to /agent/generate-candidates with correct body shape', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    const stream = await client.generateCandidates({
+      localeId: 'miyagi',
+      ingredients: ['miyagi-seri'],
+      guestSessionId: 'guest_abc',
+    });
+    expect(stream).toBeInstanceOf(ReadableStream);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const call = fetchMock.mock.calls[0]!;
+    const url = call[0];
+    const init = call[1]!;
+    expect(url).toBe('http://localhost:8080/agent/generate-candidates');
+    expect(init.method).toBe('POST');
+    const body = JSON.parse(String(init.body));
+    expect(body.localeId).toBe('miyagi');
+    expect(body.ingredients).toEqual(['miyagi-seri']);
+    expect(body.guestSessionId).toBe('guest_abc');
+    expect(body.sessionId).toMatch(/^sess_/);
+  });
+
+  it('throws when fetch returns non-2xx', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('boom', { status: 500 })),
+    );
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    await expect(
+      client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] }),
+    ).rejects.toThrow(/Agent HTTP 500/);
+  });
+
+  it('throws when response body is null', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(null, { status: 200 })),
+    );
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    await expect(
+      client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] }),
+    ).rejects.toThrow();
+  });
+
+  it('the returned stream parses back to original events', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(ndjsonBody(SAMPLE), { status: 200 })),
+    );
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    const stream = await client.generateCandidates({
+      localeId: 'miyagi',
+      ingredients: ['miyagi-seri'],
+    });
+    const events: StreamEvent[] = [];
+    for await (const e of decodeNdjsonStream(stream)) events.push(e);
+    expect(events).toEqual(SAMPLE);
+  });
+
+  it('strips trailing slash from baseUrl', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080/' });
+    await client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] });
+    expect(fetchMock.mock.calls[0]![0]).toBe('http://localhost:8080/agent/generate-candidates');
+  });
+});
+
+describe('HttpAgentClient.reroll', () => {
+  it('throws if no context was cached', async () => {
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    await expect(client.reroll('unknown')).rejects.toThrow(/no context cached/);
+  });
+
+  it('POSTs to /agent/reroll with sourceSessionId + new sessionId + cached localeId/ingredients', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const cache = new Map<string, { localeId: string; ingredients: string[] }>();
+    cache.set('sess_orig', { localeId: 'miyagi', ingredients: ['miyagi-seri'] });
+    const client = new HttpAgentClient({
+      baseUrl: 'http://localhost:8080',
+      rerollContextCache: cache,
+    });
+
+    await client.reroll('sess_orig');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const call = fetchMock.mock.calls[0]!;
+    const url = call[0];
+    const init = call[1]!;
+    expect(url).toBe('http://localhost:8080/agent/reroll');
+    const body = JSON.parse(String(init.body));
+    expect(body.sourceSessionId).toBe('sess_orig');
+    expect(body.sessionId).toMatch(/^sess_/);
+    expect(body.sessionId).not.toBe('sess_orig');
+    expect(body.localeId).toBe('miyagi');
+    expect(body.ingredients).toEqual(['miyagi-seri']);
+  });
+});
