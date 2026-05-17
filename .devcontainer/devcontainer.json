@@ -25,15 +25,17 @@
 
   "postCreateCommand": "bash .devcontainer/post-create.sh",
 
-  "forwardPorts": [3000, 4000, 8000, 8080, 9099, 9199],
+  "forwardPorts": [3000, 4000, 8080, 9099, 9199],
   "portsAttributes": {
-    "3000": { "label": "Next.js Web/BFF",        "onAutoForward": "notify" },
-    "4000": { "label": "Firebase Emulator UI",   "onAutoForward": "silent" },
-    "8000": { "label": "Python ADK Agent (FastAPI)", "onAutoForward": "silent" },
-    "8080": { "label": "Firestore Emulator",     "onAutoForward": "silent" },
-    "9099": { "label": "Auth Emulator",          "onAutoForward": "silent" },
-    "9199": { "label": "Storage Emulator",       "onAutoForward": "silent" }
+    "3000": { "label": "Next.js Web/BFF",            "onAutoForward": "notify" },
+    "4000": { "label": "Firebase Emulator UI",       "onAutoForward": "silent" },
+    "8080": { "label": "Python ADK Agent (uvicorn)", "onAutoForward": "silent" },
+    "9099": { "label": "Auth Emulator",              "onAutoForward": "silent" },
+    "9199": { "label": "Storage Emulator",           "onAutoForward": "silent" }
   },
+  // 注: 8080 は Slice 2 では Python Agent (uvicorn) が使用。
+  //     Slice 4 で Firestore Emulator を立てる際に競合する見込み。その時点で
+  //     Agent または Firestore Emulator のいずれかを別ポートに移す予定 (TODO Slice 4)。
 
   "mounts": [
     "source=mlpr-gcloud-config,target=/home/node/.config/gcloud,type=volume",
