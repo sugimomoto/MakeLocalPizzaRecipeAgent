@@ -19,7 +19,7 @@ export type AgentMode = 'mock' | 'http';
 export function createAgentClient(): AgentClient {
   const mode = (process.env.AGENT_MODE ?? 'mock') as AgentMode;
   if (mode === 'http') {
-    const baseUrl = process.env.AGENT_BASE_URL ?? 'http://localhost:8080';
+    const baseUrl = process.env.AGENT_BASE_URL ?? 'http://localhost:8001';
     const timeoutMs = process.env.AGENT_TIMEOUT_MS
       ? Number(process.env.AGENT_TIMEOUT_MS)
       : undefined;

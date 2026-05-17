@@ -22,7 +22,7 @@ describe('createAgentClient', () => {
 
   it('returns HttpAgentClient when AGENT_MODE=http', () => {
     vi.stubEnv('AGENT_MODE', 'http');
-    vi.stubEnv('AGENT_BASE_URL', 'http://localhost:8080');
+    vi.stubEnv('AGENT_BASE_URL', 'http://localhost:8001');
     expect(createAgentClient()).toBeInstanceOf(HttpAgentClient);
   });
 

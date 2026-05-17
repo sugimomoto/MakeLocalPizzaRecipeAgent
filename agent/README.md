@@ -35,10 +35,12 @@ uv sync --extra dev
 ## 起動
 
 ```bash
-uv run uvicorn makelocal_agent.main:app --port 8080 --reload
+uv run uvicorn makelocal_agent.main:app --port 8001 --reload
 ```
 
-http://localhost:8080/agent/health で `{"ok": true}` が返れば OK。
+http://localhost:8001/agent/health で `{"ok": true}` が返れば OK。
+
+> **注:** Slice 4 で port 8080 → 8001 に移行 (8080 は Firestore Emulator に明け渡し)。
 
 ## 環境変数
 
@@ -60,7 +62,7 @@ http://localhost:8080/agent/health で `{"ok": true}` が返れば OK。
 ```bash
 gcloud auth application-default login --no-launch-browser
 export MLPR_GOOGLE_CLOUD_PROJECT=your-project-id
-uv run uvicorn makelocal_agent.main:app --port 8080 --reload
+uv run uvicorn makelocal_agent.main:app --port 8001 --reload
 ```
 
 Web 側から呼ぶときは `AGENT_MODE=http` を設定:

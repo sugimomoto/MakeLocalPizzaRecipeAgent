@@ -93,8 +93,8 @@ Python Agent と Web を 2 ターミナルで並行起動:
 gcloud auth application-default login --no-launch-browser    # 初回のみ
 cd agent
 export MLPR_GOOGLE_CLOUD_PROJECT=your-project-id
-uv run uvicorn makelocal_agent.main:app --port 8080 --reload
-# http://localhost:8080/agent/health → {"ok":true}
+uv run uvicorn makelocal_agent.main:app --port 8001 --reload
+# http://localhost:8001/agent/health → {"ok":true}
 
 # ── ターミナル 2: Web (Next.js) ──
 AGENT_MODE=http pnpm dev

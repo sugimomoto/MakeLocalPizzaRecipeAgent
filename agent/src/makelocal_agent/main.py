@@ -1,7 +1,9 @@
 """FastAPI entry point.
 
 ローカル起動:
-    uv run uvicorn makelocal_agent.main:app --port 8080 --reload
+    uv run uvicorn makelocal_agent.main:app --port 8001 --reload
+
+注: Slice 4 で port 8080 → 8001 に移行 (8080 は Firestore Emulator が使用)。
 
 ルート:
     GET  /                              疎通確認 (空応答)
