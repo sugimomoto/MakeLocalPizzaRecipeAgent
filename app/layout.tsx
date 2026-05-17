@@ -1,5 +1,7 @@
 import { JetBrains_Mono, Shippori_Mincho_B1, Zen_Kaku_Gothic_New } from 'next/font/google';
 
+import { AuthProvider } from '@/hooks/use-auth';
+
 import type { ReactNode } from 'react';
 
 import './globals.css';
@@ -46,7 +48,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="ja" className={fontClasses}>
-      <body className="mlpr-washi-noise mlpr-washi-noise--canvas">{children}</body>
+      <body className="mlpr-washi-noise mlpr-washi-noise--canvas">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
