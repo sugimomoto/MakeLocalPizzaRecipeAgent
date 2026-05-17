@@ -163,10 +163,10 @@ requirements.md §6 完了の定義に従う。
 - [x] T-234 orchestrator (parallel)
 
 ### Phase 5: FastAPI ルート (4)
-- [ ] T-241 /agent/health
-- [ ] T-242 POST /agent/generate-candidates
-- [ ] T-243 POST /agent/reroll
-- [ ] T-244 main wiring
+- [x] T-241 /agent/health
+- [x] T-242 POST /agent/generate-candidates
+- [x] T-243 POST /agent/reroll
+- [x] T-244 main wiring
 
 ### Phase 6: Web 切替 (4)
 - [ ] T-251 HttpAgentClient
