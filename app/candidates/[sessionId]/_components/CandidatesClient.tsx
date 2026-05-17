@@ -22,6 +22,7 @@ import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
 
 import styles from './CandidatesClient.module.css';
 import { PENDING_SESSION_KEY } from '../../../ingredients/_components/IngredientSelectClient';
+import { PENDING_RECIPE_KEY } from '../../../recipes/[candidateId]/_components/DetailClient';
 
 type PendingSession = {
   sessionId: string;
@@ -183,12 +184,28 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
               size="lg"
               style={{ width: '100%' }}
               onClick={() => {
-                // Slice 3 で詳細画面に遷移予定。Slice 1 では確認ログのみ。
-                if (typeof window !== 'undefined') {
-                  window.alert(
-                    `${stream.candidates[activeIdx]?.title ?? ''} を選びました\n(詳細画面は Slice 3 で実装予定)`,
-                  );
-                }
+                const active = stream.candidates[activeIdx];
+                if (!active || !active.isDone) return;
+                const pending = readPendingSession(sessionId);
+                if (!pending || typeof window === 'undefined') return;
+                // 詳細画面 (Slice 3) は sessionStorage の PENDING_RECIPE_KEY に
+                // 候補スナップショット + localeId + ingredients を期待する。
+                const snapshot = {
+                  candidateId: active.candidateId,
+                  localeId: pending.localeId,
+                  ingredients: pending.ingredients,
+                  candidate: {
+                    candidateId: active.candidateId,
+                    strategy: active.strategy,
+                    title: active.title ?? '',
+                    concept: active.concept ?? '',
+                    keyIngredients: active.keyIngredients ?? [],
+                    sceneTags: active.sceneTags ?? [],
+                    why: active.why ?? '',
+                  },
+                };
+                window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(snapshot));
+                router.push(`/recipes/${encodeURIComponent(active.candidateId)}`);
               }}
             >
               この一枚に決める →
