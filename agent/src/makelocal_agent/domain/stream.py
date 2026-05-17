@@ -131,8 +131,9 @@ class ImageStartEvent(BaseModel):
 class ImageReadyEvent(BaseModel):
     type: Literal["image.ready"] = "image.ready"
     recipeId: str = Field(min_length=1)
-    dataUri: str = Field(min_length=1)
-    """RFC 2397 data URI (e.g. "data:image/png;base64,iVBORw0KG..."). Slice 4+ で URL 化予定。"""
+    url: str = Field(min_length=1)
+    """生成された画像の URL (Slice 4: GCS / Storage Emulator)。Slice 3 までは
+    `dataUri` (base64) を返していたが、NDJSON 1 行を軽量化するため URL に切替。"""
 
 
 class ImageErrorEvent(BaseModel):

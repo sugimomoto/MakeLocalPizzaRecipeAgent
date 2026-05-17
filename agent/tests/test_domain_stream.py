@@ -194,21 +194,35 @@ class TestImageEvents:
         e = ImageStartEvent(recipeId="r_1")
         assert parse_stream_event(e.model_dump()).type == "image.start"
 
-    def test_parses_image_ready_with_data_uri(self) -> None:
-        e = ImageReadyEvent(recipeId="r_1", dataUri="data:image/png;base64,iVBORw0KG")
+    def test_parses_image_ready_with_url(self) -> None:
+        e = ImageReadyEvent(
+            recipeId="r_1",
+            url="https://storage.googleapis.com/mlpr-local.appspot.com/recipes/r_1.png",
+        )
         parsed = parse_stream_event(e.model_dump())
         assert parsed.type == "image.ready"
         if parsed.type == "image.ready":
-            assert parsed.dataUri.startswith("data:image/")
+            assert parsed.url.startswith("https://")
 
     def test_parses_image_error(self) -> None:
         e = ImageErrorEvent(recipeId="r_1", code="IMAGEN_FAIL", message="quota")
         parsed = parse_stream_event(e.model_dump())
         assert parsed.type == "image.error"
 
-    def test_rejects_image_ready_with_empty_data_uri(self) -> None:
+    def test_rejects_image_ready_with_empty_url(self) -> None:
         with pytest.raises(ValidationError):
-            parse_stream_event({"type": "image.ready", "recipeId": "r_1", "dataUri": ""})
+            parse_stream_event({"type": "image.ready", "recipeId": "r_1", "url": ""})
+
+    def test_rejects_image_ready_with_old_data_uri_shape(self) -> None:
+        # Slice 4 で破壊変更: dataUri は不受理
+        with pytest.raises(ValidationError):
+            parse_stream_event(
+                {
+                    "type": "image.ready",
+                    "recipeId": "r_1",
+                    "dataUri": "data:image/png;base64,iVBORw0KG",
+                }
+            )
 
 
 class TestModelDumpJson:

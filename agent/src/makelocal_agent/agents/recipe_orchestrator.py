@@ -90,13 +90,13 @@ async def generate_recipe_detail(
 
     async def run_image() -> None:
         try:
-            data_uri = await run_image_for_candidate(
+            image_url = await run_image_for_candidate(
                 client=imagen_client,
                 candidate_title=candidate.title,
                 key_ingredients=candidate.keyIngredients,
                 prefecture=locale.prefecture,
             )
-            await queue.put(ImageReadyEvent(recipeId=recipe_id, dataUri=data_uri))
+            await queue.put(ImageReadyEvent(recipeId=recipe_id, url=image_url))
         except Exception as e:
             await queue.put(
                 ImageErrorEvent(
