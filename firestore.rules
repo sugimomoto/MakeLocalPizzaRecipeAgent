@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// Make Local Pizza Recipe Agent — Slice 4 Firestore Security Rules
+//
+// データモデル: users/{uid}/savedRecipes/{candidateId}
+// - 各ユーザーは自分のサブコレクションのみ R/W 可能
+// - 他人の savedRecipes を読み書きすることはできない
+// - 未認証ユーザーは一切アクセス不可
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/savedRecipes/{candidateId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // それ以外は明示的に deny (Slice 4 で扱うコレクションはこれだけ)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

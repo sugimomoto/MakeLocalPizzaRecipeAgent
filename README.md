@@ -105,6 +105,24 @@ AGENT_MODE=http pnpm dev
 オフライン開発したい場合は `MLPR_USE_MOCK_LLM=true` で Python agent 側だけモック化することもできる
 (プロンプト構築・スキーマ検証ロジックは本物が走る)。
 
+## 開発 — Firebase Emulator (Slice 4 以降)
+
+ピザ帳保存 (Firestore) / Google サインイン (Auth) / 画像 URL 化 (Storage) を
+全てローカル Emulator で動かす。本番 Firebase プロジェクトは Slice 6 (デプロイ時)。
+
+```bash
+# ── ターミナル 3: Firebase Emulator ──
+firebase emulators:start --project=mlpr-local
+# UI: http://localhost:4000
+# Auth: 9099 / Firestore: 8080 / Storage: 9199
+```
+
+Web 側からは `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` で自動接続。
+Python Agent 側からは `MLPR_USE_MOCK_STORAGE=false` + `MLPR_FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199` で接続。
+詳細は `.env.example` を参照。
+
+> **注:** Python Agent は port **8001** に移行済 (Firestore Emulator の 8080 と被るため)。
+
 ## Agent 側のテスト
 
 ```bash

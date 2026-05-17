@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// Make Local Pizza Recipe Agent — Slice 4 Storage Security Rules
+//
+// バケット構造: recipes/{candidateId}.png
+// - read: 全公開 (Emulator は無認証、本番では Slice 6 で署名付き URL に切替)
+// - write: client からは禁止。Python Agent (Admin SDK / service account) のみ
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /recipes/{candidateId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // それ以外は明示的に deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
