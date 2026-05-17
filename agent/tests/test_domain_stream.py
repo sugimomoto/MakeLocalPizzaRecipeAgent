@@ -11,6 +11,12 @@ from pydantic import ValidationError
 from makelocal_agent.domain.stream import (
     CandidateDoneEvent,
     CandidateStartEvent,
+    ImageErrorEvent,
+    ImageReadyEvent,
+    ImageStartEvent,
+    RecipeStepsEvent,
+    RecipeStoryEvent,
+    RecipeTitleEvent,
     SessionDoneEvent,
     SessionStartEvent,
     parse_stream_event,
@@ -113,6 +119,96 @@ class TestStreamEventTypeNarrowing:
         else:
             msg = "discriminator should narrow to candidate.title"
             raise AssertionError(msg)
+
+
+class TestRecipeEvents:
+    """Slice 3 で追加した recipe.* (7 種) の discriminated union 検証。"""
+
+    def test_parses_recipe_start_and_done(self) -> None:
+        assert parse_stream_event({"type": "recipe.start", "recipeId": "r_1"}).type == (
+            "recipe.start"
+        )
+        assert parse_stream_event({"type": "recipe.done", "recipeId": "r_1"}).type == (
+            "recipe.done"
+        )
+
+    def test_parses_recipe_title(self) -> None:
+        e = RecipeTitleEvent(recipeId="r_1", title="松島の牡蠣と、名取のせり。")
+        parsed = parse_stream_event(e.model_dump())
+        assert parsed.type == "recipe.title"
+
+    def test_parses_recipe_meta(self) -> None:
+        raw: dict[str, Any] = {
+            "type": "recipe.meta",
+            "recipeId": "r_1",
+            "meta": {
+                "servings": "4 人分",
+                "duration": "45m",
+                "bakingTemp": "270°C",
+                "difficulty": "★★☆",
+            },
+        }
+        parsed = parse_stream_event(raw)
+        assert parsed.type == "recipe.meta"
+
+    def test_parses_recipe_materials(self) -> None:
+        raw: dict[str, Any] = {
+            "type": "recipe.materials",
+            "recipeId": "r_1",
+            "materials": [{"name": "強力粉", "quantity": "300g"}],
+        }
+        parsed = parse_stream_event(raw)
+        assert parsed.type == "recipe.materials"
+
+    def test_parses_recipe_steps(self) -> None:
+        e = RecipeStepsEvent(recipeId="r_1", steps=["伸ばす", "乗せる", "焼く"])
+        parsed = parse_stream_event(e.model_dump())
+        assert parsed.type == "recipe.steps"
+
+    def test_parses_recipe_story(self) -> None:
+        e = RecipeStoryEvent(
+            recipeId="r_1", eyebrow="ゲストに語る", headline="海と田畑。", body="b"
+        )
+        parsed = parse_stream_event(e.model_dump())
+        assert parsed.type == "recipe.story"
+
+    def test_rejects_recipe_materials_with_empty_list(self) -> None:
+        with pytest.raises(ValidationError):
+            parse_stream_event(
+                {"type": "recipe.materials", "recipeId": "r_1", "materials": []},
+            )
+
+    def test_rejects_recipe_steps_with_empty_list(self) -> None:
+        with pytest.raises(ValidationError):
+            parse_stream_event({"type": "recipe.steps", "recipeId": "r_1", "steps": []})
+
+    def test_rejects_recipe_event_with_empty_recipe_id(self) -> None:
+        with pytest.raises(ValidationError):
+            parse_stream_event({"type": "recipe.start", "recipeId": ""})
+
+
+class TestImageEvents:
+    """Slice 3 で追加した image.* (3 種) の検証。"""
+
+    def test_parses_image_start(self) -> None:
+        e = ImageStartEvent(recipeId="r_1")
+        assert parse_stream_event(e.model_dump()).type == "image.start"
+
+    def test_parses_image_ready_with_data_uri(self) -> None:
+        e = ImageReadyEvent(recipeId="r_1", dataUri="data:image/png;base64,iVBORw0KG")
+        parsed = parse_stream_event(e.model_dump())
+        assert parsed.type == "image.ready"
+        if parsed.type == "image.ready":
+            assert parsed.dataUri.startswith("data:image/")
+
+    def test_parses_image_error(self) -> None:
+        e = ImageErrorEvent(recipeId="r_1", code="IMAGEN_FAIL", message="quota")
+        parsed = parse_stream_event(e.model_dump())
+        assert parsed.type == "image.error"
+
+    def test_rejects_image_ready_with_empty_data_uri(self) -> None:
+        with pytest.raises(ValidationError):
+            parse_stream_event({"type": "image.ready", "recipeId": "r_1", "dataUri": ""})
 
 
 class TestModelDumpJson:

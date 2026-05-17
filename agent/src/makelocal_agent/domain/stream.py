@@ -1,6 +1,8 @@
 """NDJSON ストリーム契約の Pydantic モデル — TS 側 schemas.ts と semantic 同期。
 
-- 10 種類のイベントを discriminated union (Annotated[..., Field(discriminator="type")])
+- Slice 1〜2: 10 種類 (session.* / candidate.* / error)
+- Slice 3: 9 種類追加 (recipe.* / image.*) — 詳細画面 + Imagen 用
+- 合計 19 種類を discriminated union (Annotated[..., Field(discriminator="type")])
 - TypeAdapter でリストとしての validation も提供
 - model_dump_json(by_alias=False) の出力が Zod 側 StreamEventSchema で parse 可能
 """
@@ -12,6 +14,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, Field, TypeAdapter
 
 from .candidate import Strategy
+from .recipe import RecipeMaterial, RecipeMeta
 
 
 class SessionStartEvent(BaseModel):
@@ -72,6 +75,73 @@ class ErrorEvent(BaseModel):
     message: str = Field(min_length=1)
 
 
+# ----- Slice 3: 詳細レシピ (recipe.*) ----------------------------------------
+
+
+class RecipeStartEvent(BaseModel):
+    type: Literal["recipe.start"] = "recipe.start"
+    recipeId: str = Field(min_length=1)
+
+
+class RecipeTitleEvent(BaseModel):
+    type: Literal["recipe.title"] = "recipe.title"
+    recipeId: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+
+
+class RecipeMetaEvent(BaseModel):
+    type: Literal["recipe.meta"] = "recipe.meta"
+    recipeId: str = Field(min_length=1)
+    meta: RecipeMeta
+
+
+class RecipeMaterialsEvent(BaseModel):
+    type: Literal["recipe.materials"] = "recipe.materials"
+    recipeId: str = Field(min_length=1)
+    materials: list[RecipeMaterial] = Field(min_length=1)
+
+
+class RecipeStepsEvent(BaseModel):
+    type: Literal["recipe.steps"] = "recipe.steps"
+    recipeId: str = Field(min_length=1)
+    steps: list[str] = Field(min_length=1)
+
+
+class RecipeStoryEvent(BaseModel):
+    type: Literal["recipe.story"] = "recipe.story"
+    recipeId: str = Field(min_length=1)
+    eyebrow: str = Field(min_length=1)
+    headline: str = Field(min_length=1)
+    body: str = Field(min_length=1)
+
+
+class RecipeDoneEvent(BaseModel):
+    type: Literal["recipe.done"] = "recipe.done"
+    recipeId: str = Field(min_length=1)
+
+
+# ----- Slice 3: 画像生成 (image.*) -------------------------------------------
+
+
+class ImageStartEvent(BaseModel):
+    type: Literal["image.start"] = "image.start"
+    recipeId: str = Field(min_length=1)
+
+
+class ImageReadyEvent(BaseModel):
+    type: Literal["image.ready"] = "image.ready"
+    recipeId: str = Field(min_length=1)
+    dataUri: str = Field(min_length=1)
+    """RFC 2397 data URI (e.g. "data:image/png;base64,iVBORw0KG..."). Slice 4+ で URL 化予定。"""
+
+
+class ImageErrorEvent(BaseModel):
+    type: Literal["image.error"] = "image.error"
+    recipeId: str = Field(min_length=1)
+    code: str = Field(min_length=1)
+    message: str = Field(min_length=1)
+
+
 StreamEvent = Annotated[
     SessionStartEvent
     | CandidateStartEvent
@@ -82,7 +152,17 @@ StreamEvent = Annotated[
     | CandidateWhyEvent
     | CandidateDoneEvent
     | SessionDoneEvent
-    | ErrorEvent,
+    | ErrorEvent
+    | RecipeStartEvent
+    | RecipeTitleEvent
+    | RecipeMetaEvent
+    | RecipeMaterialsEvent
+    | RecipeStepsEvent
+    | RecipeStoryEvent
+    | RecipeDoneEvent
+    | ImageStartEvent
+    | ImageReadyEvent
+    | ImageErrorEvent,
     Field(discriminator="type"),
 ]
 """Discriminated union: type フィールドで具象クラスを決定する。"""
