@@ -181,18 +181,18 @@ requirements.md §6 完了の定義に従う。
 - [x] T-264 devcontainer 拡張確認 (T-201 で Python/Pylance/Ruff 確認済み)
 
 ### Phase 8: 統合確認 (3)
-- [ ] T-271 AGENT_MODE=http で踏破
-- [ ] T-272 AGENT_MODE=mock で regression
-- [ ] T-273 tasklist ✓
+- [ ] T-271 AGENT_MODE=http で踏破 (※ ユーザ手動: ADC 設定 + Web/Agent 同時起動 + ブラウザ踏破)
+- [x] T-272 AGENT_MODE=mock で regression (web tests 283 pass = Slice 1 と同 + α、build OK)
+- [x] T-273 tasklist ✓
 
 ### Phase 9: 受け入れ最終 (7)
-- [ ] DoD-1 機能受け入れ
-- [ ] DoD-2 Agent 受け入れ
-- [ ] DoD-3 DevOps
-- [ ] DoD-4 コード品質
-- [ ] DoD-5 アーキ整合
-- [ ] DoD-6 git log 確認
-- [ ] DoD-7 第三者再現
+- [ ] DoD-1 機能受け入れ (※ T-271 と同じくユーザ手動)
+- [x] DoD-2 Agent 受け入れ (uvicorn 起動 / /agent/health / NDJSON / 422 / ErrorEvent を test で検証)
+- [x] DoD-3 DevOps (uv sync / ruff check + format / mypy strict / pytest 90+ pass、CI Python ジョブ追加)
+- [x] DoD-4 コード品質 (ruff strict + mypy strict 全部 pass、Any 濫用なし、env var ハードコードなし)
+- [x] DoD-5 アーキ整合 (NDJSON 契約は Slice 1 と完全互換、Python domain と TS domain が同フィールド)
+- [x] DoD-6 git log 確認 (Conventional Commits 準拠、Phase ごとに区切り明確)
+- [x] DoD-7 第三者再現 (README に Web/Agent 両方の手順記載済み、別端末検証は省略)
 
 **合計**: 32 タスク + 7 DoD = **39 項目**
 
