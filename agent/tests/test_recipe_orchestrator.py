@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 
 import pytest
+from pydantic import BaseModel
 
 from makelocal_agent.agents.imagen_client import MockImagenClient
 from makelocal_agent.agents.recipe_orchestrator import generate_recipe_detail
@@ -74,8 +75,8 @@ class _FailLlmClient:
         model: str,
         instruction: str,
         prompt: str,
-        output_schema: type,
-    ) -> object:
+        output_schema: type[BaseModel],
+    ) -> BaseModel:
         msg = "simulated gemini failure"
         raise RuntimeError(msg)
 

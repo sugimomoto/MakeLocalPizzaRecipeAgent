@@ -3,17 +3,19 @@
 ローカル/旬の食材を活かしたピザレシピを提案する **AI エージェント**。
 
 > 地元 × 旬 × 戦略 (王道 / 一歩外す / 大冒険) を起点に、ピザの 3 案を即座に提案する Web アプリ。
-> Slice 1 (本リポジトリの現状) は **AI モック + 縦貫スタック完成** までを範囲とする。
+> 現状は **Slice 3 (詳細レシピ + Imagen 画像生成)** まで実装済み (v0.3.0)。
 
 ---
 
-## 機能 (Slice 1 時点)
+## 機能 (Slice 3 時点)
 
-- ✅ **地元選択** — 47 都道府県 (Slice 1 はキュレーション 3 県)
+- ✅ **地元選択** — 47 都道府県 (現状はキュレーション 3 県)
 - ✅ **食材選択** — 季節 / カテゴリでフィルタ、複数選択
 - ✅ **候補 3 案の段階表示** — NDJSON ストリームで `王道 / 一歩外す / 大冒険` を順次焼き上げ
 - ✅ **振り直し** — 別 seed で 3 案を再生成
-- 🚧 Slice 2+: 本物の Gemini Agent (Python ADK) / 詳細画面 + Imagen / 楽天ふるさと納税連動 / Firebase Auth
+- ✅ **本物の Gemini Agent** (Python ADK + Vertex Gemini 2.5 Flash) — Slice 2 で実装
+- ✅ **詳細レシピ + Imagen 画像生成** — Slice 3 で実装。テキストは Gemini Flash、画像は Imagen 4 を並列実行 (テキスト先 → 画像後の体験)
+- 🚧 Slice 4+: 「ピザ帳」保存 (Firestore) / Auth / 楽天ふるさと納税連動
 
 ---
 
@@ -112,7 +114,7 @@ uv run ruff check .
 uv run mypy .
 ```
 
-## API エンドポイント (Slice 1)
+## API エンドポイント (Slice 3 時点)
 
 | メソッド | パス                                | 用途                                            |
 | -------- | ----------------------------------- | ----------------------------------------------- |
@@ -121,6 +123,15 @@ uv run mypy .
 | `GET`    | `/api/locales/:id/ingredients`      | 地元の食材一覧 (`?season=` `?category=` で絞込) |
 | `POST`   | `/api/quicktap/sessions`            | 候補 3 案を NDJSON ストリームで生成             |
 | `POST`   | `/api/quicktap/sessions/:id/reroll` | 別 seed で振り直し                              |
+| `POST`   | `/api/recipes/:candidateId`         | 詳細レシピ + Imagen 画像 NDJSON (Slice 3)       |
+
+Agent (Python 側):
+
+| メソッド | パス                          | 用途                                      |
+| -------- | ----------------------------- | ----------------------------------------- |
+| `POST`   | `/agent/generate-candidates`  | 3 案 (Gemini Flash) を NDJSON で配信      |
+| `POST`   | `/agent/reroll`               | 別 seed で 3 案を再生成                   |
+| `POST`   | `/agent/recipes/:candidateId` | 詳細 (Gemini) + 画像 (Imagen) 並列 NDJSON |
 
 ---
 
@@ -167,6 +178,10 @@ uv run mypy .
   - [requirements.md](.steering/20260516-slice2-adk-gemini/requirements.md)
   - [design.md](.steering/20260516-slice2-adk-gemini/design.md)
   - [tasklist.md](.steering/20260516-slice2-adk-gemini/tasklist.md)
+- [Slice 3 ステアリング](.steering/20260517-slice3-detail-imagen/) (詳細画面 + Imagen 画像生成、v0.3.0)
+  - [requirements.md](.steering/20260517-slice3-detail-imagen/requirements.md)
+  - [design.md](.steering/20260517-slice3-detail-imagen/design.md)
+  - [tasklist.md](.steering/20260517-slice3-detail-imagen/tasklist.md)
 - [agent/README.md](agent/README.md) — Python サービス単独の手順
 
 ---
@@ -176,6 +191,7 @@ uv run mypy .
 - **Turbopack + `next/font/google` の解決バグ**: Next 16.2.6 で `dev` / `build` ともに workaround として `--webpack` 明示中 (`package.json` 参照)。Next 側修正が出たら外す。
 - **Vitest 4 採用**: `design.md` は Vitest 2 を指定していたが古いため最新を採用。
 - **Mock Agent**: Slice 1 は `MockAgentClient` で決定論的 3 案を返す。Slice 2 で Python ADK Agent (Cloud Run) に差し替え。
+- **Imagen 4 のコスト**: Slice 3 で詳細画面を開くたびに Imagen を 1 回叩く (~$0.04 / 画像)。GCS への永続化は Slice 4 or 6 で実装予定。それまでは毎回再生成。オフライン開発は `MLPR_USE_MOCK_IMAGE=true` で 1x1 透明 PNG を返すよう切替できる。
 
 ## ライセンス
 
