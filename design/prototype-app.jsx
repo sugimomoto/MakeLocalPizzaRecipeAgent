@@ -1309,6 +1309,7 @@ function FloatingNav({ screen, setScreen, resetLocale, locale }) {
 Object.assign(window, {
   LocalScreen, IngredientsScreen, LoadingScreen, CandidatesScreen,
   DetailScreen, FeedbackScreen, SavedScreen,
+  Phone, Tap, PrimaryBtn, GhostBtn,
   buildCandidates, PREFS, ALL_INGREDIENTS, App,
 });
 

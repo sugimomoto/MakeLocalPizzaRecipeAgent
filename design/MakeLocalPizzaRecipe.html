@@ -25,6 +25,7 @@
 <script type="text/babel" src="ios-frame.jsx"></script>
 <script type="text/babel" src="pizza-tokens.jsx"></script>
 <script type="text/babel" src="prototype-app.jsx"></script>
+<script type="text/babel" src="slice4-screens.jsx"></script>
 
 <script type="text/babel">
 const W = 393;
@@ -105,6 +106,15 @@ function App() {
         <DCArtboard id="saved" label="07 · ピザ帳 (保存一覧)" width={W} height={H}>
           <SavedScreen feedback={SAMPLE_FEEDBACK} candidate={PICKED} onAgain={noop}/>
         </DCArtboard>
+      </DCSection>
+
+      <DCSection id="slice4" title="Slice 4 · 認証 & ピザ帳" subtitle="TOP / Sign-in (Modal) / Library / Heart 状態 / Toast">
+        <DCArtboard id="top"          label="08 · TOP ページ"               width={W} height={H}><TopScreen/></DCArtboard>
+        <DCArtboard id="signin"       label="09 · Sign-in (Modal)"          width={W} height={H}><SignInModal/></DCArtboard>
+        <DCArtboard id="library"      label="10 · ピザ帳 (アバタータップ先)"  width={W} height={H}><LibraryScreen/></DCArtboard>
+        <DCArtboard id="library-empty"label="11 · ピザ帳 (空)"               width={W} height={H}><LibraryScreen empty/></DCArtboard>
+        <DCArtboard id="hearts"       label="12 · ハート3状態 + トースト"      width={W} height={H}><HeartShowcase/></DCArtboard>
+        <DCArtboard id="toasts"       label="13 · トースト 4バリアント"        width={W} height={H}><ToastShowcase/></DCArtboard>
       </DCSection>
     </DesignCanvas>
   );
