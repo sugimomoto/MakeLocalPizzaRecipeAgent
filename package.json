@@ -25,6 +25,7 @@
     "build:data": "node --experimental-strip-types --no-warnings=ExperimentalWarning scripts/build-ingredient-data.ts"
   },
   "dependencies": {
+    "firebase": "^12.13.0",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
