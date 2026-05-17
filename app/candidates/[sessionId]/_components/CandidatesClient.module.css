@@ -58,9 +58,18 @@
 .dot {
   width: 6px;
   height: 6px;
+  border: none;
+  padding: 0;
   border-radius: 3px;
   background: rgba(31, 26, 18, 0.18);
-  transition: height 0.2s ease;
+  cursor: pointer;
+  transition:
+    height 0.2s ease,
+    background 0.2s ease;
+}
+
+.dot:hover {
+  background: rgba(31, 26, 18, 0.35);
 }
 
 .dotActive {
@@ -68,15 +77,15 @@
   background: var(--mlpr-shu);
 }
 
+.dotActive:hover {
+  background: var(--mlpr-shu);
+}
+
 .scroll {
   padding: 8px 16px 40px;
-  scroll-snap-type: y proximity;
-  -webkit-overflow-scrolling: touch;
 }
 
 .cardWrap {
-  scroll-snap-align: start;
-  scroll-margin-top: 8px;
   margin-bottom: 16px;
 }
 

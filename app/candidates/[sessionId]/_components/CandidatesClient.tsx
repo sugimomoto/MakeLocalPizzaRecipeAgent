@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * /candidates/[sessionId] 画面の Client Component (Phase 14 リファクタ版)。
+ * /candidates/[sessionId] 画面の Client Component。
  *
- * 機能差分:
  * - 上部 3 分割: 「← 食材」/「新提案 · 3案」mincho ラベル /「↻ ふり直す」
  * - ScreenHero (「今宵の一枚を、/ あなたの目で。」) + 右に縦長 pagination dots
- * - 候補カード縦スクロール (scroll-snap-y proximity) + active dot の高さで強調
- * - sticky decide bar: 「この一枚に決める →」 (Slice 1 は no-op、Slice 3 で詳細画面)
+ * - 候補カードを縦に 3 枚並べる。**カードクリックで活性化** (旧: スクロール検出)
+ * - 活性化カードは朱色のリング + 「選択中」バッジで強調 (CandidateCard 側)
+ * - sticky decide bar: 「「<title>」に決める →」で詳細画面へ
  * - 焼成中は BakingAnimation
  */
 
@@ -58,7 +58,6 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
   const router = useRouter();
   const stream = useQuickTapStream();
   const startedRef = useRef(false);
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
@@ -71,28 +70,6 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
     startedRef.current = true;
     void stream.start({ localeId: pending.localeId, ingredients: pending.ingredients });
   }, [sessionId, router, stream]);
-
-  // 縦スクロールで最も中央に近いカードを active にする
-  useEffect(() => {
-    function onScroll() {
-      const mid = window.scrollY + window.innerHeight / 2;
-      let best = 0;
-      let bestDist = Infinity;
-      cardRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const c = rect.top + window.scrollY + rect.height / 2;
-        const d = Math.abs(c - mid);
-        if (d < bestDist) {
-          bestDist = d;
-          best = i;
-        }
-      });
-      setActiveIdx(best);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // 焼成中: state が idle/streaming で、まだ 1 件も完成 (isDone) していない間。
   // 第 1 候補が isDone になったらカード一覧を表示する (Gemini の構造化出力は一括返却なので
@@ -135,12 +112,15 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
         {!isInitialLoad && stream.candidates.length > 0 && (
           <div className={styles.pagination} aria-label="候補ページネーション">
             {stream.candidates.map((c, i) => (
-              <div
+              <button
                 key={c.candidateId}
+                type="button"
                 className={[styles.dot, i === activeIdx ? styles.dotActive : null]
                   .filter(Boolean)
                   .join(' ')}
-                aria-hidden="true"
+                aria-label={`候補 ${i + 1} を選ぶ${i === activeIdx ? ' (選択中)' : ''}`}
+                aria-pressed={i === activeIdx}
+                onClick={() => setActiveIdx(i)}
               />
             ))}
           </div>
@@ -162,14 +142,12 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
       {!isInitialLoad && stream.candidates.length > 0 && (
         <div className={styles.scroll}>
           {stream.candidates.map((c, i) => (
-            <div
-              key={c.candidateId}
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              className={styles.cardWrap}
-            >
-              <CandidateCard candidate={c} isActive={i === activeIdx} />
+            <div key={c.candidateId} className={styles.cardWrap}>
+              <CandidateCard
+                candidate={c}
+                isActive={i === activeIdx}
+                onSelect={() => setActiveIdx(i)}
+              />
             </div>
           ))}
           {stream.state === 'done' && <p className={styles.tail}>── 以上、3 案 ──</p>}
