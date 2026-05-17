@@ -114,6 +114,29 @@ uv run ruff check .
 uv run mypy .
 ```
 
+## E2E テスト (Playwright)
+
+実ブラウザで /local → /ingredients → /candidates → /recipes の主要ジャーニーを
+通す smoke。AGENT_MODE=mock (Python agent 不要、Vertex 不要、決定論的)。
+
+```bash
+# 初回のみ chromium をインストール (約 110MB)
+PLAYWRIGHT_BROWSERS_PATH=./.cache/ms-playwright pnpm exec playwright install chromium
+
+# 走らせる (内部で pnpm build + pnpm start を起動 → テスト → 自動停止)
+pnpm test:e2e
+
+# UI モード (開発時)
+pnpm test:e2e:ui
+
+# 既に dev/start を別ターミナルで立てている場合
+E2E_BASE_URL=http://localhost:3000 pnpm test:e2e
+```
+
+dev (`pnpm dev` の 12MB バンドル) ではなく `pnpm start` (production build) を
+使うのは、VS Code ポートフォワード経由で dev バンドル末尾が転送切れする事例の
+回避と、本番に近い構成での回帰検査の両方が目的。CI でも同じパス。
+
 ## API エンドポイント (Slice 3 時点)
 
 | メソッド | パス                                | 用途                                            |

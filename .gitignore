@@ -81,6 +81,7 @@ venv/
 test-results/
 playwright-report/
 playwright/.cache/
+.cache/
 
 # =============================================================================
 # IDE

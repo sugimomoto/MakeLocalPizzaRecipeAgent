@@ -13,6 +13,10 @@ export default tseslint.config(
       'next-env.d.ts',
       'src/data/ingredients.generated.json',
       'pnpm-lock.yaml',
+      // E2E アーティファクト (Playwright ブラウザ・テスト結果)
+      '.cache/**',
+      'test-results/**',
+      'playwright-report/**',
       // 非ソース領域 (参照/設定/ドキュメント)
       'design/**',
       'docs/**',
