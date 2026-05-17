@@ -30,7 +30,7 @@ type State = {
   materials: RecipeMaterial[] | null;
   steps: string[] | null;
   story: RecipeStory | null;
-  imageDataUri: string | null;
+  imageUrl: string | null;
   imageError: string | null;
   error: string | null;
 };
@@ -43,7 +43,7 @@ const initialState: State = {
   materials: null,
   steps: null,
   story: null,
-  imageDataUri: null,
+  imageUrl: null,
   imageError: null,
   error: null,
 };
@@ -74,7 +74,7 @@ function applyEvent(state: State, event: RecipeDetailStreamEvent): State {
       };
     case 'recipe.done': {
       // 画像がもう届いていれば allDone、それ以外は recipeDone (画像待ち)
-      const next: RecipeDetailStreamState = state.imageDataUri ? 'allDone' : 'recipeDone';
+      const next: RecipeDetailStreamState = state.imageUrl ? 'allDone' : 'recipeDone';
       return { ...state, state: next };
     }
     case 'image.start':
@@ -82,7 +82,7 @@ function applyEvent(state: State, event: RecipeDetailStreamEvent): State {
     case 'image.ready': {
       const next: RecipeDetailStreamState =
         state.state === 'recipeDone' || state.state === 'allDone' ? 'allDone' : state.state;
-      return { ...state, imageDataUri: event.dataUri, state: next };
+      return { ...state, imageUrl: event.url, state: next };
     }
     case 'image.error':
       return { ...state, imageError: `${event.code}: ${event.message}` };
@@ -120,7 +120,7 @@ export type UseRecipeDetailStreamResult = {
   materials: RecipeMaterial[] | null;
   steps: string[] | null;
   story: RecipeStory | null;
-  imageDataUri: string | null;
+  imageUrl: string | null;
   imageError: string | null;
   error: string | null;
   start: (input: GenerateRecipeDetailInput) => Promise<void>;
@@ -189,7 +189,7 @@ export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
     materials: state.materials,
     steps: state.steps,
     story: state.story,
-    imageDataUri: state.imageDataUri,
+    imageUrl: state.imageUrl,
     imageError: state.imageError,
     error: state.error,
     start,

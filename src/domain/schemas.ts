@@ -143,7 +143,11 @@ const imageStartSchema = z.object({
 const imageReadySchema = z.object({
   type: z.literal('image.ready'),
   recipeId: z.string().min(1),
-  dataUri: z.string().min(1),
+  /**
+   * Slice 4 で `dataUri` (data:image/png;base64,...) から GCS の URL に変更。
+   * NDJSON 1 行が 5MB → 数百 B に縮む。
+   */
+  url: z.string().min(1),
 });
 
 const imageErrorSchema = z.object({

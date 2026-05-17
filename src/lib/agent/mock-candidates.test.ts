@@ -163,12 +163,13 @@ describe('MockAgentClient.generateRecipeDetail', () => {
     expect(firstTwo).toEqual(new Set(['recipe.start', 'image.start']));
   });
 
-  it('image.ready carries a PNG data URI', async () => {
+  it('image.ready carries an image URL', async () => {
     const client = new MockAgentClient({ delayRange: FAST });
     const events = await collect(await client.generateRecipeDetail(input));
     const ready = events.find((e) => e.type === 'image.ready');
     if (ready?.type !== 'image.ready') throw new Error('expected image.ready');
-    expect(ready.dataUri).toMatch(/^data:image\/png;base64,/);
+    // Slice 4 で dataUri → url に変更。data URI も valid な URL なので Mock では再利用。
+    expect(ready.url).toBeTruthy();
   });
 
   it('recipe.title reflects the input candidate', async () => {

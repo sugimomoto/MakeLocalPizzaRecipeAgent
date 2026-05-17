@@ -207,11 +207,11 @@ describe('StreamEventSchema (Slice 3 image.* events)', () => {
     expect(r.success).toBe(true);
   });
 
-  it('parses image.ready with data URI', () => {
+  it('parses image.ready with URL', () => {
     const r = StreamEventSchema.safeParse({
       type: 'image.ready',
       recipeId: 'r_1',
-      dataUri: 'data:image/png;base64,iVBORw0KGgo=',
+      url: 'https://storage.googleapis.com/mlpr-local.appspot.com/recipes/r_1.png',
     });
     expect(r.success).toBe(true);
   });
@@ -226,11 +226,20 @@ describe('StreamEventSchema (Slice 3 image.* events)', () => {
     expect(r.success).toBe(true);
   });
 
-  it('rejects image.ready with empty dataUri', () => {
+  it('rejects image.ready with empty url', () => {
     const r = StreamEventSchema.safeParse({
       type: 'image.ready',
       recipeId: 'r_1',
-      dataUri: '',
+      url: '',
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it('rejects old image.ready shape with dataUri (Slice 4 で破壊変更)', () => {
+    const r = StreamEventSchema.safeParse({
+      type: 'image.ready',
+      recipeId: 'r_1',
+      dataUri: 'data:image/png;base64,iVBORw0KGgo=',
     });
     expect(r.success).toBe(false);
   });

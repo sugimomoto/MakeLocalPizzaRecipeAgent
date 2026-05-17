@@ -49,7 +49,7 @@ const HAPPY_EVENTS: StreamEvent[] = [
     body: '海と山の境界に置く一枚。',
   },
   { type: 'recipe.done', recipeId: 'c_test' },
-  { type: 'image.ready', recipeId: 'c_test', dataUri: 'data:image/png;base64,iVBORw0K' },
+  { type: 'image.ready', recipeId: 'c_test', url: 'https://storage.test/recipes/c_test.png' },
 ];
 
 function streamFromEvents(events: StreamEvent[]): ReadableStream<Uint8Array> {
@@ -77,7 +77,7 @@ describe('useRecipeDetailStream', () => {
     expect(result.current.title).toBeNull();
     expect(result.current.meta).toBeNull();
     expect(result.current.materials).toBeNull();
-    expect(result.current.imageDataUri).toBeNull();
+    expect(result.current.imageUrl).toBeNull();
   });
 
   it('happy path reaches allDone with title/meta/materials/steps/story/image populated', async () => {
@@ -99,7 +99,7 @@ describe('useRecipeDetailStream', () => {
     expect(result.current.materials?.length).toBe(3);
     expect(result.current.steps?.length).toBe(3);
     expect(result.current.story?.headline).toBe('松島の夜。');
-    expect(result.current.imageDataUri).toMatch(/^data:image\/png;base64,/);
+    expect(result.current.imageUrl).toBe('https://storage.test/recipes/c_test.png');
     expect(result.current.imageError).toBeNull();
     expect(result.current.error).toBeNull();
   });
@@ -127,7 +127,7 @@ describe('useRecipeDetailStream', () => {
     });
 
     await waitFor(() => expect(result.current.state).toBe('recipeDone'));
-    expect(result.current.imageDataUri).toBeNull();
+    expect(result.current.imageUrl).toBeNull();
     expect(result.current.imageError).toContain('IMAGEN_FAIL');
     expect(result.current.error).toBeNull();
     expect(result.current.title).toBe('松島の牡蠣ピザ');
@@ -138,7 +138,7 @@ describe('useRecipeDetailStream', () => {
       { type: 'recipe.start', recipeId: 'c_test' },
       { type: 'image.start', recipeId: 'c_test' },
       { type: 'error', code: 'RECIPE_FAIL', message: 'simulated gemini failure' },
-      { type: 'image.ready', recipeId: 'c_test', dataUri: 'data:image/png;base64,iV' },
+      { type: 'image.ready', recipeId: 'c_test', url: 'https://storage.test/recipes/c_test.png' },
     ];
     vi.stubGlobal('fetch', fetchMockFor(events));
     const { result } = renderHook(() => useRecipeDetailStream());
@@ -218,6 +218,6 @@ describe('useRecipeDetailStream', () => {
     act(() => result.current.reset());
     expect(result.current.state).toBe('idle');
     expect(result.current.title).toBeNull();
-    expect(result.current.imageDataUri).toBeNull();
+    expect(result.current.imageUrl).toBeNull();
   });
 });

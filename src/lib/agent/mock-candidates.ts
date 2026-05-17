@@ -190,10 +190,11 @@ export class MockAgentClient implements AgentClient {
   }
 }
 
-// ----- Slice 3: 詳細レシピ + 画像 Mock -------------------------------------
+// ----- Slice 3: 詳細レシピ + 画像 Mock (Slice 4 で URL 化) -------------------
 
-// 1x1 透明 PNG を base64 で表現 (data URI のテスト用ペイロード)
-const MOCK_IMAGE_DATA_URI =
+// Mock の image URL — 実 Agent では Storage Emulator / 本番 GCS の URL に置き換わる。
+// 1x1 透明 PNG の data URI でも valid な src になるので Storybook / E2E でも壊れない。
+const MOCK_IMAGE_URL =
   'data:image/png;base64,' +
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
@@ -257,5 +258,5 @@ async function* buildRecipeDetailEvents(
 
   // 画像は少し遅れて入る (実 Imagen 4 を模擬)
   await delay(pseudoDelay(seed, ++idx, { min: delayRange.min * 2, max: delayRange.max * 2 }));
-  yield { type: 'image.ready', recipeId, dataUri: MOCK_IMAGE_DATA_URI };
+  yield { type: 'image.ready', recipeId, url: MOCK_IMAGE_URL };
 }

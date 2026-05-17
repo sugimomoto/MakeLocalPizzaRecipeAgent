@@ -1,15 +1,15 @@
 /**
  * RecipeHero — 詳細画面の最上部、ピザ画像 + 戻る + 保存ハートのヒーローエリア。
  *
- * - image (Imagen data URI) がまだ無ければスケルトン (washi の上で柔らかく脈動)
+ * - image (Slice 3: base64 data URI、Slice 4: GCS URL) がまだ無ければスケルトン
  * - 戻る (◂) / ハート (♡ / ♥) は左右に固定オーバーレイ
- * - クリック挙動は親から callback で受ける (Slice 3 では alert)
+ * - クリック挙動は親から callback で受ける
  */
 
 import styles from './RecipeHero.module.css';
 
 export type RecipeHeroProps = {
-  imageDataUri: string | null;
+  imageUrl: string | null;
   imageError: string | null;
   onBack: () => void;
   onSave: () => void;
@@ -18,7 +18,7 @@ export type RecipeHeroProps = {
 };
 
 export function RecipeHero({
-  imageDataUri,
+  imageUrl,
   imageError,
   onBack,
   onSave,
@@ -27,10 +27,10 @@ export function RecipeHero({
 }: RecipeHeroProps) {
   return (
     <div className={styles.hero}>
-      {imageDataUri ? (
-        // base64 data URI なので next/image を使わず素の img で十分 (外部最適化不要)
+      {imageUrl ? (
+        // 外部 URL or data URI どちらでも素の img で良い (next/image は不要)
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageDataUri} alt={altText} className={styles.image} />
+        <img src={imageUrl} alt={altText} className={styles.image} />
       ) : (
         <div
           className={styles.skeleton}

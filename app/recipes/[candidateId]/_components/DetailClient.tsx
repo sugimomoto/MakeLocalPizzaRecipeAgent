@@ -102,7 +102,7 @@ export function DetailClient({ candidateId }: DetailClientProps) {
   return (
     <div className={styles.shell}>
       <RecipeHero
-        imageDataUri={stream.imageDataUri}
+        imageUrl={stream.imageUrl}
         imageError={stream.imageError}
         onBack={() => router.back()}
         onSave={() => {
