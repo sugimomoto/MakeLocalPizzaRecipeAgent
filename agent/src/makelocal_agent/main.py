@@ -4,10 +4,11 @@
     uv run uvicorn makelocal_agent.main:app --port 8080 --reload
 
 ルート:
-    GET  /                          疎通確認 (空応答)
-    GET  /agent/health              ヘルスチェック
-    POST /agent/generate-candidates 3 案 NDJSON ストリーム生成
-    POST /agent/reroll              別 seed で再生成 (NDJSON ストリーム)
+    GET  /                              疎通確認 (空応答)
+    GET  /agent/health                  ヘルスチェック
+    POST /agent/generate-candidates     3 案 NDJSON ストリーム生成
+    POST /agent/reroll                  別 seed で再生成 (NDJSON ストリーム)
+    POST /agent/recipes/{candidate_id}  詳細レシピ + Imagen 画像 NDJSON (Slice 3)
 """
 
 from __future__ import annotations
@@ -16,17 +17,21 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .lib.logging import get_logger
-from .routes import candidates, health, reroll
+from .routes import candidates, health, recipes, reroll
 
 app = FastAPI(
     title="makelocal-agent",
-    version="0.2.0",
-    description="Python ADK + Vertex Gemini で 3 案を NDJSON ストリームで返す。",
+    version="0.3.0",
+    description=(
+        "Python ADK + Vertex Gemini で 3 案を NDJSON ストリームで返す。"
+        "Slice 3 で /agent/recipes/{id} を追加し、詳細レシピ + Imagen 画像を同様に配信。"
+    ),
 )
 
 app.include_router(health.router)
 app.include_router(candidates.router)
 app.include_router(reroll.router)
+app.include_router(recipes.router)
 
 
 @app.get("/")
