@@ -24,6 +24,7 @@ import { ScreenHero } from '@/components/primitives/ScreenHero';
 import { findPrefecture } from '@/data/prefectures';
 import { isInSeason } from '@/domain/ingredient';
 import { useLocale } from '@/hooks/use-locale';
+import { PENDING_SESSION_KEY } from '@/lib/storage-keys';
 import { useQuickTapStore } from '@/stores/quicktap';
 
 import styles from './IngredientSelectClient.module.css';
@@ -43,7 +44,6 @@ type LocalesResponse = {
 
 type LoadState = 'idle' | 'loading' | 'ready' | 'pending' | 'error';
 
-export const PENDING_SESSION_KEY = 'mlpr.pendingSession.v1';
 const MAX_SELECTION = 3;
 
 function generateSessionId(): string {

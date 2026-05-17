@@ -24,12 +24,11 @@ import { StepList } from '@/components/recipe/StepList';
 import { StoryCard } from '@/components/recipe/StoryCard';
 import { STRATEGY_LABELS } from '@/domain/candidate';
 import { useRecipeDetailStream } from '@/hooks/use-recipe-detail-stream';
+import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
 import styles from './DetailClient.module.css';
 
 import type { Candidate } from '@/domain/candidate';
-
-export const PENDING_RECIPE_KEY = 'mlpr.pendingRecipe.v1';
 
 type PendingRecipe = {
   candidateId: string;

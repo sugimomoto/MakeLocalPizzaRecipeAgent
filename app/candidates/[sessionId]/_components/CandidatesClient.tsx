@@ -19,10 +19,9 @@ import { BakingAnimation } from '@/components/loading/BakingAnimation';
 import { Button } from '@/components/primitives/Button';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
 import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
+import { PENDING_RECIPE_KEY, PENDING_SESSION_KEY } from '@/lib/storage-keys';
 
 import styles from './CandidatesClient.module.css';
-import { PENDING_SESSION_KEY } from '../../../ingredients/_components/IngredientSelectClient';
-import { PENDING_RECIPE_KEY } from '../../../recipes/[candidateId]/_components/DetailClient';
 
 type PendingSession = {
   sessionId: string;
