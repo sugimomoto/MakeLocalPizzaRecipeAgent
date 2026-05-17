@@ -154,19 +154,19 @@
 
 ### T-411 Toast + ToastHost コンポーネント (見た目)
 
-- [ ] `src/components/notify/Toast.tsx` + `.module.css` (success/info/warning の 3 トーン、washi-deep 背景 + 朱縦線)
-- [ ] `src/components/notify/ToastHost.tsx` + `.module.css` (画面下中央 fixed, 縦に積む)
-- [ ] RTL test: 3 トーン + 手動 close + auto progress bar
+- [x] `src/components/notify/Toast.tsx` + `.module.css` (success/info/warning の 3 トーン、washi-deep 背景 + 朱縦線)
+- [x] `src/components/notify/ToastHost.tsx` + `.module.css` (画面下中央 fixed, 縦に積む)
+- [x] RTL test: 3 トーン + 手動 close + auto progress bar
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add Toast + ToastHost components`
+- **commit**: `feat(slice4): add Toast + ToastHost components` (7a4102d)
 
 ### T-412 useToast + ToastProvider 統合
 
-- [ ] `src/hooks/use-toast.tsx`: Context + push 関数 + 2.5s auto remove
-- [ ] `app/layout.tsx` に ToastProvider をラップ (AuthProvider と同列または内側)
-- [ ] テスト: push → 2.5s 後に消える / 手動 close で即消える
+- [x] `src/hooks/use-toast.tsx`: Context + push 関数 + 2.5s auto remove
+- [x] `app/layout.tsx` に ToastProvider をラップ (AuthProvider と同列または内側)
+- [x] テスト: push → 2.5s 後に消える / 手動 close で即消える
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add useToast hook + ToastProvider`
+- **commit**: `feat(slice4): add useToast hook + ToastProvider` (8c2955c)
 
 → **push & CI green 確認**
 
@@ -176,20 +176,20 @@
 
 ### T-413 GoogleButton コンポーネント
 
-- [ ] `src/components/auth/GoogleButton.tsx`: SVG G ロゴ (4 色) + Roboto + radius 999 + height 50
-- [ ] `.module.css`: 公式ガイドライン準拠
-- [ ] RTL test: ラベル / クリック handler 呼び出し
+- [x] `src/components/auth/GoogleButton.tsx`: SVG G ロゴ (4 色) + Roboto + radius 999 + height 50
+- [x] `.module.css`: 公式ガイドライン準拠
+- [x] RTL test: ラベル / クリック handler 呼び出し
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add GoogleButton component`
+- **commit**: `feat(slice4): add GoogleButton component` (f68c204)
 
 ### T-414 SignInModal + useSignInModal
 
-- [ ] `src/components/auth/SignInModal.tsx`: `<dialog>` ベース + handle + eyebrow + title + GoogleButton + やめる link
-- [ ] `src/hooks/use-sign-in-modal.tsx`: Context + open/close 状態 + SignInModal をマウント
-- [ ] `app/layout.tsx` に SignInModalProvider をラップ (AuthProvider の内側)
-- [ ] RTL test: Modal 開閉 / Google ボタンクリックで signInWithGoogle 呼ばれる / ESC で閉じる
+- [x] `src/components/auth/SignInModal.tsx`: `<dialog>` ベース + handle + eyebrow + title + GoogleButton + やめる link
+- [x] `src/hooks/use-sign-in-modal.tsx`: Context + open/close 状態 + SignInModal をマウント
+- [x] `app/layout.tsx` に SignInModalProvider をラップ (AuthProvider の内側)
+- [x] RTL test: Modal 開閉 / Google ボタンクリックで signInWithGoogle 呼ばれる / ESC で閉じる
 - **DoC**: vitest green + a11y (aria-modal, focus trap) 検証
-- **commit**: `feat(slice4): add SignInModal + useSignInModal hook`
+- **commit**: `feat(slice4): add SignInModal + useSignInModal hook` (f0f142f)
 
 → **push & CI green 確認**
 
