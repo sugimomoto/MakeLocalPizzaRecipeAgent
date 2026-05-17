@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import json
+import os
 import uuid
 from typing import Any
 
@@ -27,11 +28,20 @@ _USER_ID = "internal"
 
 
 class AdkLlmClient:
-    """ADK LlmAgent + Vertex AI で構造化出力を取得する。"""
+    """ADK LlmAgent + Vertex AI で構造化出力を取得する。
+
+    google-genai SDK は **デフォルトで Gemini Developer API (API key 認証)** を使うため、
+    Vertex AI 経由 (ADC 認証) に切替える環境変数を明示的に設定する必要がある。
+    既存値を尊重しつつ未設定なら設定 (テストや他コードからの override を妨げない)。
+    """
 
     def __init__(self, *, project: str, location: str) -> None:
         self.project = project
         self.location = location
+        # google-genai SDK を Vertex AI モードに切替 (ADC で認証)
+        os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "true")
+        os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project)
+        os.environ.setdefault("GOOGLE_CLOUD_LOCATION", location)
 
     async def run_structured(
         self,
