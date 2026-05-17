@@ -151,7 +151,7 @@ requirements.md §6 完了の定義に従う。
 - [x] T-214 StreamEvent
 
 ### Phase 3: ライブラリ (4)
-- [ ] T-221 settings
+- [x] T-221 settings
 - [ ] T-222 logging
 - [ ] T-223 ndjson encoder
 - [ ] T-224 ingredients repository
