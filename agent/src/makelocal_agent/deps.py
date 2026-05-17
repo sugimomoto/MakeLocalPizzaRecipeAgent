@@ -9,9 +9,10 @@
 
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Protocol, get_args, get_origin
 
 from pydantic import BaseModel
+from pydantic.fields import FieldInfo
 
 from .lib.settings import Settings, get_settings
 
@@ -32,13 +33,56 @@ class LlmClient(Protocol):
     ) -> BaseModel: ...
 
 
+def _min_length_of(finfo: FieldInfo) -> int:
+    """Pydantic FieldInfo から min_length 制約を取り出す。なければ 0。"""
+    for meta in finfo.metadata or ():
+        v = getattr(meta, "min_length", None)
+        if isinstance(v, int):
+            return v
+    return 0
+
+
+def _mock_value(ann: object, name: str, *, min_len: int = 0) -> object:
+    """型注釈に応じてモック値を組み立てる (Slice 3 で再帰対応に拡張)。
+
+    - str → f"mock-{name}"
+    - list[str] → max(min_len, 2) 件の文字列
+    - list[<BaseModel 派生>] → max(min_len, 3) 件のサブモデル
+    - <BaseModel 派生> → 再帰的に各 field を埋める
+    - その他 → None (呼び出し側に判断を委ねる)
+    """
+    if ann is str:
+        return f"mock-{name}"
+
+    origin = get_origin(ann)
+    if origin is list:
+        (inner,) = get_args(ann)
+        count = max(min_len, 2)
+        if isinstance(inner, type) and issubclass(inner, BaseModel):
+            count = max(min_len, 3)
+            return [_build_basemodel(inner) for _ in range(count)]
+        if inner is str:
+            return [f"mock-{name}-{i + 1}" for i in range(count)]
+
+    if isinstance(ann, type) and issubclass(ann, BaseModel):
+        return _build_basemodel(ann)
+
+    return None
+
+
+def _build_basemodel(model_cls: type[BaseModel]) -> BaseModel:
+    """BaseModel の各 field を _mock_value で再帰的に埋めて instance を作る。"""
+    kwargs: dict[str, object] = {}
+    for fname, finfo in model_cls.model_fields.items():
+        kwargs[fname] = _mock_value(finfo.annotation, fname, min_len=_min_length_of(finfo))
+    return model_cls(**kwargs)
+
+
 class MockLlmClient:
     """テスト・オフライン用ダミー。output_schema の field を機械的に埋める。
 
-    Pydantic field の必須項目を以下のルールで埋める:
-    - str: f"mock-{field_name}"
-    - list[str]: ["mock-1", "mock-2"]
-    - その他: 既定値 (Pydantic デフォルト or None)
+    Slice 1: str / list[str] の単純対応のみ。
+    Slice 3: ネスト BaseModel と list[BaseModel] の再帰対応 + min_length 反映。
     """
 
     async def run_structured(
@@ -49,17 +93,7 @@ class MockLlmClient:
         prompt: str,
         output_schema: type[BaseModel],
     ) -> BaseModel:
-        kwargs: dict[str, object] = {}
-        for fname, finfo in output_schema.model_fields.items():
-            ann = finfo.annotation
-            if ann is str:
-                kwargs[fname] = f"mock-{fname}"
-            elif ann == list[str]:
-                kwargs[fname] = [f"mock-{fname}-1", f"mock-{fname}-2"]
-            else:
-                # 試しに None を渡す (失敗する型は呼び出し側で test)
-                kwargs[fname] = None
-        return output_schema(**kwargs)
+        return _build_basemodel(output_schema)
 
 
 _singleton: LlmClient | None = None

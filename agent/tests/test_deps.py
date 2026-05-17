@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from makelocal_agent.deps import (
     MockLlmClient,
@@ -17,6 +17,23 @@ from makelocal_agent.lib.settings import Settings, reset_settings_for_testing
 class _SampleOut(BaseModel):
     title: str
     tags: list[str]
+
+
+class _NestedLeaf(BaseModel):
+    name: str
+    quantity: str
+
+
+class _NestedMeta(BaseModel):
+    servings: str
+    duration: str
+
+
+class _NestedOut(BaseModel):
+    title: str
+    meta: _NestedMeta
+    items: list[_NestedLeaf] = Field(min_length=3)
+    notes: list[str] = Field(min_length=4)
 
 
 @pytest.fixture(autouse=True)
@@ -38,6 +55,24 @@ class TestMockLlmClient:
         assert isinstance(out, _SampleOut)
         assert out.title == "mock-title"
         assert out.tags == ["mock-tags-1", "mock-tags-2"]
+
+    @pytest.mark.asyncio
+    async def test_fills_nested_basemodel_and_respects_min_length(self) -> None:
+        client = MockLlmClient()
+        out = await client.run_structured(
+            model="x",
+            instruction="i",
+            prompt="p",
+            output_schema=_NestedOut,
+        )
+        assert isinstance(out, _NestedOut)
+        assert out.meta.servings == "mock-servings"
+        assert out.meta.duration == "mock-duration"
+        assert len(out.items) == 3
+        assert out.items[0].name == "mock-name"
+        assert out.items[0].quantity == "mock-quantity"
+        # list[str] にも min_length が反映される
+        assert len(out.notes) == 4
 
 
 class TestFactory:
