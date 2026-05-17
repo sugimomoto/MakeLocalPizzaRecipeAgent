@@ -1,0 +1,44 @@
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid rgba(31, 26, 18, 0.12);
+  border-bottom: 1px solid rgba(31, 26, 18, 0.12);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+}
+
+.cell + .cell::before {
+  content: '';
+  position: absolute;
+  top: 14%;
+  bottom: 14%;
+  left: 0;
+  width: 1px;
+  background: rgba(31, 26, 18, 0.1);
+}
+
+.label {
+  margin: 0;
+  font-family: var(--mlpr-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(31, 26, 18, 0.55);
+}
+
+.value {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho, serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mlpr-sumi, #1f1a12);
+}
