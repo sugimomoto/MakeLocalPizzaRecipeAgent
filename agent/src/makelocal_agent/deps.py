@@ -1,10 +1,11 @@
-"""DI: LLM クライアントの取得 (ADK + Vertex 実装 / Mock 実装の切替)。
+"""DI: LLM / Imagen クライアントの取得 (実装 / Mock 実装の切替)。
 
 設計判断:
 - ADK の Runner を毎回 spin up すると重い。LlmClient プロトコルを噛ませて、
   テスト / オフライン開発では MockLlmClient で即値返却に切替可能にする。
 - 実 Gemini 呼び出しは AdkLlmClient (T-232 で実装) が担当。
 - settings.use_mock_llm = True または GOOGLE_CLOUD_PROJECT 未設定なら Mock。
+- Slice 3 で ImagenClient を追加 (use_mock_image / 同条件で Mock 化)。
 """
 
 from __future__ import annotations
@@ -127,3 +128,39 @@ def set_llm_client_for_testing(client: LlmClient) -> None:
     """テストから具体的な LlmClient を注入する (e.g. unittest.mock.AsyncMock)。"""
     global _singleton  # noqa: PLW0603  process-wide singleton
     _singleton = client
+
+
+# ----- Slice 3: Imagen クライアント ------------------------------------------
+
+from .agents.imagen_client import ImagenClient, MockImagenClient  # noqa: E402
+
+_imagen_singleton: ImagenClient | None = None
+
+
+def get_imagen_client(settings: Settings | None = None) -> ImagenClient:
+    """プロセス内シングルトン。use_mock_image または GOOGLE_CLOUD_PROJECT 未設定で Mock。"""
+    global _imagen_singleton  # noqa: PLW0603  process-wide singleton
+    if _imagen_singleton is not None:
+        return _imagen_singleton
+    s = settings or get_settings()
+    if s.use_mock_image or s.use_mock_llm or not s.google_cloud_project:
+        _imagen_singleton = MockImagenClient()
+    else:
+        from .agents.imagen_client import VertexImagenClient  # noqa: PLC0415
+
+        _imagen_singleton = VertexImagenClient(
+            project=s.google_cloud_project,
+            location=s.vertex_ai_location,
+        )
+    return _imagen_singleton
+
+
+def reset_imagen_client_for_testing() -> None:
+    global _imagen_singleton  # noqa: PLW0603  process-wide singleton
+    _imagen_singleton = None
+
+
+def set_imagen_client_for_testing(client: ImagenClient) -> None:
+    """テストから具体的な ImagenClient を注入する。"""
+    global _imagen_singleton  # noqa: PLW0603  process-wide singleton
+    _imagen_singleton = client

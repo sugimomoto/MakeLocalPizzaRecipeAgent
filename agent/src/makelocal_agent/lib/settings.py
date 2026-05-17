@@ -25,9 +25,11 @@ class Settings(BaseSettings):
     google_cloud_project: str = ""
     vertex_ai_location: str = "asia-northeast1"
     gemini_model: str = "gemini-2.5-flash"
+    imagen_model: str = "imagen-4.0-generate-001"
 
     max_timeout_sec: float = 60.0
     use_mock_llm: bool = False
+    use_mock_image: bool = False
 
     # データファイルの相対パス (agent/ 起動時の cwd 基準)
     ingredients_yaml_path: str = "data/ingredients.yaml"

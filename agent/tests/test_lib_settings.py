@@ -15,10 +15,14 @@ def _reset() -> None:
 def test_defaults_when_no_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("MLPR_GEMINI_MODEL", raising=False)
     monkeypatch.delenv("MLPR_VERTEX_AI_LOCATION", raising=False)
+    monkeypatch.delenv("MLPR_IMAGEN_MODEL", raising=False)
+    monkeypatch.delenv("MLPR_USE_MOCK_IMAGE", raising=False)
     s = Settings()
     assert s.gemini_model == "gemini-2.5-flash"
     assert s.vertex_ai_location == "asia-northeast1"
+    assert s.imagen_model == "imagen-4.0-generate-001"
     assert s.use_mock_llm is False
+    assert s.use_mock_image is False
     assert s.max_timeout_sec == 60.0
 
 

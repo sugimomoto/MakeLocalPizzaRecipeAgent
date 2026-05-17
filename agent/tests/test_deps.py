@@ -5,10 +5,14 @@ from __future__ import annotations
 import pytest
 from pydantic import BaseModel, Field
 
+from makelocal_agent.agents.imagen_client import MockImagenClient, VertexImagenClient
 from makelocal_agent.deps import (
     MockLlmClient,
+    get_imagen_client,
     get_llm_client,
+    reset_imagen_client_for_testing,
     reset_llm_client_for_testing,
+    set_imagen_client_for_testing,
     set_llm_client_for_testing,
 )
 from makelocal_agent.lib.settings import Settings, reset_settings_for_testing
@@ -39,6 +43,7 @@ class _NestedOut(BaseModel):
 @pytest.fixture(autouse=True)
 def _reset() -> None:
     reset_llm_client_for_testing()
+    reset_imagen_client_for_testing()
     reset_settings_for_testing()
 
 
@@ -96,3 +101,39 @@ class TestFactory:
         custom = MockLlmClient()
         set_llm_client_for_testing(custom)
         assert get_llm_client() is custom
+
+
+class TestImagenFactory:
+    def test_returns_mock_when_use_mock_image_true(self) -> None:
+        s = Settings(use_mock_image=True, google_cloud_project="some-proj")
+        client = get_imagen_client(s)
+        assert isinstance(client, MockImagenClient)
+
+    def test_returns_mock_when_use_mock_llm_true(self) -> None:
+        # Mock LLM 設定なら画像も Mock 側に揃える (整合性)
+        s = Settings(use_mock_llm=True, google_cloud_project="some-proj")
+        client = get_imagen_client(s)
+        assert isinstance(client, MockImagenClient)
+
+    def test_returns_mock_when_no_project(self) -> None:
+        s = Settings(use_mock_image=False, google_cloud_project="")
+        client = get_imagen_client(s)
+        assert isinstance(client, MockImagenClient)
+
+    def test_returns_vertex_when_project_and_no_mock(self) -> None:
+        s = Settings(
+            use_mock_llm=False,
+            use_mock_image=False,
+            google_cloud_project="some-proj",
+        )
+        client = get_imagen_client(s)
+        assert isinstance(client, VertexImagenClient)
+
+    def test_returns_singleton(self) -> None:
+        s = Settings(use_mock_image=True)
+        assert get_imagen_client(s) is get_imagen_client(s)
+
+    def test_set_for_testing_overrides_singleton(self) -> None:
+        custom = MockImagenClient()
+        set_imagen_client_for_testing(custom)
+        assert get_imagen_client() is custom
