@@ -159,7 +159,7 @@ requirements.md §6 完了の定義に従う。
 ### Phase 4: ADK + Orchestrator (4)
 - [x] T-231 vertex DI
 - [x] T-232 candidates_agent
-- [ ] T-233 prompt builder
+- [x] T-233 prompt builder
 - [ ] T-234 orchestrator (parallel)
 
 ### Phase 5: FastAPI ルート (4)
