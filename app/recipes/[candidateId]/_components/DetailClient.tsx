@@ -14,6 +14,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { AvatarButton } from '@/components/auth/AvatarButton';
 import { StrategySeal } from '@/components/candidate/StrategySeal';
 import { Button } from '@/components/primitives/Button';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
@@ -101,6 +102,9 @@ export function DetailClient({ candidateId }: DetailClientProps) {
 
   return (
     <div className={styles.shell}>
+      <div className={styles.topRow}>
+        <AvatarButton />
+      </div>
       <RecipeHero
         imageUrl={stream.imageUrl}
         imageError={stream.imageError}

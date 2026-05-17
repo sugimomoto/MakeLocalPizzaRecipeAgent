@@ -14,6 +14,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { AvatarButton } from '@/components/auth/AvatarButton';
 import { PrefectureTile } from '@/components/local/PrefectureTile';
 import { RegionRail } from '@/components/local/RegionRail';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
@@ -68,6 +69,9 @@ export function LocalSelectClient() {
 
   return (
     <div className={styles.shell}>
+      <div className={styles.topRow}>
+        <AvatarButton />
+      </div>
       <ScreenHero
         eyebrow="地 元 × ピ ザ"
         title={

@@ -15,6 +15,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
+import { AvatarButton } from '@/components/auth/AvatarButton';
 import { CategoryTab } from '@/components/ingredient/CategoryTab';
 import { IngredientCard } from '@/components/ingredient/IngredientCard';
 import { SeasonTab } from '@/components/ingredient/SeasonTab';
@@ -175,7 +176,10 @@ export function IngredientSelectClient() {
     <div className={styles.shell}>
       <div className={styles.topRow}>
         <LocaleHeader localeId={localeId} locales={locales} />
-        <span className={styles.tapBadge}>Tap 2 / 2</span>
+        <div className={styles.topRowRight}>
+          <span className={styles.tapBadge}>Tap 2 / 2</span>
+          <AvatarButton />
+        </div>
       </div>
 
       <ScreenHero

@@ -14,6 +14,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { AvatarButton } from '@/components/auth/AvatarButton';
 import { CandidateCard } from '@/components/candidate/CandidateCard';
 import { BakingAnimation } from '@/components/loading/BakingAnimation';
 import { Button } from '@/components/primitives/Button';
@@ -88,14 +89,17 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
           <span aria-hidden="true">‹</span> 食材
         </button>
         <span className={styles.tapBadge}>新 提 案 · 3 案</span>
-        <button
-          type="button"
-          className={styles.rerollLink}
-          onClick={() => void stream.reroll(sessionId)}
-          disabled={stream.state === 'streaming'}
-        >
-          <span aria-hidden="true">↻</span> ふり直す
-        </button>
+        <div className={styles.topRowRight}>
+          <button
+            type="button"
+            className={styles.rerollLink}
+            onClick={() => void stream.reroll(sessionId)}
+            disabled={stream.state === 'streaming'}
+          >
+            <span aria-hidden="true">↻</span> ふり直す
+          </button>
+          <AvatarButton />
+        </div>
       </div>
 
       <div className={styles.heroRow}>

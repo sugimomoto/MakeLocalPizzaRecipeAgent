@@ -39,6 +39,12 @@
   letter-spacing: 0.3em;
 }
 
+.topRowRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .heroRow {
   padding: 14px 24px 6px;
   display: flex;

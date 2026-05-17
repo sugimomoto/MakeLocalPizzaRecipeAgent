@@ -11,6 +11,12 @@
   align-items: center;
 }
 
+.topRowRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .tapBadge {
   font-family: var(--mlpr-font-mincho);
   font-size: 10px;

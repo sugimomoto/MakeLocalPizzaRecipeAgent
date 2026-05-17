@@ -5,6 +5,13 @@
   flex-direction: column;
 }
 
+.topRow {
+  padding: 8px 20px 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .scroll {
   padding: 0 16px 32px;
 }
