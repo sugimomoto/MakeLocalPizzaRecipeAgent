@@ -1,3 +1,8 @@
+/* wrap は Card の overflow:hidden の外側に活性中バッジを浮かせるための親 */
+.wrap {
+  position: relative;
+}
+
 .card {
   display: flex;
   flex-direction: column;
@@ -26,7 +31,9 @@
   padding: 3px 10px;
   border-radius: 999px;
   box-shadow: 0 2px 6px rgba(178, 58, 72, 0.25);
-  z-index: 1;
+  /* Card 外に出すので wrap (position:relative) からの z-index */
+  z-index: 2;
+  pointer-events: none;
 }
 
 .header {

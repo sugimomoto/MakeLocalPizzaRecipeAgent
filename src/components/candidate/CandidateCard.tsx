@@ -29,11 +29,6 @@ export function CandidateCard({ candidate, onSelect, isActive = false }: Candida
 
   const inner = (
     <>
-      {isActive && (
-        <span className={styles.activeBadge} aria-hidden="true">
-          選択中
-        </span>
-      )}
       {isDone && <span className={styles.doneIndicator} aria-label="決定可能" />}
 
       <div className={styles.header}>
@@ -75,17 +70,29 @@ export function CandidateCard({ candidate, onSelect, isActive = false }: Candida
     </>
   );
 
+  const badge = isActive ? (
+    <span className={styles.activeBadge} aria-hidden="true">
+      選択中
+    </span>
+  ) : null;
+
   if (onSelect) {
     return (
-      <Card asButton onClick={onSelect} elevated padding="lg" className={cardClass}>
-        {inner}
-      </Card>
+      <div className={styles.wrap}>
+        {badge}
+        <Card asButton onClick={onSelect} elevated padding="lg" className={cardClass}>
+          {inner}
+        </Card>
+      </div>
     );
   }
 
   return (
-    <Card elevated padding="lg" className={cardClass}>
-      {inner}
-    </Card>
+    <div className={styles.wrap}>
+      {badge}
+      <Card elevated padding="lg" className={cardClass}>
+        {inner}
+      </Card>
+    </div>
   );
 }
