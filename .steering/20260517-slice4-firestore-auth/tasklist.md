@@ -199,22 +199,22 @@
 
 ### T-415 AvatarButton コンポーネント
 
-- [ ] `src/components/auth/AvatarButton.tsx`: 32〜36px 円、photoURL or イニシャル、未サインインは NULL
-- [ ] `.module.css`: shadow / hover / focus
-- [ ] クリックで `router.push('/library')`
-- [ ] RTL test: 未/済 + photoURL/イニシャルの分岐
+- [x] `src/components/auth/AvatarButton.tsx`: 32〜36px 円、photoURL or イニシャル、未サインインは「サインイン」リンク
+- [x] `.module.css`: shadow / hover / focus
+- [x] クリックで `router.push('/library')`、未サインインなら `openModal()`
+- [x] RTL test: 未/済 + photoURL/イニシャルの分岐
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add AvatarButton component`
+- **commit**: `feat(slice4): add AvatarButton component` (420cde5)
 
 ### T-416 各画面 topRow に AvatarButton を配置
 
-- [ ] `LocalSelectClient` topRow 右上 (region rail と干渉しないよう)
-- [ ] `IngredientSelectClient` topRow 右上 (既存「Tap 2 / 2」の隣に並べる or 置換)
-- [ ] `CandidatesClient` topRow 右上 (既存「↻ ふり直す」と並べる)
-- [ ] `DetailClient` topRow を新設 (RecipeHero 上に薄く)
-- [ ] レイアウト微調整 (既存 CSS Module を最小編集)
-- **DoC**: 全画面 typecheck / lint green、視覚回帰なし (Playwright snapshot 任意)
-- **commit**: `feat(slice4): place AvatarButton in all top-rows`
+- [x] `LocalSelectClient` topRow 新設 (flex-end で右寄せ)
+- [x] `IngredientSelectClient` topRow 右上 (既存「Tap 2 / 2」の隣に並べる)
+- [x] `CandidatesClient` topRow 右上 (既存「↻ ふり直す」と並べる)
+- [x] `DetailClient` topRow を新設 (RecipeHero 上に position: absolute で薄く)
+- [x] レイアウト微調整 (既存 CSS Module を最小編集)
+- **DoC**: 全画面 typecheck / lint green、視覚回帰なし
+- **commit**: `feat(slice4): place AvatarButton in all top-rows` (670da9b)
 
 → **push & CI green 確認**
 
