@@ -20,11 +20,15 @@ import { Button } from '@/components/primitives/Button';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
 import { MaterialList } from '@/components/recipe/MaterialList';
 import { MetaStrip } from '@/components/recipe/MetaStrip';
-import { RecipeHero } from '@/components/recipe/RecipeHero';
+import { RecipeHero, type HeartSavedState } from '@/components/recipe/RecipeHero';
 import { StepList } from '@/components/recipe/StepList';
 import { StoryCard } from '@/components/recipe/StoryCard';
+import { findPrefecture } from '@/data/prefectures';
 import { STRATEGY_LABELS } from '@/domain/candidate';
 import { useRecipeDetailStream } from '@/hooks/use-recipe-detail-stream';
+import { useSavedRecipe } from '@/hooks/use-saved-recipe';
+import { useSignInModal } from '@/hooks/use-sign-in-modal';
+import { useToast } from '@/hooks/use-toast';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
 import styles from './DetailClient.module.css';
@@ -69,7 +73,10 @@ export function DetailClient({ candidateId }: DetailClientProps) {
   const stream = useRecipeDetailStream();
   const startedRef = useRef(false);
   const [pending, setPending] = useState<PendingRecipe | null>(null);
-  const [isSaved, setIsSaved] = useState(false);
+
+  const saved = useSavedRecipe(candidateId);
+  const { openModal } = useSignInModal();
+  const toast = useToast();
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -94,11 +101,53 @@ export function DetailClient({ candidateId }: DetailClientProps) {
   const strategyLabel = candidate ? STRATEGY_LABELS[candidate.strategy].japaneseLabel : null;
   const displayTitle = stream.title ?? candidate?.title ?? null;
 
-  function pseudoAlert(label: string) {
-    if (typeof window !== 'undefined') {
-      window.alert(`${label}\n(Slice 4 で Firestore 保存に差し替え予定)`);
+  // saved.state ('loading'|'unauthenticated'|'unsaved'|'saved') を
+  // RecipeHero の HeartSavedState (3 値) にマップ。loading は unsaved として描画
+  // (チカチカ防止)。
+  const heartState: HeartSavedState =
+    saved.state === 'saved'
+      ? 'saved'
+      : saved.state === 'unauthenticated'
+        ? 'unauthenticated'
+        : 'unsaved';
+
+  const handleHeart = async (): Promise<void> => {
+    if (saved.state === 'loading') return;
+    if (saved.state === 'unauthenticated') {
+      openModal();
+      return;
     }
-  }
+    if (!pending || !candidate || !displayTitle) {
+      // 詳細がまだ届く前の早押しはガード
+      return;
+    }
+    try {
+      if (saved.state === 'saved') {
+        await saved.unsave();
+        toast.push({ kind: 'success', message: '保存を解除しました' });
+      } else {
+        // unsaved
+        const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
+        await saved.save({
+          candidateId,
+          title: displayTitle,
+          localeId: pending.localeId,
+          prefecture,
+          strategy: candidate.strategy,
+          imageUrl: stream.imageUrl ?? '',
+          ingredients: pending.ingredients,
+        });
+        toast.push({ kind: 'success', message: 'ピザ帳に保存しました' });
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : '保存処理に失敗しました。再度お試しください。';
+      toast.push({
+        kind: 'warning',
+        message: `保存処理に失敗しました (${message})`,
+      });
+    }
+  };
 
   return (
     <div className={styles.shell}>
@@ -109,11 +158,8 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         imageUrl={stream.imageUrl}
         imageError={stream.imageError}
         onBack={() => router.back()}
-        onSave={() => {
-          setIsSaved((v) => !v);
-          pseudoAlert(isSaved ? '保存解除' : 'ピザ帳に保存');
-        }}
-        isSaved={isSaved}
+        onSave={() => void handleHeart()}
+        savedState={heartState}
         altText={displayTitle ?? 'pizza'}
       />
 
@@ -158,18 +204,16 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       <div className={styles.stickyCtas}>
         <div className={styles.stickyInner}>
           <Button
-            variant="ghost"
-            size="md"
-            style={{ flex: 1 }}
-            onClick={() => pseudoAlert('ピザ帳に保存')}
-          >
-            ピザ帳に保存
-          </Button>
-          <Button
             variant="shu"
             size="md"
             style={{ flex: 1 }}
-            onClick={() => pseudoAlert('作ってみる')}
+            onClick={() => {
+              // 「作ってみる」は Slice 5+ で調理開始フローに置き換え予定。
+              // 一旦 alert で導線だけ残す。
+              if (typeof window !== 'undefined') {
+                window.alert('作ってみる (準備中)');
+              }
+            }}
           >
             作ってみる →
           </Button>

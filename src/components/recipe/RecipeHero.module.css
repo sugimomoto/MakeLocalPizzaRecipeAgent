@@ -50,8 +50,6 @@
 
 .backBtn,
 .heartBtn {
-  position: absolute;
-  top: 14px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -67,11 +65,30 @@
 }
 
 .backBtn {
+  position: absolute;
+  top: 14px;
   left: 14px;
 }
 
-.heartBtn {
+.heartGroup {
+  position: absolute;
+  top: 14px;
   right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guestHint {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11px;
+  color: var(--mlpr-sumi);
+  background: rgba(245, 239, 225, 0.92);
+  padding: 6px 10px;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .heartActive {

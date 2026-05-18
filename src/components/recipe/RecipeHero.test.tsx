@@ -46,11 +46,31 @@ describe('RecipeHero', () => {
     expect(onSave).toHaveBeenCalledOnce();
   });
 
-  it('toggles heart label and aria-pressed when isSaved=true', () => {
+  it('toggles heart label and aria-pressed when savedState="saved"', () => {
     render(
-      <RecipeHero imageUrl={null} imageError={null} onBack={() => {}} onSave={() => {}} isSaved />,
+      <RecipeHero
+        imageUrl={null}
+        imageError={null}
+        onBack={() => {}}
+        onSave={() => {}}
+        savedState="saved"
+      />,
     );
     const btn = screen.getByLabelText('保存解除');
     expect(btn).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('shows a guest hint when savedState="unauthenticated" and keeps the heart aria-label as 保存', () => {
+    render(
+      <RecipeHero
+        imageUrl={null}
+        imageError={null}
+        onBack={() => {}}
+        onSave={() => {}}
+        savedState="unauthenticated"
+      />,
+    );
+    expect(screen.getByText('サインインしてピザ帳に保存')).toBeInTheDocument();
+    expect(screen.getByLabelText('ピザ帳に保存')).toHaveAttribute('aria-pressed', 'false');
   });
 });

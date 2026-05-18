@@ -8,12 +8,23 @@
 
 import styles from './RecipeHero.module.css';
 
+/**
+ * Slice 4 で `isSaved` (boolean) を `savedState` (3 状態) に拡張。
+ * - 'unauthenticated': ハート上に「サインインしてピザ帳に保存」吹き出しを出す
+ * - 'unsaved'        : 通常の「♡」、aria-label='ピザ帳に保存'
+ * - 'saved'          : 朱に塗られた「♥」、aria-label='保存解除'
+ * 'loading' (auth status='loading') は描画上 'unsaved' と同等として扱う
+ * (UX 的にチカチカさせない方が良い)。
+ */
+export type HeartSavedState = 'unsaved' | 'saved' | 'unauthenticated';
+
 export type RecipeHeroProps = {
   imageUrl: string | null;
   imageError: string | null;
   onBack: () => void;
   onSave: () => void;
-  isSaved?: boolean;
+  /** 'unsaved' | 'saved' | 'unauthenticated' (デフォルト 'unsaved') */
+  savedState?: HeartSavedState;
   altText?: string;
 };
 
@@ -22,9 +33,13 @@ export function RecipeHero({
   imageError,
   onBack,
   onSave,
-  isSaved = false,
+  savedState = 'unsaved',
   altText = '生成されたピザの画像',
 }: RecipeHeroProps) {
+  const isSaved = savedState === 'saved';
+  const isGuest = savedState === 'unauthenticated';
+  const ariaLabel = isSaved ? '保存解除' : 'ピザ帳に保存';
+
   return (
     <div className={styles.hero}>
       {imageUrl ? (
@@ -45,15 +60,24 @@ export function RecipeHero({
         <span aria-hidden="true">‹</span>
       </button>
 
-      <button
-        type="button"
-        className={[styles.heartBtn, isSaved ? styles.heartActive : null].filter(Boolean).join(' ')}
-        onClick={onSave}
-        aria-label={isSaved ? '保存解除' : 'ピザ帳に保存'}
-        aria-pressed={isSaved}
-      >
-        <span aria-hidden="true">{isSaved ? '♥' : '♡'}</span>
-      </button>
+      <div className={styles.heartGroup}>
+        {isGuest && (
+          <span className={styles.guestHint} role="note">
+            サインインしてピザ帳に保存
+          </span>
+        )}
+        <button
+          type="button"
+          className={[styles.heartBtn, isSaved ? styles.heartActive : null]
+            .filter(Boolean)
+            .join(' ')}
+          onClick={onSave}
+          aria-label={ariaLabel}
+          aria-pressed={isSaved}
+        >
+          <span aria-hidden="true">{isSaved ? '♥' : '♡'}</span>
+        </button>
+      </div>
     </div>
   );
 }
