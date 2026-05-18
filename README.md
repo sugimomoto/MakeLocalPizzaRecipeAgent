@@ -3,36 +3,42 @@
 ローカル/旬の食材を活かしたピザレシピを提案する **AI エージェント**。
 
 > 地元 × 旬 × 戦略 (王道 / 一歩外す / 大冒険) を起点に、ピザの 3 案を即座に提案する Web アプリ。
-> 現状は **Slice 3 (詳細レシピ + Imagen 画像生成)** まで実装済み (v0.3.0)。
+> 現状は **Slice 4 (Firestore + Auth + GCS / ピザ帳)** まで実装済み (v0.4.0)。
 
 ---
 
-## 機能 (Slice 3 時点)
+## 機能 (Slice 4 時点)
 
+- ✅ **TOP ページ** — 初回訪問者には「未来の一枚は、あなたの地元にある。」+ 「始める →」、リピーターは /local に自動再開、サインイン済は /library に直行
 - ✅ **地元選択** — 47 都道府県 (現状はキュレーション 3 県)
 - ✅ **食材選択** — 季節 / カテゴリでフィルタ、複数選択
 - ✅ **候補 3 案の段階表示** — NDJSON ストリームで `王道 / 一歩外す / 大冒険` を順次焼き上げ
 - ✅ **振り直し** — 別 seed で 3 案を再生成
 - ✅ **本物の Gemini Agent** (Python ADK + Vertex Gemini 2.5 Flash) — Slice 2 で実装
 - ✅ **詳細レシピ + Imagen 画像生成** — Slice 3 で実装。テキストは Gemini Flash、画像は Imagen 4 を並列実行 (テキスト先 → 画像後の体験)
-- 🚧 Slice 4+: 「ピザ帳」保存 (Firestore) / Auth / 楽天ふるさと納税連動
+- ✅ **Google サインイン** — Firebase Auth (Google Sign-In)。各画面の右上「サインイン」リンク / アバターから Modal 起動
+- ✅ **ピザ帳 (Firestore)** — 詳細画面のハートで `users/{uid}/savedRecipes/{candidateId}` に保存。`/library` で savedAt 降順一覧、ハート再 tap で解除
+- ✅ **GCS Storage 連動** — Python `image_agent` が Imagen の PNG を Firebase Storage に put し、`image.ready { url }` で配信 (Slice 4 で `dataUri` から URL に移行)
+- ✅ **Toast / SignInModal / AvatarButton** — Provider ベースのグローバル UI 基盤
+- ✅ **Security Rules** — Firestore: 本人のみ自分の savedRecipes を R/W、Storage: recipes/ public read + client write 不可。`pnpm test:rules` で Emulator 相手にユニットテスト
+- 🚧 Slice 5+: 楽天ふるさと納税連動 / OTel / Cloud Run デプロイ
 
 ---
 
 ## 技術スタック
 
-| 層             | 採用                                                                        |
-| -------------- | --------------------------------------------------------------------------- |
-| フロント       | **Next.js 16** (App Router) / React 19 / TypeScript 5.9                     |
-| 状態           | Zustand 5 / React 19 標準 (`useSyncExternalStore` / `useReducer`)           |
-| バリデーション | Zod 4 (NDJSON / API リクエスト / 静的データ)                                |
-| BFF            | Next.js Route Handlers (Edge ではなく Node ランタイム)                      |
-| デザイン       | 自作トークン (CSS 変数) + CSS Modules / 和紙テクスチャ + 明朝/ゴシック/モノ |
-| テスト         | Vitest 4 + jsdom + RTL / Playwright 1.60 (smoke のみ)                       |
-| 静的データ     | YAML → Zod 検証 → JSON (build 時に生成、リポジトリ管理)                     |
-| CI             | GitHub Actions (lint / typecheck / test / build)                            |
-| pre-commit     | lefthook (eslint / prettier / typecheck / gitleaks)                         |
-| デプロイ       | Cloud Run (multi-stage Dockerfile, Next.js standalone) — **Slice 6 で実装** |
+| 層             | 採用                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------- |
+| フロント       | **Next.js 16** (App Router) / React 19 / TypeScript 5.9                                     |
+| 状態           | Zustand 5 / React 19 標準 (`useSyncExternalStore` / `useReducer`)                           |
+| バリデーション | Zod 4 (NDJSON / API リクエスト / 静的データ)                                                |
+| BFF            | Next.js Route Handlers (Edge ではなく Node ランタイム)                                      |
+| デザイン       | 自作トークン (CSS 変数) + CSS Modules / 和紙テクスチャ + 明朝/ゴシック/モノ                 |
+| テスト         | Vitest 4 + jsdom + RTL / Playwright 1.60 (smoke のみ)                                       |
+| 静的データ     | YAML → Zod 検証 → JSON (build 時に生成、リポジトリ管理)                                     |
+| CI             | GitHub Actions (lint / typecheck / test / build / rules (Firebase Emulator) / e2e / Python) |
+| pre-commit     | lefthook (eslint / prettier / typecheck / gitleaks)                                         |
+| デプロイ       | Cloud Run (multi-stage Dockerfile, Next.js standalone) — **Slice 6 で実装**                 |
 
 ---
 
@@ -123,6 +129,28 @@ Python Agent 側からは `MLPR_USE_MOCK_STORAGE=false` + `MLPR_FIREBASE_STORAGE
 
 > **注:** Python Agent は port **8001** に移行済 (Firestore Emulator の 8080 と被るため)。
 
+### devcontainer の port forward がずれた場合
+
+VS Code の port forward が、コンテナ内 port を host 側で別 port に割り当てる
+ことがある (例: 9099 → 9100、8080 → 8081)。Firebase Web SDK は `localhost:9099`
+固定でブラウザから popup を開こうとするため、ずれていると popup が接続失敗する。
+`.env` で **ホスト側から見える host:port** を指定して上書きする:
+
+```env
+NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=localhost:9100
+NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST=localhost:8081
+# NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199
+```
+
+### Security Rules テスト
+
+```bash
+# Emulator を起動した別ターミナルがある状態で
+pnpm test:rules
+```
+
+CI では `firebase emulators:exec --only auth,firestore,storage` で一時起動して走る (`.github/workflows/ci.yml` の `rules` job)。
+
 ## Agent 側のテスト
 
 ```bash
@@ -155,6 +183,19 @@ dev (`pnpm dev` の 12MB バンドル) ではなく `pnpm start` (production bui
 使うのは、VS Code ポートフォワード経由で dev バンドル末尾が転送切れする事例の
 回避と、本番に近い構成での回帰検査の両方が目的。CI でも同じパス。
 
+## 画面と動線 (Slice 4 時点)
+
+| ルート            | 役割                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `/`               | TOP。初回訪問者 → 大型 hero + 「始める →」/ リピーター → `/local` 自動 redirect / サインイン済 → `/library` 自動 redirect |
+| `/local`          | 47 都道府県から地元を選ぶ                                                                                                 |
+| `/ingredients`    | 主役の食材を 1〜3 つ選ぶ                                                                                                  |
+| `/candidates/:id` | NDJSON で 3 案を順次受信、決める                                                                                          |
+| `/recipes/:id`    | 詳細レシピ + Imagen 画像。ハートで Firestore に保存 / 解除                                                                |
+| `/library`        | ピザ帳 (保存済みレシピ一覧)。プロフィール帯からサインアウト                                                               |
+
+全 5 画面の右上に AvatarButton (未サインイン: 「サインイン」リンク → SignInModal / サインイン済: イニシャル円 → /library)。
+
 ## API エンドポイント (Slice 3 時点)
 
 | メソッド | パス                                | 用途                                            |
@@ -165,6 +206,8 @@ dev (`pnpm dev` の 12MB バンドル) ではなく `pnpm start` (production bui
 | `POST`   | `/api/quicktap/sessions`            | 候補 3 案を NDJSON ストリームで生成             |
 | `POST`   | `/api/quicktap/sessions/:id/reroll` | 別 seed で振り直し                              |
 | `POST`   | `/api/recipes/:candidateId`         | 詳細レシピ + Imagen 画像 NDJSON (Slice 3)       |
+
+Slice 4 ではピザ帳 (Firestore) は Web SDK が直接書き込むので、Web 側に新規 BFF エンドポイントは追加していない (Security Rules で保護)。
 
 Agent (Python 側):
 
@@ -223,6 +266,10 @@ Agent (Python 側):
   - [requirements.md](.steering/20260517-slice3-detail-imagen/requirements.md)
   - [design.md](.steering/20260517-slice3-detail-imagen/design.md)
   - [tasklist.md](.steering/20260517-slice3-detail-imagen/tasklist.md)
+- [Slice 4 ステアリング](.steering/20260517-slice4-firestore-auth/) (Firestore + Auth + GCS / ピザ帳、v0.4.0)
+  - [requirements.md](.steering/20260517-slice4-firestore-auth/requirements.md)
+  - [design.md](.steering/20260517-slice4-firestore-auth/design.md)
+  - [tasklist.md](.steering/20260517-slice4-firestore-auth/tasklist.md)
 - [agent/README.md](agent/README.md) — Python サービス単独の手順
 
 ---
@@ -232,7 +279,8 @@ Agent (Python 側):
 - **Turbopack + `next/font/google` の解決バグ**: Next 16.2.6 で `dev` / `build` ともに workaround として `--webpack` 明示中 (`package.json` 参照)。Next 側修正が出たら外す。
 - **Vitest 4 採用**: `design.md` は Vitest 2 を指定していたが古いため最新を採用。
 - **Mock Agent**: Slice 1 は `MockAgentClient` で決定論的 3 案を返す。Slice 2 で Python ADK Agent (Cloud Run) に差し替え。
-- **Imagen 4 のコスト**: Slice 3 で詳細画面を開くたびに Imagen を 1 回叩く (~$0.04 / 画像)。GCS への永続化は Slice 4 or 6 で実装予定。それまでは毎回再生成。オフライン開発は `MLPR_USE_MOCK_IMAGE=true` で 1x1 透明 PNG を返すよう切替できる。
+- **Imagen 4 のコスト**: Slice 3 で詳細画面を開くたびに Imagen を 1 回叩く (~$0.04 / 画像)。Slice 4 で GCS Storage (Emulator) に put + URL 配信化したが、ドキュメント (Firestore) には imageUrl のみ保存し詳細レシピは保存しないため、`/library` から再アクセスする度に Imagen を再生成する (ドキュメントスナップショット化は Slice 5+)。オフライン開発は `MLPR_USE_MOCK_IMAGE=true` で 1x1 透明 PNG / `AGENT_MODE=mock` で和紙 SVG ダミーを返す。
+- **Slice 4 サインインフローの E2E**: Firebase Auth Emulator の `signInWithPopup` を Playwright から popup 無しで完結させる仕組みが未実装のため、`tests/e2e/auth.spec.ts` は `test.skip`。Slice 5 で対応予定。
 
 ## ライセンス
 
