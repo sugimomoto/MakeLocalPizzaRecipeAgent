@@ -51,9 +51,10 @@ test('locale → ingredients → candidates → recipe detail を 1 本通せる
   await expect(page.getByText('食 材')).toBeVisible();
   await expect(page.getByText('手 順')).toBeVisible();
 
-  // CTA (作ってみる) が present であれば DetailClient のレンダリングは完了している。
-  // 「ピザ帳に保存」は RecipeHero のハート (aria-label) と底部ボタン (text) の 2 箇所に
-  // 同じアクセシブル名で出るので、ここでは底部 CTA のみを text セレクタで確認する。
-  await expect(page.getByText('ピザ帳に保存')).toBeVisible();
+  // Slice 4 で旧「ピザ帳に保存」alert ボタンは削除済 (ハート + Firestore に統合)。
+  // 残った底部 CTA は「作ってみる」のみ。RecipeHero のハート aria-label は
+  // 未サインインなら「ピザ帳に保存」のままなので、ここでは底部ボタンのみを確認する。
   await expect(page.getByRole('button', { name: /作ってみる/ })).toBeVisible();
+  // ハートも描画されている (aria-label「ピザ帳に保存」 = guest 状態)
+  await expect(page.getByRole('button', { name: 'ピザ帳に保存' })).toBeVisible();
 });
