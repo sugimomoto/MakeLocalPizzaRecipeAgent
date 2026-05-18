@@ -30,6 +30,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare .env (Firebase env を build に焼き込み)
+        # `.env.example` には fake-api-key + USE_FIREBASE_EMULATOR=true 等が入って
+        # おり、build に焼き込んでも本番値ではない。CI runtime で実際に Firebase
+        # に接続することはなく、AuthProvider 側で getFirebaseAuth() が throw した
+        # ら unauthenticated に fall through する防御も入っている。
+        run: cp .env.example .env
+
       - name: Lint
         run: pnpm lint
 
@@ -62,6 +69,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Prepare .env (E2E は production build を経由するので env を作る)
+        run: cp .env.example .env
 
       - name: Install Playwright browsers (chromium)
         run: pnpm exec playwright install --with-deps chromium

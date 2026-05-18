@@ -68,7 +68,17 @@ export function AuthProvider({ children, authOverride }: AuthProviderProps): Rea
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    const auth = authOverride ?? getFirebaseAuth();
+    /* eslint-disable react-hooks/set-state-in-effect */
+    // Firebase の env が空の環境 (CI の E2E 等) で初期化が throw しても
+    // アプリ全体を落とさないように、未認証状態として静かに fall through する。
+    let auth: Auth;
+    try {
+      auth = authOverride ?? getFirebaseAuth();
+    } catch {
+      setUser(null);
+      setStatus('unauthenticated');
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (fbUser) => {
       if (!fbUser) {
         setUser(null);
@@ -79,6 +89,7 @@ export function AuthProvider({ children, authOverride }: AuthProviderProps): Rea
       setStatus('authenticated');
     });
     return unsub;
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [authOverride]);
 
   const signInWithGoogle = useCallback(async () => {
