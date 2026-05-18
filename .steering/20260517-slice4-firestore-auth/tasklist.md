@@ -256,29 +256,31 @@
 
 ### T-420 LibraryCard + ProfileStrip コンポーネント
 
-- [ ] `src/components/library/LibraryCard.tsx` + CSS (72px サムネ + title + 戦略印小 + 県名 + 保存日 + ハート)
-- [ ] `src/components/library/ProfileStrip.tsx` + CSS (アバタ + 名前 + メール + サインアウトボタン)
-- [ ] RTL test: 各カードのクリック / ハート / ProfileStrip のサインアウト呼び出し
+- [x] `src/components/library/LibraryCard.tsx` + CSS (72px サムネ + title + 戦略印小 + 県名 + 保存日 + ハート)
+- [x] `src/components/library/ProfileStrip.tsx` + CSS (アバタ + 名前 + メール + サインアウトボタン)
+- [x] RTL test: 各カードのクリック / ハート / ProfileStrip のサインアウト呼び出し
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add LibraryCard + ProfileStrip components`
+- **commit**: `feat(slice4): add LibraryCard + ProfileStrip components` (2d3b080)
 
 ### T-421 LibraryClient + /library/page.tsx
 
-- [ ] `app/library/page.tsx` (Server Component)
-- [ ] `app/library/_components/LibraryClient.tsx` + CSS
-- [ ] レイアウト: topRow + ScreenHero + ProfileStrip + LibraryCard リスト or 空状態
-- [ ] 未サインインなら SignInModal 強制 open + / に redirect (Modal を閉じた時)
-- [ ] サインアウト時 → `signOut()` + Toast 'info' + redirect to '/'
-- [ ] テスト: 状態別 (loading/empty/items/unauthenticated) の表示
-- **DoC**: vitest green / lint / typecheck / E2E partial
-- **commit**: `feat(slice4): add /library page + LibraryClient`
+- [x] `app/library/page.tsx` (Server Component)
+- [x] `app/library/_components/LibraryClient.tsx` + CSS
+- [x] レイアウト: topRow + ScreenHero + 保存件数 + ProfileStrip + LibraryCard リスト or 空状態
+- [x] 未サインインなら SignInModal 強制 open + / に redirect (Modal を閉じた時)
+- [x] サインアウト時 → `signOut()` + Toast 'info' + redirect to '/'
+- [x] LibraryCard クリック → PENDING_RECIPE_KEY に snapshot 書込 → /recipes/[id]
+- [x] LibraryCard ハート → useSavedRecipe(id).unsave + success Toast
+- **DoC**: vitest green / lint / typecheck (E2E は Phase 11 で延長)
+- **commit**: `feat(slice4): add /library page + LibraryClient` (d711d3e)
 
 ### T-422 ヘッダー上の AvatarButton を /library への直行に統一
 
-- [ ] 既存 AvatarButton のクリック動線を /library 1 本に絞る (dropdown は実装しない)
-- [ ] 未サインインで /library に直接アクセスした場合の挙動を確認 (Modal 強制 open)
+- [x] AvatarButton のクリック動線は `router.push('/library')` の 1 本 (T-415 で実装、dropdown は無し)
+- [x] 未サインインで /library に直接アクセス → SignInModal を強制 open、Modal クローズで / redirect (T-421 LibraryClient で実装)
+- [x] 全 5 画面 (Local / Ingredients / Candidates / Detail / Library) に AvatarButton 配置済
 - **DoC**: vitest green / 全画面で「アバター → /library」動線が成立
-- **commit**: `feat(slice4): unify avatar tap → /library across screens`
+- **commit**: 別 commit 不要 (T-415 + T-421 でカバー済)
 
 → **push & CI green 確認**
 
