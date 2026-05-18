@@ -48,8 +48,9 @@ export function CandidateCard({ candidate, onSelect, isActive = false }: Candida
 
       {keyIngredients && keyIngredients.length > 0 && (
         <div className={styles.chipRow} aria-label="主な食材">
-          {keyIngredients.map((ing) => (
-            <Chip key={ing} tone="shu" size="sm">
+          {keyIngredients.map((ing, i) => (
+            // 同一食材が複数回現れることがあるため index と結合して key を一意化
+            <Chip key={`${ing}-${i}`} tone="shu" size="sm">
               {ing}
             </Chip>
           ))}
@@ -58,8 +59,8 @@ export function CandidateCard({ candidate, onSelect, isActive = false }: Candida
 
       {sceneTags && sceneTags.length > 0 && (
         <div className={styles.chipRow} aria-label="シーンタグ">
-          {sceneTags.map((tag) => (
-            <Chip key={tag} tone="ghost" size="sm">
+          {sceneTags.map((tag, i) => (
+            <Chip key={`${tag}-${i}`} tone="ghost" size="sm">
               {tag}
             </Chip>
           ))}

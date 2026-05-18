@@ -77,6 +77,11 @@ function pickIngredientPair(input: GenerateCandidatesInput, strategy: Strategy):
   const sorted = [...input.ingredients].sort();
   const display = sorted.map((id) => MOCK_INGREDIENT_DISPLAY[id] ?? id);
   if (display.length === 0) return ['食材A', '食材B'];
+  if (display.length === 1) {
+    // 食材が 1 つしか選ばれていない場合、b を「モッツァレラ」で補完して
+    // タイトルや keyIngredients に同じ語が重複しないようにする。
+    return [display[0]!, 'モッツァレラ'];
+  }
   const idx = STRATEGY_ORDER.indexOf(strategy);
   const a = display[idx % display.length] ?? display[0]!;
   const b = display[(idx + 1) % display.length] ?? display[0]!;
@@ -135,7 +140,9 @@ async function* buildEvents(
     yield {
       type: 'candidate.ingredients',
       candidateId,
-      ingredients: [a, b, 'モッツァレラ'],
+      // a と b が既に「モッツァレラ」と一致する可能性 (食材 1 つ選択時の補完など)
+      // があるため Set で dedupe。order は a → b → モッツァレラ の優先順を維持。
+      ingredients: Array.from(new Set([a, b, 'モッツァレラ'])),
     };
 
     await delay(pseudoDelay(seed, ++eventIndex, delayRange));
