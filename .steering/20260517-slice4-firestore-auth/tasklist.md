@@ -290,14 +290,14 @@
 
 ### T-423 `/` を実画面化 + Sign-in 導線
 
-- [ ] `app/_components/HomeRedirector.tsx` を refactor → `app/_components/TopClient.tsx`
-- [ ] `localeId` 有 → /local に replace (リピーターの自動 redirect 維持)
-- [ ] 初回訪問者は TOP の中身を表示 (eyebrow + 大型明朝 + 朱 CTA「始める →」+ 「サインインしてピザ帳を開く」リンク + 3 戦略印オーナメント)
-- [ ] サインインリンクで `openModal()` → 認証成功で `router.push('/library')`
-- [ ] CSS Module で washi 背景 / 中央寄せ / 呼吸する余白 / フッタ
-- [ ] テスト: localeId 有 redirect / なし TOP 表示 / リンク挙動
-- **DoC**: vitest green / E2E が新 TOP を経由できる
-- **commit**: `feat(slice4): realize TOP page (/) with sign-in entry`
+- [x] `app/_components/HomeRedirector.tsx` を削除 → `app/_components/TopClient.tsx` 新設
+- [x] `localeId` 有 → /local に replace (リピーターの自動 redirect 維持)
+- [x] 初回訪問者は TOP の中身を表示 (eyebrow + 大型明朝 + 朱 CTA「始める →」+ 「サインインしてピザ帳を開く」リンク + 3 戦略印オーナメント)
+- [x] サインインリンクで `openModal()` → 認証成功 (TOP に戻った状態) で `/library` に自動 replace
+- [x] CSS Module で washi 背景 / 中央寄せ / 呼吸する余白 / フッタ
+- [x] テスト: hydration 前 null / localeId 有 redirect / なし TOP 表示 / 各リンク挙動 / authenticated で /library 行き
+- **DoC**: vitest green (E2E は Phase 11 で延長)
+- **commit**: `feat(slice4): realize TOP page (/) with sign-in entry` (f27df2e)
 
 → **push & CI green 確認**
 
