@@ -1,0 +1,122 @@
+.shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topRow {
+  padding: 10px 14px 0;
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+}
+
+.backBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+  padding: 0;
+}
+
+.titleLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  text-align: center;
+}
+
+.statusText {
+  padding: 30px;
+  text-align: center;
+  color: var(--mlpr-sumi-soft);
+  font-family: var(--mlpr-font-gothic);
+}
+
+.savedCount {
+  padding: 0 24px;
+  margin: 10px 0 0;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 13px;
+  color: var(--mlpr-sumi-soft);
+}
+.savedCount strong {
+  font-family: var(--mlpr-font-mono);
+  color: var(--mlpr-sumi);
+  font-weight: 700;
+  padding: 0 2px;
+}
+
+.profileWrap {
+  margin: 14px 16px 0;
+}
+
+.list {
+  margin: 14px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listTail {
+  text-align: center;
+  padding: 12px 0 0;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 0.3em;
+}
+
+/* Empty state */
+.emptyWrap {
+  padding: 50px 28px 0;
+  text-align: center;
+}
+
+.emptyHeart {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background: var(--mlpr-kinari);
+  border: 1px dashed var(--mlpr-sumi-muted);
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.emptyHeart span {
+  font-size: 44px;
+  color: var(--mlpr-sumi-muted);
+  line-height: 1;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.45;
+}
+
+.emptyBody {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.85;
+}
+
+.emptyCta {
+  margin: 28px auto 0;
+  width: 220px;
+}
