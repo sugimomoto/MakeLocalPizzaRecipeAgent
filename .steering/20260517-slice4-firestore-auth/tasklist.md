@@ -336,9 +336,10 @@
 - [x] `README.md`: 機能リスト / 画面動線 / 関連ドキュメント / 既知の事項を更新
 - [x] `.env.example` は Slice 4 で既に整備済 (確認のみ)
 - [x] `package.json` / `agent/pyproject.toml` を 0.4.0 にバンプ
-- [ ] CI 全 green を確認 (push 後)
-- [ ] `git tag -a v0.4.0 -m "Slice 4: Firestore + Auth + GCS"` + push --tags
+- [x] CI 全 green を確認 (run 26043880062 = HEAD a3c97e8 で全 4 job success)
+- [x] `git tag -a v0.4.0 -m "Slice 4 — Firestore + Auth + GCS / ピザ帳"` + push v0.4.0
 - **DoC**: 全 CI green / 手動 E2E 1 回成功 / タグ push 済
+- **commit**: `chore(slice4): wrap-up README + bump to v0.4.0` (8de20bd) + `fix(ci+slice4): make AuthProvider resilient to missing Firebase env` (a3c97e8)
 
 → **push & tag v0.4.0**
 
