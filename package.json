@@ -18,6 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:rules": "vitest run --config vitest.config.rules.ts",
     "test:e2e": "PLAYWRIGHT_BROWSERS_PATH=./.cache/ms-playwright playwright test --config tests/e2e/playwright.config.ts",
     "test:e2e:ui": "PLAYWRIGHT_BROWSERS_PATH=./.cache/ms-playwright playwright test --config tests/e2e/playwright.config.ts --ui",
     "format": "prettier --write .",
@@ -33,6 +34,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.1",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
