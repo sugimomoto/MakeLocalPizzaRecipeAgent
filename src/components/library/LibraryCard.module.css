@@ -1,0 +1,134 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(31, 26, 18, 0.04);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(31, 26, 18, 0.08);
+}
+.card:active {
+  transform: translateY(1px);
+}
+.card:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--mlpr-washi-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbFallback {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.seal {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+
+.sealExploit {
+  color: var(--mlpr-exploit-ink);
+  background: var(--mlpr-exploit-bg);
+}
+.sealTune {
+  color: var(--mlpr-tune-ink);
+  background: var(--mlpr-tune-bg);
+}
+.sealExplore {
+  color: var(--mlpr-explore-ink);
+  background: var(--mlpr-explore-bg);
+}
+
+.prefecture {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 10px;
+  color: var(--mlpr-sumi-soft);
+}
+
+.date {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  letterspacing: 0.08em;
+}
+
+.heart {
+  flex-shrink: 0;
+  padding: 6px;
+  color: var(--mlpr-shu);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.heart:hover {
+  background: var(--mlpr-shu-pale);
+}
+.heart:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
