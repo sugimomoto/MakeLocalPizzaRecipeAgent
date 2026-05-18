@@ -1,0 +1,119 @@
+/**
+ * Firestore `users/{uid}/savedRecipes/{candidateId}` の CRUD ヘルパ。
+ *
+ * - ドキュメント ID = candidateId なので 1 候補は 1 ユーザにつき 1 件しか保存できない
+ *   (重複保存防止 + ハートトグルが冪等)。
+ * - savedAt は serverTimestamp() を使い、Firestore 側で時刻が決まる。
+ * - 読出し時 Firestore Timestamp → JS Date に正規化して `SavedRecipe` 型として返す。
+ * - 未認証時の保護は Firestore Security Rules 側で実施 (このヘルパは uid を受け取るだけ)。
+ */
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  type DocumentData,
+  type DocumentSnapshot,
+  type Firestore,
+  type QuerySnapshot,
+  type Unsubscribe,
+} from 'firebase/firestore';
+
+import type { SavedRecipe, SavedRecipeSnapshot } from '@/domain/saved-recipe';
+
+export const USERS_COLLECTION = 'users';
+export const SAVED_RECIPES_SUBCOLLECTION = 'savedRecipes';
+
+function savedRecipeDocRef(db: Firestore, uid: string, candidateId: string) {
+  return doc(db, USERS_COLLECTION, uid, SAVED_RECIPES_SUBCOLLECTION, candidateId);
+}
+
+function savedRecipesCollectionRef(db: Firestore, uid: string) {
+  return collection(db, USERS_COLLECTION, uid, SAVED_RECIPES_SUBCOLLECTION);
+}
+
+/**
+ * Firestore の生 data を SavedRecipe (savedAt が Date) に正規化する。
+ * - savedAt が未着 (serverTimestamp() 反映前) なら呼び出し時刻で代用
+ * - 未知フィールドは無視する (forward compat 寄せ)
+ */
+function normalizeSavedRecipe(data: DocumentData): SavedRecipe {
+  const savedAtRaw = data['savedAt'];
+  let savedAt: Date;
+  if (savedAtRaw instanceof Timestamp) savedAt = savedAtRaw.toDate();
+  else if (savedAtRaw instanceof Date) savedAt = savedAtRaw;
+  else savedAt = new Date();
+
+  const base: SavedRecipe = {
+    candidateId: String(data['candidateId'] ?? ''),
+    title: String(data['title'] ?? ''),
+    localeId: String(data['localeId'] ?? '') as SavedRecipe['localeId'],
+    prefecture: String(data['prefecture'] ?? ''),
+    strategy: String(data['strategy'] ?? 'exploit') as SavedRecipe['strategy'],
+    imageUrl: String(data['imageUrl'] ?? ''),
+    savedAt,
+  };
+  if (Array.isArray(data['ingredients'])) {
+    return { ...base, ingredients: data['ingredients'] as NonNullable<SavedRecipe['ingredients']> };
+  }
+  return base;
+}
+
+export async function saveRecipe(
+  db: Firestore,
+  uid: string,
+  snapshot: SavedRecipeSnapshot,
+): Promise<void> {
+  const ref = savedRecipeDocRef(db, uid, snapshot.candidateId);
+  await setDoc(ref, {
+    ...snapshot,
+    savedAt: serverTimestamp(),
+  });
+}
+
+export async function unsaveRecipe(db: Firestore, uid: string, candidateId: string): Promise<void> {
+  await deleteDoc(savedRecipeDocRef(db, uid, candidateId));
+}
+
+export function subscribeSavedRecipe(
+  db: Firestore,
+  uid: string,
+  candidateId: string,
+  onChange: (recipe: SavedRecipe | null) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const ref = savedRecipeDocRef(db, uid, candidateId);
+  return onSnapshot(
+    ref,
+    (snap: DocumentSnapshot<DocumentData>) => {
+      if (!snap.exists()) {
+        onChange(null);
+        return;
+      }
+      onChange(normalizeSavedRecipe(snap.data()));
+    },
+    (error) => onError?.(error),
+  );
+}
+
+export function subscribeSavedRecipes(
+  db: Firestore,
+  uid: string,
+  onChange: (recipes: SavedRecipe[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const q = query(savedRecipesCollectionRef(db, uid), orderBy('savedAt', 'desc'));
+  return onSnapshot(
+    q,
+    (snap: QuerySnapshot<DocumentData>) => {
+      const items = snap.docs.map((d) => normalizeSavedRecipe(d.data()));
+      onChange(items);
+    },
+    (error) => onError?.(error),
+  );
+}
