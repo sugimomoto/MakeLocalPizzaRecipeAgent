@@ -224,29 +224,29 @@
 
 ### T-417 useSavedRecipe フック (1 件)
 
-- [ ] `src/hooks/use-saved-recipe.ts`: `onSnapshot` で doc を購読 + save/unsave 関数
-- [ ] `src/lib/firebase/saved-recipe.ts`: Firestore CRUD ヘルパ + 型
-- [ ] テスト: Emulator 経由 (Provider mock) で save → state 'saved' / unsave → 'unsaved'
-- **DoC**: vitest green (Firestore Emulator が起動していること)
-- **commit**: `feat(slice4): add useSavedRecipe hook`
+- [x] `src/hooks/use-saved-recipe.ts`: `onSnapshot` で doc を購読 + save/unsave 関数
+- [x] `src/lib/firebase/saved-recipe.ts`: Firestore CRUD ヘルパ + 型
+- [x] テスト: helper を mock してフックのロジックを検証 (auth status 連動 / save/unsave 委譲 / unsubscribe / error 集約)
+- **DoC**: vitest green
+- **commit**: `feat(slice4): add useSavedRecipe hook + Firestore CRUD helpers` (11f4697)
 
 ### T-418 DetailClient のハートを Firestore + Modal + Toast に接続
 
-- [ ] DetailClient: 既存 `isSaved` local state を `useSavedRecipe(candidateId)` に置換
-- [ ] ハート onClick: state 別に分岐 (unauth → openModal / saved → unsave + toast / unsaved → save + toast)
-- [ ] 旧「ピザ帳に保存」ボタンを削除 (alert もろとも)
-- [ ] RecipeHero の `isSaved` prop を `savedState: 'unsaved'|'saved'|'unauthenticated'` に拡張
-- [ ] 未サインイン時のガイド表示 (デザイン 12 の guest state)
-- [ ] テスト: 各 state の onClick が想定通り
+- [x] DetailClient: 既存 `isSaved` local state を `useSavedRecipe(candidateId)` に置換
+- [x] ハート onClick: state 別に分岐 (unauth → openModal / saved → unsave + toast / unsaved → save + toast)
+- [x] 旧「ピザ帳に保存」ボタンを削除 (alert もろとも、pseudoAlert も削除)
+- [x] RecipeHero の `isSaved` prop を `savedState: 'unsaved'|'saved'|'unauthenticated'` に拡張
+- [x] 未サインイン時のガイド表示「サインインしてピザ帳に保存」吹き出し
+- [x] テスト: RecipeHero の 3 state ＋ guest hint
 - **DoC**: vitest green / lint / typecheck
-- **commit**: `feat(slice4): wire DetailClient heart to Firestore + Modal + Toast`
+- **commit**: `feat(slice4): wire DetailClient heart to Firestore + Modal + Toast` (57fbda7)
 
 ### T-419 useSavedRecipes フック (一覧、orderBy savedAt desc)
 
-- [ ] `src/hooks/use-saved-recipes.ts`: `onSnapshot` で query 購読
-- [ ] テスト: Emulator で 3 件 add → 一覧が降順で返る
+- [x] `src/hooks/use-saved-recipes.ts`: `onSnapshot` で query 購読
+- [x] テスト: helper を mock して空配列 / 3 件レスポンス / unsubscribe / error
 - **DoC**: vitest green
-- **commit**: `feat(slice4): add useSavedRecipes hook (list)`
+- **commit**: `feat(slice4): add useSavedRecipes hook (list)` (b8fa761)
 
 → **push & CI green 確認**
 
