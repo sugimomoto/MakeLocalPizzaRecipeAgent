@@ -4,18 +4,16 @@
   padding-bottom: 100px;
   background: var(--mlpr-washi, #f5efe1);
   min-height: 100vh;
-  position: relative;
 }
 
-/* RecipeHero の上にうっすら被せるトップ行 (画像の上端に Avatar が乗る) */
+/* RecipeHero の上に独立して配置するトップ行。
+   以前は position: absolute で画像領域に重ねていたが、RecipeHero の
+   右上ハートと衝突するため通常の flow に戻す。 */
 .topRow {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  z-index: 5;
+  padding: 10px 14px 8px;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  /* RecipeHero の戻る (◂) は左上にあるので、AvatarButton は右上に */
 }
 
 .body {
