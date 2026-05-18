@@ -193,10 +193,29 @@ export class MockAgentClient implements AgentClient {
 // ----- Slice 3: 詳細レシピ + 画像 Mock (Slice 4 で URL 化) -------------------
 
 // Mock の image URL — 実 Agent では Storage Emulator / 本番 GCS の URL に置き換わる。
-// 1x1 透明 PNG の data URI でも valid な src になるので Storybook / E2E でも壊れない。
-const MOCK_IMAGE_URL =
-  'data:image/png;base64,' +
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+// 開発体験のため、和紙トーンのダミー SVG (data URI) を返す。
+// オフラインでも壊れず、視覚的にピザ画像が乗っていることが判別できる。
+// (本物の Imagen 出力は Slice 4 の AGENT_MODE=http + 認証で確認できる)
+const MOCK_IMAGE_URL = `data:image/svg+xml;utf8,${encodeURIComponent(
+  [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" preserveAspectRatio="xMidYMid slice">`,
+    // 背景 (washi-deep)
+    `<rect width="640" height="480" fill="#e8ddc4"/>`,
+    // ピザの皿 (薄い円)
+    `<circle cx="320" cy="240" r="200" fill="#fbf7ed" stroke="#928571" stroke-width="2" opacity="0.6"/>`,
+    // ピザ生地 (中央円、朱で軽く)
+    `<circle cx="320" cy="240" r="170" fill="#f2d9cc" stroke="#c8412a" stroke-width="3"/>`,
+    // トッピング (3 つの円: 朱 / 山吹 / 抹茶)
+    `<circle cx="260" cy="200" r="22" fill="#c8412a" opacity="0.85"/>`,
+    `<circle cx="380" cy="220" r="18" fill="#dc8a2a" opacity="0.85"/>`,
+    `<circle cx="300" cy="290" r="20" fill="#607744" opacity="0.85"/>`,
+    `<circle cx="370" cy="295" r="14" fill="#c8412a" opacity="0.75"/>`,
+    `<circle cx="240" cy="265" r="12" fill="#dc8a2a" opacity="0.75"/>`,
+    // ラベル
+    `<text x="320" y="430" text-anchor="middle" font-family="serif" font-size="22" fill="#5a4e3e" letter-spacing="6">MOCK PIZZA</text>`,
+    `</svg>`,
+  ].join(''),
+)}`;
 
 async function* buildRecipeDetailEvents(
   input: GenerateRecipeDetailInput,
