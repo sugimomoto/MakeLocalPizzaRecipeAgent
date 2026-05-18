@@ -3,9 +3,15 @@
  *
  * - Slice 4: client → Firestore 直接書込み (BFF 経由なし)。
  * - `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` の場合、auth/firestore/storage の
- *   3 ハンドルを Emulator に向ける (localhost:9099 / 8080 / 9199)。
- * - HMR / 二重初期化対策で `getApps()` を見て singleton 化、
- *   Emulator 接続済みフラグを auth インスタンス上に持たせて重複 connect を防ぐ。
+ *   3 ハンドルを Emulator に向ける。
+ * - 各 Emulator のホストは env で上書き可能 (devcontainer のポートフォワードで
+ *   ホスト側ポートがずれる場合に必要):
+ *     NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=localhost:9099
+ *     NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST=localhost:8080
+ *     NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199
+ * - HMR / 二重初期化対策で `getApps()` を見て singleton 化。
+ *   Emulator 接続済みフラグを各ハンドルに持たせ、独立に 1 回ずつ connect する
+ *   (auth だけ初期化したいケースで storage の connect を待たせない)。
  *
  * server-side で参照しても crash しないように、Emulator 接続は
  * `typeof window !== 'undefined'` でガード。
@@ -17,6 +23,16 @@ import { connectStorageEmulator, getStorage, type FirebaseStorage } from 'fireba
 
 type EmulatorMarked = { _mlprEmulatorConnected?: true };
 
+type EmulatorHostPort = { host: string; port: number };
+
+function parseHostPort(raw: string | undefined, fallback: EmulatorHostPort): EmulatorHostPort {
+  if (!raw) return fallback;
+  const [host, portStr] = raw.split(':');
+  const port = Number.parseInt(portStr ?? '', 10);
+  if (!host || !Number.isFinite(port)) return fallback;
+  return { host, port };
+}
+
 function readEnv(): {
   apiKey: string;
   authDomain: string;
@@ -24,6 +40,9 @@ function readEnv(): {
   storageBucket: string;
   appId: string;
   useEmulator: boolean;
+  authEmulator: EmulatorHostPort;
+  firestoreEmulator: EmulatorHostPort;
+  storageEmulator: EmulatorHostPort;
 } {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? '';
   const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? '';
@@ -37,6 +56,18 @@ function readEnv(): {
     storageBucket: `${projectId}.appspot.com`,
     appId,
     useEmulator,
+    authEmulator: parseHostPort(process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST, {
+      host: 'localhost',
+      port: 9099,
+    }),
+    firestoreEmulator: parseHostPort(process.env.NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST, {
+      host: 'localhost',
+      port: 8080,
+    }),
+    storageEmulator: parseHostPort(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST, {
+      host: 'localhost',
+      port: 9199,
+    }),
   };
 }
 
@@ -66,7 +97,7 @@ export function getFirebaseApp(): FirebaseApp {
 export function getFirebaseAuth(): Auth {
   if (!_auth) {
     _auth = getAuth(getFirebaseApp());
-    maybeConnectEmulators();
+    connectAuthEmulatorIfNeeded(_auth);
   }
   return _auth;
 }
@@ -74,7 +105,7 @@ export function getFirebaseAuth(): Auth {
 export function getFirebaseDb(): Firestore {
   if (!_db) {
     _db = getFirestore(getFirebaseApp());
-    maybeConnectEmulators();
+    connectFirestoreEmulatorIfNeeded(_db);
   }
   return _db;
 }
@@ -82,22 +113,40 @@ export function getFirebaseDb(): Firestore {
 export function getFirebaseStorage(): FirebaseStorage {
   if (!_storage) {
     _storage = getStorage(getFirebaseApp());
-    maybeConnectEmulators();
+    connectStorageEmulatorIfNeeded(_storage);
   }
   return _storage;
 }
 
-function maybeConnectEmulators(): void {
-  if (typeof window === 'undefined') return;
-  const env = readEnv();
-  if (!env.useEmulator) return;
-  // 3 ハンドルが全部揃ったタイミングでまとめて connect (どれか 1 つから呼ばれてもよい)
-  if (!_auth || !_db || !_storage) return;
-  const marker = _auth as Auth & EmulatorMarked;
+function shouldConnectEmulator(): boolean {
+  if (typeof window === 'undefined') return false;
+  return readEnv().useEmulator;
+}
+
+function connectAuthEmulatorIfNeeded(auth: Auth): void {
+  if (!shouldConnectEmulator()) return;
+  const marker = auth as Auth & EmulatorMarked;
   if (marker._mlprEmulatorConnected) return;
-  connectAuthEmulator(_auth, 'http://localhost:9099', { disableWarnings: true });
-  connectFirestoreEmulator(_db, 'localhost', 8080);
-  connectStorageEmulator(_storage, 'localhost', 9199);
+  const { host, port } = readEnv().authEmulator;
+  connectAuthEmulator(auth, `http://${host}:${port}`, { disableWarnings: true });
+  marker._mlprEmulatorConnected = true;
+}
+
+function connectFirestoreEmulatorIfNeeded(db: Firestore): void {
+  if (!shouldConnectEmulator()) return;
+  const marker = db as Firestore & EmulatorMarked;
+  if (marker._mlprEmulatorConnected) return;
+  const { host, port } = readEnv().firestoreEmulator;
+  connectFirestoreEmulator(db, host, port);
+  marker._mlprEmulatorConnected = true;
+}
+
+function connectStorageEmulatorIfNeeded(storage: FirebaseStorage): void {
+  if (!shouldConnectEmulator()) return;
+  const marker = storage as FirebaseStorage & EmulatorMarked;
+  if (marker._mlprEmulatorConnected) return;
+  const { host, port } = readEnv().storageEmulator;
+  connectStorageEmulator(storage, host, port);
   marker._mlprEmulatorConnected = true;
 }
 
