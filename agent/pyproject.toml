@@ -24,6 +24,13 @@ dependencies = [
     "google-cloud-firestore>=2.18.0",
     # Slice 5: refresh CLI が .env を読む (Web の Next.js は dotenv-flow を介さない)
     "python-dotenv>=1.0.0",
+    # Slice 6: OpenTelemetry + Cloud Trace export (Web 側と親子 span を繋ぐ)
+    "opentelemetry-api>=1.27.0",
+    "opentelemetry-sdk>=1.27.0",
+    "opentelemetry-exporter-gcp-trace>=1.7.0",
+    "opentelemetry-instrumentation-fastapi>=0.48b0",
+    "opentelemetry-instrumentation-httpx>=0.48b0",
+    "opentelemetry-propagator-gcp>=1.7.0",
 ]
 
 [project.optional-dependencies]

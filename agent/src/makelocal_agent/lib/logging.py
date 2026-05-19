@@ -3,12 +3,15 @@
 - JSON 1 行 / 1 ログ (severity / message / timestamp / 任意 context)
 - severity は Cloud Logging 用 (DEBUG/INFO/WARNING/ERROR)
 - get_logger() でモジュール内シングルトンを取得
+- Slice 6: OTel 配線済 (Cloud Run 上) では trace_id を inject し、
+  Cloud Logging から該当 trace に飛べるようにする
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 from datetime import UTC, datetime
 from typing import Any, Literal
@@ -60,6 +63,19 @@ class StructuredLogger:
             **self._base_context,
             **(context or {}),
         }
+        # Slice 6: Cloud Run 上で OTel が動いている場合のみ trace を注入。
+        # logging_v2_LogEntry の `trace` フィールドに合わせ
+        # `projects/<project-id>/traces/<TRACE_ID>` 形式で書くと Cloud Logging
+        # と Cloud Trace の relation が見える化される。
+        trace_id = _get_current_trace_id()
+        if trace_id is not None:
+            project_id = _get_gcp_project_id()
+            if project_id:
+                record["logging.googleapis.com/trace"] = (
+                    f"projects/{project_id}/traces/{trace_id}"
+                )
+            else:
+                record["trace_id"] = trace_id
         line = json.dumps(record, ensure_ascii=False)
         stream = self._stream_err if level in ("warn", "error") else self._stream_info
         print(line, file=stream, flush=True)
@@ -90,6 +106,21 @@ def _level_for_priority(priority: int) -> LogLevel:
         if p == priority:
             return lvl
     return "info"
+
+
+def _get_current_trace_id() -> str | None:
+    """OTel 配線済なら現在 span の trace_id を返す。循環 import 防止のため lazy。"""
+    try:
+        from .observability import get_current_trace_id  # noqa: PLC0415
+
+        return get_current_trace_id()
+    except Exception:  # pragma: no cover
+        return None
+
+
+def _get_gcp_project_id() -> str | None:
+    """Cloud Run 起動時の env から GCP プロジェクト ID を取得 (Cloud Logging の trace link 用)。"""
+    return os.environ.get("MLPR_GOOGLE_CLOUD_PROJECT") or os.environ.get("GOOGLE_CLOUD_PROJECT")
 
 
 _singleton: StructuredLogger | None = None

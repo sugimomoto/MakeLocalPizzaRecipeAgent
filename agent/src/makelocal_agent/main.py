@@ -19,6 +19,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .lib.logging import get_logger
+from .lib.observability import configure_observability
 from .routes import candidates, health, recipes, reroll
 
 app = FastAPI(
@@ -29,6 +30,10 @@ app = FastAPI(
         "Slice 3 で /agent/recipes/{id} を追加し、詳細レシピ + Imagen 画像を同様に配信。"
     ),
 )
+
+# Slice 6: Cloud Run 環境でだけ OTel + Cloud Trace を起動 (K_SERVICE 判定)。
+# Cloud Run 外 (uvicorn ローカル / pytest) では no-op。
+configure_observability(app)
 
 app.include_router(health.router)
 app.include_router(candidates.router)
