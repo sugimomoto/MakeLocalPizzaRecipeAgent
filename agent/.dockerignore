@@ -1,0 +1,57 @@
+# =============================================================================
+# .dockerignore — agent/ build context 除外
+# =============================================================================
+# image に含めない:
+#   - test 関連 (tests/, .pytest_cache, .coverage)
+#   - 開発時の venv / cache (.venv, .ruff_cache, .mypy_cache)
+#   - dev / refresh CLI (scripts/) は image には不要 (refresh は手元で実行)
+#   - 秘密情報 (.env, *.pem)
+#   - VCS / IDE
+# =============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+.Python
+
+# Test / Lint cache
+tests/
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+
+# Virtualenv (builder で作り直す)
+.venv/
+venv/
+env/
+
+# Secrets (誤 bake 防止)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+
+# Refresh CLI は本番 image に含めない (手元から実行する設計)
+scripts/
+
+# Misc
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Docker / Build artifacts
+Dockerfile
+.dockerignore
+
+# Git
+.git/
+.gitignore
