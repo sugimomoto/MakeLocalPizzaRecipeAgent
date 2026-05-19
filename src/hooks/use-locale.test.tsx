@@ -14,7 +14,8 @@ describe('useLocale', () => {
     const { result } = renderHook(() => useLocale());
     expect(result.current.localeId).toBeNull();
     expect(result.current.selectedAt).toBeNull();
-    expect(result.current.isHydrated).toBe(true); // jsdom 環境では window が存在
+    // hydration-safe 仕様: useEffect 実行後 (renderHook 完了時点) に true
+    expect(result.current.isHydrated).toBe(true);
   });
 
   it('reads an existing stored value on first render', () => {

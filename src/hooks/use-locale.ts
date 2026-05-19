@@ -14,7 +14,7 @@
  * 表示は呼び出し側で /api/locales のレスポンスと突き合わせる。
  */
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 import {
   clearLocale as clearLocaleStorage,
@@ -83,9 +83,17 @@ export type UseLocaleResult = {
 
 export function useLocale(): UseLocaleResult {
   const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  // useSyncExternalStore は SSR 中は getServerSnapshot を返し、
-  // クライアントで mount 後 getSnapshot に切り替わる → その時点で hydrated とみなす
-  const isHydrated = typeof window !== 'undefined';
+  // hydration-safe: 初回 client render は SSR と同じく false。
+  // mount 後の useEffect で true に切り替えることで、React の SSR/CSR 一致
+  // チェックを通す (`typeof window !== 'undefined'` 即時判定だと SSR=false /
+  // CSR initial render=true で mismatch になる)。
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    // hydration safe フラグ。mount 完了の同期通知が目的のため
+    // set-state-in-effect 警告は意図通り disable する。
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsHydrated(true);
+  }, []);
 
   return {
     localeId: stored?.localeId ?? null,
