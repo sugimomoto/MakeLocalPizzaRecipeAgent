@@ -1,3 +1,4 @@
+# mypy: warn-unused-ignores=False
 """ふるさと納税返礼品の Firestore キャッシュ層。
 
 設計:
@@ -7,12 +8,15 @@
 - agent runtime / Web SDK は read のみ。書き込みは refresh script のみ。
 
 テスト容易性のため Protocol で抽象化し、in-memory 実装を併存させる。
+
+注: `google-cloud-firestore` の attribute 解決が CI と local で揺れるため
+file-level で `warn-unused-ignores=False` を当てている。
 """
 
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from makelocal_agent.domain.furusato import FurusatoItem
 
@@ -93,8 +97,9 @@ class FirestoreFurusatoCache:
     """
 
     def __init__(self, *, project_id: str) -> None:
-        # SDK は重いので必要時のみ import (google-cloud-firestore は py.typed 未提供)
-        from google.cloud import firestore  # type: ignore[import-untyped,attr-defined]  # noqa: I001,PLC0415
+        # SDK は重いので必要時のみ import (namespace package の attribute 解決を
+        # mypy が嫌うため attr-defined を抑制)
+        from google.cloud import firestore  # type: ignore[attr-defined]  # noqa: PLC0415
 
         self._client = firestore.Client(project=project_id)
         self._collection = self._client.collection(CACHE_COLLECTION)
@@ -104,7 +109,11 @@ class FirestoreFurusatoCache:
         # ブロックしないよう asyncio.to_thread で逃がす。
         import asyncio  # noqa: PLC0415
 
-        snap = await asyncio.to_thread(self._collection.document(ingredient_id).get)
+        # firestore.Client は同期版なので `get()` の戻り値は `DocumentSnapshot`。
+        # 型 stubs では Union[DocumentSnapshot, Awaitable[DocumentSnapshot]] と
+        # 推論されるため、Any にキャストして以後の属性アクセスを通す。
+        raw_snap = await asyncio.to_thread(self._collection.document(ingredient_id).get)
+        snap = cast(Any, raw_snap)
         if not snap.exists:
             return None
         data: dict[str, Any] = snap.to_dict() or {}

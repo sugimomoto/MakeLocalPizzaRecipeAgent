@@ -78,7 +78,14 @@ disallow_untyped_decorators = false # FastAPI/router decorator は untyped
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["google.adk.*", "vertexai.*", "google.cloud.aiplatform.*", "yaml"]
+module = [
+    "google.adk.*",
+    "vertexai.*",
+    # `google.cloud.*` を一括で ignore (firestore / storage / aiplatform はすべて
+    # py.typed 未提供 or 型推論が CI と local で揺れる)
+    "google.cloud.*",
+    "yaml",
+]
 ignore_missing_imports = true
 
 # ── pytest ───────────────────────────────────────────────────────────────

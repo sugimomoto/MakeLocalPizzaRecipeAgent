@@ -1,3 +1,4 @@
+# mypy: warn-unused-ignores=False
 """画像オブジェクトストレージ抽象 (Slice 4)。
 
 - `StorageClient` Protocol で実装を差替可能に
@@ -9,6 +10,8 @@
   `recipes/{key}.png` にぶら下げる
 - PNG のみを扱う (Slice 4)。将来 WebP / JPEG 対応する場合は content_type
   引数を追加する
+- `google-cloud-storage` の attribute 解決が CI と local で揺れるため
+  file-level で `warn-unused-ignores=False`。
 """
 
 from __future__ import annotations
@@ -58,8 +61,9 @@ class FirebaseStorageClient:
         if emulator_host:
             # google-cloud-storage は STORAGE_EMULATOR_HOST を見て接続先を切替
             os.environ.setdefault("STORAGE_EMULATOR_HOST", f"http://{emulator_host}")
-        # SDK は重いので必要時のみ import (google-cloud-storage は py.typed 未提供)
-        from google.cloud import storage  # type: ignore[import-untyped,attr-defined]  # noqa: PLC0415,I001
+        # SDK は重いので必要時のみ import (namespace package の attribute 解決を
+        # mypy が嫌うため attr-defined を抑制)
+        from google.cloud import storage  # type: ignore[attr-defined]  # noqa: PLC0415
 
         self._client = storage.Client()
 
