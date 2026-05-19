@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { AvatarButton } from '@/components/auth/AvatarButton';
 import { StrategySeal } from '@/components/candidate/StrategySeal';
+import { FurusatoSection } from '@/components/furusato/FurusatoSection';
 import { Button } from '@/components/primitives/Button';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
 import { MaterialList } from '@/components/recipe/MaterialList';
@@ -197,6 +198,8 @@ export function DetailClient({ candidateId }: DetailClientProps) {
           <SectionLabel jp="手 順" {...(stream.steps && { count: stream.steps.length })} />
           <StepList steps={stream.steps} />
         </section>
+
+        <FurusatoSection ingredientIds={pending?.ingredients ?? []} />
 
         <StoryCard story={stream.story} />
       </div>

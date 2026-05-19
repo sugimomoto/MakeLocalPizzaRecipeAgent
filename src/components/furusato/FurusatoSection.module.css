@@ -1,0 +1,59 @@
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* セクションヘッダ: 「取 寄 / FURUSATO」既存「食 材」リズムに揃える */
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.headerJp {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 0.3em;
+}
+
+.headerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--mlpr-hairline);
+}
+
+.headerEn {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 9px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 0.2em;
+}
+
+.subcopy {
+  margin: 0 0 14px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.7;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.errorBox {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(159, 50, 32, 0.06);
+  border: 1px solid rgba(159, 50, 32, 0.2);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11.5px;
+  color: var(--mlpr-shu-deep);
+  line-height: 1.6;
+}
