@@ -23,6 +23,8 @@ export default tseslint.config(
       '.steering/**',
       '.claude/**',
       '.devcontainer/**',
+      // _reference/ は別プロジェクトの clone (gitignore 済)。lint 対象外
+      '_reference/**',
       '.github/**',
       'public/**',
       // Python サイド (Slice 2 以降)
