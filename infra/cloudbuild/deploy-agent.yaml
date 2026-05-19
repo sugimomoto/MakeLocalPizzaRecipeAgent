@@ -1,0 +1,68 @@
+# =============================================================================
+# Cloud Build — mlpr-agent build + deploy
+# =============================================================================
+# 呼び出し:
+#   gcloud builds submit \
+#     --config=infra/cloudbuild/deploy-agent.yaml \
+#     --substitutions=_TAG=$(git rev-parse --short HEAD) \
+#     .
+#
+# 前提:
+#   - infra/terraform/ で apply 済
+#   - Secret Manager の楽天 secret には値が投入済
+#   - 実行 SA は mlpr-deployer
+#
+# 注: build context は repo root (`.`)。docker は agent/Dockerfile を見る。
+#     agent/.dockerignore で tests / .venv / scripts は除外済。
+# =============================================================================
+
+substitutions:
+  _REGION: 'asia-northeast1'
+  _REPO: 'mlpr'
+  _SERVICE: 'mlpr-agent'
+  _TAG: 'manual'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
+timeout: 1800s
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:${_TAG}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:latest'
+
+steps:
+  # 1. Docker build (Agent: ./agent/Dockerfile)
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:${_TAG}
+      - --tag=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:latest
+      - --file=agent/Dockerfile
+      - agent
+
+  # 2. Push
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - --all-tags
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent
+
+  # 3. Cloud Run deploy (internal ingress、no-allow-unauthenticated は Terraform 側で既設)
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:${_TAG}
+      - --region=${_REGION}
+      - --platform=managed
+      - --ingress=internal
+      - --no-allow-unauthenticated
+      - --quiet
