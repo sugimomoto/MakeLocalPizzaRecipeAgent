@@ -17,9 +17,13 @@
 
 name: Deploy
 
+# 初期は workflow_dispatch のみ (手動 trigger)。
+# GCP セットアップ + Terraform apply + GitHub vars 設定が完了したら
+# `push: branches: [main]` を有効化して main push 自動デプロイに切替える。
+# 詳細手順は infra/README.md を参照。
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_dispatch:
 
 # OIDC token (id-token: write) が必須。content は actions/checkout のみで read。

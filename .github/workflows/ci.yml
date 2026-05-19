@@ -184,8 +184,9 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          # providers.tf の required_version >= 1.6
-          terraform_version: '1.6.0'
+          # required_version >= 1.6。terraform 1.6.0 は provider GPG key が
+          # 期限切れになるため、現行 stable (1.11+) を使う。
+          terraform_version: '1.11.0'
           terraform_wrapper: false
 
       - name: terraform fmt -check

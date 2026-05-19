@@ -71,9 +71,7 @@ class StructuredLogger:
         if trace_id is not None:
             project_id = _get_gcp_project_id()
             if project_id:
-                record["logging.googleapis.com/trace"] = (
-                    f"projects/{project_id}/traces/{trace_id}"
-                )
+                record["logging.googleapis.com/trace"] = f"projects/{project_id}/traces/{trace_id}"
             else:
                 record["trace_id"] = trace_id
         line = json.dumps(record, ensure_ascii=False)
