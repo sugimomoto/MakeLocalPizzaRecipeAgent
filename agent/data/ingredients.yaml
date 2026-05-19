@@ -191,7 +191,9 @@ locales:
         story: 清流四万十川で育つ、香り立つ磯の風
       - id: kochi-myoga
         name: 茗荷
-        searchQuery: 茗荷 高知
+        # 「茗荷 高知」だと楽天ふるさと納税で 0 件 (retrospective 実績)。
+        # ひらがな単独 + AND「ふるさと納税」で 3 件取得できることを実証済 (2026-05)。
+        searchQuery: みょうが
         category: vegetable
         seasons: [summer]
         story: 全国シェア 9 割、すっきりした香気と軽い辛味
