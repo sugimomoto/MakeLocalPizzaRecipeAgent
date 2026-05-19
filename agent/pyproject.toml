@@ -20,6 +20,10 @@ dependencies = [
     "google-cloud-aiplatform>=1.78.0",
     # Slice 4: Firebase Storage (Emulator + 本番 GCS) に Imagen 画像を put
     "google-cloud-storage>=2.18.0",
+    # Slice 5: ふるさと納税キャッシュを Firestore (Emulator + 本番) に書く
+    "google-cloud-firestore>=2.18.0",
+    # Slice 5: refresh CLI が .env を読む (Web の Next.js は dotenv-flow を介さない)
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
