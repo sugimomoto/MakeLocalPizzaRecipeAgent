@@ -147,23 +147,26 @@
 
 ### T-510 `src/lib/firebase/furusato.ts` (read-only ヘルパ)
 
-- [ ] `subscribeFurusatoItems(db, ingredientId, onChange, onError): Unsubscribe`
+- [x] `subscribeFurusatoItems(db, ingredientId, onChange, onError): Unsubscribe`
   - `furusato_items/{id}` の `onSnapshot`
-  - TTL 切れなら空配列を返す (アプリ側評価)
-  - Timestamp → JS Date 正規化 (savedAt 同様)
-- [ ] テスト: helper を mock せず Firestore lite mock で 1 ケース (返却 shape の検証)
+  - doc 不在 / TTL 切れ なら空配列
+  - Firestore Timestamp / Date / ISO 文字列の 3 形式を Date に正規化
+  - 各 item を最小バリデーション (itemId / title / url / donationAmount>0) で弾く
+- [x] テスト 6 件 (firebase/firestore モック; doc 不在 / fresh / TTL 切れ / 必須欠落 / error / Unsubscribe)
 - **DoC**: vitest green
-- **commit**: `feat(slice5): add Firestore subscribeFurusatoItems helper`
+- **commit**: `feat(slice5): add Firestore subscribeFurusatoItems helper` (d968bec)
 
 ### T-511 `src/hooks/use-furusato-items.ts`
 
-- [ ] `useFurusatoItems(ingredientIds: string[]): { state, items, error }`
-- [ ] `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` で `{ state: 'disabled', items: [], error: null }`
-- [ ] 各 id について `subscribeFurusatoItems` を並列で張る (useEffect で N 個)
-- [ ] 結果を accumulate → flatten + `donationAmount` 昇順 sort
-- [ ] テスト: helper mock で disabled / loading / ready / error の各遷移
+- [x] `useFurusatoItems(ingredientIds: string[]): { state, items, error }`
+- [x] `NEXT_PUBLIC_FURUSATO_INTEGRATION!='on'` で `{ state: 'disabled', items: [], error: null }`
+- [x] 各 id について `subscribeFurusatoItems` を並列で張る (useEffect で N 個)
+- [x] 結果を bucket map に保持 → flatten + `donationAmount` 昇順 sort
+- [x] 全 ingredient で first snapshot 受信したら ready 遷移
+- [x] ingredientIds 変更で全 unsub → 張り直し
+- [x] テスト 7 件 (disabled / 空 / loading / flatten+sort / error / unmount / resubscribe)
 - **DoC**: vitest green
-- **commit**: `feat(slice5): add useFurusatoItems hook`
+- **commit**: `feat(slice5): add useFurusatoItems hook` (a93731c)
 
 → **push & CI green 確認**
 
