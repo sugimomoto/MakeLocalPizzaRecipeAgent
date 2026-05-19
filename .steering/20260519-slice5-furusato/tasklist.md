@@ -256,10 +256,10 @@
 - [x] `package.json` を 0.5.0 にバンプ
 - [x] `agent/pyproject.toml` を 0.5.0 にバンプ
 - [x] `NEXT_PUBLIC_APP_VERSION=0.5.0` を `.env.example` に
-- [ ] CI 全 green を確認 (push 後)
-- [ ] `git tag -a v0.5.0 -m "Slice 5 — Rakuten Furusato connection"` + push v0.5.0
+- [x] CI 全 green を確認 (run 26101213868, HEAD 4c07777 で 4 job 全 success)
+- [x] `git tag -a v0.5.0` + push v0.5.0
 - **DoC**: 全 CI green / 手動 dev で詳細画面に「取 寄 / FURUSATO」セクション + カードが出る / タグ push 済
-- **commit**: `chore(slice5): wrap-up README + bump to v0.5.0`
+- **commit**: `chore(slice5): wrap-up README + bump to v0.5.0` (82a1d5f) + `fix(slice5): satisfy ruff/mypy strict on refresh CLI script` (4e371e5) + `fix(slice5): stabilize mypy across CI and local` (4c07777)
 
 → **push & tag v0.5.0**
 
