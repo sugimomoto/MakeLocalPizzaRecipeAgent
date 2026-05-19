@@ -170,3 +170,31 @@ jobs:
 
       - name: Test (pytest)
         run: uv run pytest
+
+  terraform:
+    name: Terraform — fmt + validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: ./infra/terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          # providers.tf の required_version >= 1.6
+          terraform_version: '1.6.0'
+          terraform_wrapper: false
+
+      - name: terraform fmt -check
+        run: terraform fmt -check -recursive
+
+      - name: terraform init (no backend)
+        # GCS backend は CI から触らない (state を持たない)、provider plugin
+        # のダウンロードのみ目的。
+        run: terraform init -backend=false -input=false
+
+      - name: terraform validate
+        run: terraform validate
