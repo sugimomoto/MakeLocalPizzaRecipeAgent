@@ -28,6 +28,9 @@
     "seed:furusato:dry": "cd agent && uv run python scripts/refresh_furusato_cache.py --dry-run --in-memory"
   },
   "dependencies": {
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^3.0.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.76.0",
+    "@opentelemetry/sdk-node": "^0.218.0",
     "firebase": "^12.13.0",
     "google-auth-library": "^10.6.2",
     "next": "^16.2.6",
