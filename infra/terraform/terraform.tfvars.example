@@ -1,0 +1,21 @@
+# =============================================================================
+# terraform.tfvars.example
+# =============================================================================
+# 使い方:
+#   cp terraform.tfvars.example terraform.tfvars
+#   terraform.tfvars を編集して GCP project ID 等を埋める。
+#
+# terraform.tfvars 本体は .gitignore で commit 対象外。
+# =============================================================================
+
+# GCP プロジェクト ID (Google Cloud Console で確認)
+project_id = "your-gcp-project-id"
+
+# Cloud Run / Artifact Registry / Storage の region
+region = "asia-northeast1"
+
+# GitHub Actions WIF 用のリポジトリ識別子 (org/name)
+github_repository = "sugimomoto/MakeLocalPizzaRecipeAgent"
+
+# リソース名のプレフィックス (通常は変えない)
+# name_prefix = "mlpr"
