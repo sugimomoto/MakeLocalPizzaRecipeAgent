@@ -35,9 +35,13 @@ RUN pnpm build
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 
+# Cloud Run 規約:
+#   - PORT (default 8080) を env で渡してくる → Next.js standalone (server.js) は
+#     process.env.PORT を尊重するのでそのまま動く
+#   - HOSTNAME=0.0.0.0 で外部からの接続を受け付ける
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
 # 非 root ユーザで実行
@@ -50,6 +54,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["node", "server.js"]

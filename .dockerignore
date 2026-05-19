@@ -22,11 +22,34 @@ docs
 .devcontainer
 design
 
+# Web build context: agent/ は data/ingredients.yaml のみ必要なので、
+# それ以外の重い path を除外する (src / scripts / tests / .venv 等)。
+# infra / _reference / agent の Python 関連は image に含めない。
+agent/src
+agent/scripts
+agent/tests
+agent/.venv
+agent/.mypy_cache
+agent/.pytest_cache
+agent/.ruff_cache
+agent/.env
+agent/uv.lock
+agent/pyproject.toml
+agent/Dockerfile
+agent/.dockerignore
+agent/README.md
+agent/__pycache__
+infra
+_reference
+
 # Test / Dev only
 tests
 playwright-report
 test-results
 *.log
+firebase-debug.log
+ui-debug.log
+firestore-debug.log
 
 # Env
 .env
