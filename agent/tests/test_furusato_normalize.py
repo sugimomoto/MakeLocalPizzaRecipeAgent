@@ -11,13 +11,13 @@ from makelocal_agent.furusato.normalize import (
 )
 
 
-def _wrapped(item: dict) -> dict:
+def _wrapped(item: dict[str, object]) -> dict[str, object]:
     """楽天 API の `Items[]` 形式 (Item ラップ) を作る。"""
     return {"Item": item}
 
 
-def _valid_raw(**overrides) -> dict:
-    base = {
+def _valid_raw(**overrides: object) -> dict[str, object]:
+    base: dict[str, object] = {
         "itemCode": "shop-A:item-1",
         "itemName": "【ふるさと納税】宮城県松島町 三陸産生牡蠣 1kg",
         "itemPrice": 12000,
@@ -144,7 +144,7 @@ class TestFromRakutenItem:
 
 class TestMunicipalityExtraction:
     @pytest.mark.parametrize(
-        "title,expected",
+        ("title", "expected"),
         [
             ("【ふるさと納税】宮城県松島町 三陸産生牡蠣", "宮城県松島町"),
             ("【ふるさと納税】 北海道 利尻昆布", "北海道"),

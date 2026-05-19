@@ -10,7 +10,7 @@ safety net として、商品名に「ふるさと納税」が含まれない場
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from makelocal_agent.domain.furusato import FurusatoItem
@@ -18,7 +18,7 @@ from makelocal_agent.domain.furusato import FurusatoItem
 
 def now_iso() -> str:
     """ISO 8601 (Z 終端、ミリ秒精度) の現在時刻を返す。"""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")[:-4] + "Z"
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")[:-4] + "Z"
 
 
 def _unwrap(raw: dict[str, Any]) -> dict[str, Any]:

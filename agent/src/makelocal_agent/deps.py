@@ -207,3 +207,42 @@ def set_storage_client_for_testing(client: StorageClient) -> None:
     """テストから具体的な StorageClient を注入する。"""
     global _storage_singleton  # noqa: PLW0603  process-wide singleton
     _storage_singleton = client
+
+
+# ----- Slice 5: Furusato cache (楽天ふるさと納税) -----------------------------
+
+from .furusato.cache import FurusatoCache, InMemoryFurusatoCache  # noqa: E402
+
+_furusato_singleton: FurusatoCache | None = None
+
+
+def get_furusato_cache(settings: Settings | None = None) -> FurusatoCache:
+    """プロセス内シングルトン。
+
+    優先順位:
+    - use_mock_furusato=True or furusato_integration=False → InMemoryFurusatoCache
+    - GOOGLE_CLOUD_PROJECT 未設定 → InMemoryFurusatoCache (オフライン)
+    - それ以外 → FirestoreFurusatoCache (Emulator host があれば事前 setenv が必要)
+    """
+    global _furusato_singleton  # noqa: PLW0603  process-wide singleton
+    if _furusato_singleton is not None:
+        return _furusato_singleton
+    s = settings or get_settings()
+    if s.use_mock_furusato or not s.furusato_integration or not s.google_cloud_project:
+        _furusato_singleton = InMemoryFurusatoCache()
+    else:
+        from .furusato.cache import FirestoreFurusatoCache  # noqa: PLC0415
+
+        _furusato_singleton = FirestoreFurusatoCache(project_id=s.google_cloud_project)
+    return _furusato_singleton
+
+
+def reset_furusato_cache_for_testing() -> None:
+    global _furusato_singleton  # noqa: PLW0603  process-wide singleton
+    _furusato_singleton = None
+
+
+def set_furusato_cache_for_testing(cache: FurusatoCache) -> None:
+    """テストから具体的な FurusatoCache を注入する。"""
+    global _furusato_singleton  # noqa: PLW0603  process-wide singleton
+    _furusato_singleton = cache

@@ -6,7 +6,7 @@ FirestoreFurusatoCache は実際の Emulator 接続が必要なため別途 (CI 
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import UTC, timedelta
 
 import pytest
 
@@ -81,8 +81,10 @@ class TestInMemoryFurusatoCache:
         await cache.set("miyagi-seri", [_item("miyagi-seri", "2")])
         loaded_oyster = await cache.get("miyagi-oyster")
         loaded_seri = await cache.get("miyagi-seri")
-        assert loaded_oyster and loaded_oyster[0].ingredientId == "miyagi-oyster"
-        assert loaded_seri and loaded_seri[0].ingredientId == "miyagi-seri"
+        assert loaded_oyster is not None
+        assert loaded_oyster[0].ingredientId == "miyagi-oyster"
+        assert loaded_seri is not None
+        assert loaded_seri[0].ingredientId == "miyagi-seri"
 
     @pytest.mark.asyncio
     async def test_empty_items_round_trip(self) -> None:
@@ -118,14 +120,13 @@ class TestExpirationEdge:
     async def test_ttl_just_in_future_is_still_valid(self) -> None:
         cache = InMemoryFurusatoCache()
         # 内部 store に直接書いて TTL を 1 秒先に
-        from datetime import timezone  # noqa: PLC0415
 
         future = _now() + timedelta(seconds=1)
         cache._store["x"] = {
             "ingredientId": "x",
             "items": [_item("x").model_dump()],
             "refreshedAt": _iso(_now()),
-            "ttlExpiresAt": _iso(future.astimezone(timezone.utc)),
+            "ttlExpiresAt": _iso(future.astimezone(UTC)),
         }
         loaded = await cache.get("x")
         assert loaded is not None

@@ -11,7 +11,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
 from makelocal_agent.domain.furusato import FurusatoItem
@@ -21,7 +21,7 @@ DEFAULT_TTL_DAYS = 7
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _iso(dt: datetime) -> str:
@@ -93,8 +93,8 @@ class FirestoreFurusatoCache:
     """
 
     def __init__(self, *, project_id: str) -> None:
-        # SDK は重いので必要時のみ import
-        from google.cloud import firestore  # noqa: PLC0415  # type: ignore[import-untyped]
+        # SDK は重いので必要時のみ import (google-cloud-firestore は py.typed 未提供)
+        from google.cloud import firestore  # type: ignore[import-untyped,attr-defined]  # noqa: I001,PLC0415
 
         self._client = firestore.Client(project=project_id)
         self._collection = self._client.collection(CACHE_COLLECTION)
@@ -109,12 +109,13 @@ class FirestoreFurusatoCache:
             return None
         data: dict[str, Any] = snap.to_dict() or {}
         ttl_raw = data.get("ttlExpiresAt")
-        if isinstance(ttl_raw, str):
-            if _parse_iso(ttl_raw) < _now():
-                return None
-        elif hasattr(ttl_raw, "to_datetime"):
-            # Firestore Timestamp 型
-            if ttl_raw.to_datetime() < _now():
+        # 文字列保存 (本実装の標準形) と Firestore Timestamp 型 (将来) の両方をサポート
+        if isinstance(ttl_raw, str) and _parse_iso(ttl_raw) < _now():
+            return None
+        # Firestore Timestamp 型: hasattr で guard、cast はせず動的に呼ぶ
+        if ttl_raw is not None and hasattr(ttl_raw, "to_datetime"):
+            ts_dt = ttl_raw.to_datetime()
+            if ts_dt < _now():
                 return None
         return [FurusatoItem.model_validate(i) for i in data.get("items", [])]
 

@@ -8,16 +8,20 @@ from pydantic import BaseModel, Field
 from makelocal_agent.agents.imagen_client import MockImagenClient, VertexImagenClient
 from makelocal_agent.deps import (
     MockLlmClient,
+    get_furusato_cache,
     get_imagen_client,
     get_llm_client,
     get_storage_client,
+    reset_furusato_cache_for_testing,
     reset_imagen_client_for_testing,
     reset_llm_client_for_testing,
     reset_storage_client_for_testing,
+    set_furusato_cache_for_testing,
     set_imagen_client_for_testing,
     set_llm_client_for_testing,
     set_storage_client_for_testing,
 )
+from makelocal_agent.furusato.cache import InMemoryFurusatoCache
 from makelocal_agent.lib.settings import Settings, reset_settings_for_testing
 from makelocal_agent.lib.storage import MockStorageClient
 
@@ -49,6 +53,7 @@ def _reset() -> None:
     reset_llm_client_for_testing()
     reset_imagen_client_for_testing()
     reset_storage_client_for_testing()
+    reset_furusato_cache_for_testing()
     reset_settings_for_testing()
 
 
@@ -169,3 +174,32 @@ class TestStorageFactory:
         custom = MockStorageClient(base_url="http://test")
         set_storage_client_for_testing(custom)
         assert get_storage_client() is custom
+
+
+class TestFurusatoCacheFactory:
+    def test_returns_in_memory_when_use_mock_furusato_true(self) -> None:
+        s = Settings(
+            furusato_integration=True,
+            use_mock_furusato=True,
+            google_cloud_project="some-proj",
+        )
+        assert isinstance(get_furusato_cache(s), InMemoryFurusatoCache)
+
+    def test_returns_in_memory_when_integration_off(self) -> None:
+        # integration off の状態でも cache singleton としては InMemory を返す
+        # (tool 側で _is_disabled でガードする)
+        s = Settings(furusato_integration=False, google_cloud_project="some-proj")
+        assert isinstance(get_furusato_cache(s), InMemoryFurusatoCache)
+
+    def test_returns_in_memory_when_no_project(self) -> None:
+        s = Settings(furusato_integration=True, google_cloud_project="")
+        assert isinstance(get_furusato_cache(s), InMemoryFurusatoCache)
+
+    def test_returns_singleton(self) -> None:
+        s = Settings(use_mock_furusato=True)
+        assert get_furusato_cache(s) is get_furusato_cache(s)
+
+    def test_set_for_testing_overrides_singleton(self) -> None:
+        custom = InMemoryFurusatoCache()
+        set_furusato_cache_for_testing(custom)
+        assert get_furusato_cache() is custom
