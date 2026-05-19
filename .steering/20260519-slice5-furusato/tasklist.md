@@ -1,0 +1,288 @@
+# Slice 5 タスクリスト — 楽天ふるさと納税連動
+
+> 本書は [`requirements.md`](requirements.md) / [`design.md`](design.md) を実装する
+> タスク分解。**1 task = 1 commit** (Conventional Commits)、フェーズ末に push & 動作確認。
+
+---
+
+## 進捗ルール
+
+- ステータス: `[ ]` 未着手 / `[~]` 進行中 / `[x]` 完了
+- 完了条件 (DoC): 各タスクに記載。lint / typecheck / test がローカルで pass すること
+- フェーズ単位で push → CI green を確認してから次フェーズへ
+- 1 タスク = 1 commit を原則とする (関連修正のみ同梱可)
+- コミットメッセージは Conventional Commits + `Co-Authored-By: Claude` フッタ
+
+---
+
+## サマリ (合計 18 タスク / 7 フェーズ)
+
+| Phase | 主題 | タスク数 |
+|---|---|---|
+| Phase 1 | Domain 型 + Security Rules + env スイッチ | 3 |
+| Phase 2 | Python furusato レイヤ (client / normalize / cache) | 4 |
+| Phase 3 | Python refresh CLI + ingredients YAML 拡張 | 2 |
+| Phase 4 | Web Firestore ヘルパ + useFurusatoItems フック | 2 |
+| Phase 5 | UI コンポーネント (FurusatoSection / Card / Skeleton / Credit) | 3 |
+| Phase 6 | DetailClient 組込 + dev 疎通確認 | 1 |
+| Phase 7 | seed スクリプト + README + CI 確認 + v0.5.0 タグ | 3 |
+
+---
+
+## Phase 1 — Domain 型 + Security Rules + env スイッチ
+
+### T-501 Domain 型 (TS + Python) + Zod schema
+
+- [ ] `src/domain/furusato.ts`: `FurusatoItem` 型 + `furusatoItemSchema` (Zod 4)
+- [ ] `agent/src/makelocal_agent/domain/furusato.py`: `FurusatoItem` Pydantic
+- [ ] テスト: TS schema parse / Python model_validate (round-trip)
+- **DoC**: vitest + pytest green、両言語で同 shape
+- **commit**: `feat(slice5): add FurusatoItem domain type (TS + Python)`
+
+### T-502 Firestore Security Rules: `furusato_items/*` public read / write deny
+
+- [ ] `firestore.rules` に `match /furusato_items/{ingredientId}` を追加
+- [ ] `tests/rules/firestore-rules.test.ts` に Slice 5 用テスト 2 件追加 (read 可 / write 不可)
+- **DoC**: `pnpm test:rules` green (既存 8 + 新規 2 = 10 件以上)
+- **commit**: `feat(slice5): add Firestore rules for furusato_items collection`
+
+### T-503 env スイッチ + `.env.example` 拡張
+
+- [ ] `.env.example` に `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` / `MLPR_FURUSATO_INTEGRATION=off` / `MLPR_USE_MOCK_FURUSATO=false` / `RAKUTEN_*` を追加 (ダミー値)
+- [ ] `agent/.env.example` (or `agent/src/.../config.py`) に同様
+- [ ] README に Slice 5 env 説明セクションを追加 (詳細は T-517 で本格更新)
+- **DoC**: `.env.example` をコピーすれば Slice 5 を `off` で安全に試せる
+- **commit**: `chore(slice5): document furusato env vars in .env.example`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 2 — Python furusato レイヤ
+
+### T-504 `rakuten_client.py` (新エンドポイント版)
+
+- [ ] `agent/src/makelocal_agent/furusato/rakuten_client.py`:
+  - `RAKUTEN_API_BASE = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401"`
+  - `RakutenClient` クラス (applicationId UUID + `accessKey` ヘッダ + 1.05s rate limit + `keyword` AND「ふるさと納税」)
+  - `search_furusato(keyword, max_items, max_donation_yen)` 実装
+- [ ] `agent/tests/test_rakuten_client.py`: httpx.MockTransport で API レスポンス fixture を使ったテスト
+- **DoC**: pytest green / ruff / mypy strict pass / 1.05s rate limit が観測される (時計を mock してテスト)
+- **commit**: `feat(slice5): add RakutenClient for new endpoint (UUID + accessKey)`
+
+### T-505 `normalize.py` (raw → FurusatoItem)
+
+- [ ] `agent/src/makelocal_agent/furusato/normalize.py`:
+  - `from_rakuten_item(raw, *, ingredient_id, fetched_at)` 関数
+  - `{"Item": {...}}` ラップ / 平坦の両方を許容
+  - 自治体抽出 regex (前回プロジェクトから流用)
+  - 「ふるさと納税」未表記の safety net で `None` を返す
+- [ ] `agent/tests/test_furusato_normalize.py`: 各 fixture (ラップ形式 / 平坦 / 必須欠落 / 自治体パース 4 パターン)
+- **DoC**: pytest green
+- **commit**: `feat(slice5): add normalize.py for Rakuten raw → FurusatoItem`
+
+### T-506 `cache.py` (Protocol + InMemory + Firestore)
+
+- [ ] `agent/src/makelocal_agent/furusato/cache.py`:
+  - `FurusatoCache` Protocol (get / set)
+  - `InMemoryFurusatoCache` (テスト・Mock 用)
+  - `FirestoreFurusatoCache` (Admin SDK 経由)
+  - TTL 7 日のアプリ側評価
+- [ ] `agent/tests/test_furusato_cache.py`: InMemory の get/set/TTL 切れ
+- **DoC**: pytest green / Firestore Emulator 接続テストは別途 (Slice 7 で CI 統合)
+- **commit**: `feat(slice5): add FurusatoCache (Protocol + InMemory + Firestore)`
+
+### T-507 `tool.py` + DI (`deps.py`)
+
+- [ ] `agent/src/makelocal_agent/furusato/tool.py`:
+  - `lookup_items_by_ingredient_id(ingredient_id)` ADK tool
+  - `_is_disabled()` で `MLPR_FURUSATO_INTEGRATION` を見る
+  - cache が inject 済か確認
+- [ ] `agent/src/makelocal_agent/deps.py`: `get_furusato_cache()` factory (`MLPR_USE_MOCK_FURUSATO` で分岐)
+- [ ] `agent/tests/test_furusato_tool.py`: 3 ケース (disabled / cache miss / cache hit)
+- **DoC**: pytest green / mypy
+- **commit**: `feat(slice5): add furusato tool + DI factory`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 3 — Python refresh CLI + ingredients YAML
+
+### T-508 `refresh_furusato_cache.py` 手動 CLI
+
+- [ ] `agent/scripts/refresh_furusato_cache.py`:
+  - argparse で `--dry-run` / `--in-memory` / `--only <id>` / `--max-items 3`
+  - ingredients YAML を load → 各 ingredient について `search_query or name` をキーワード化
+  - `RakutenClient.search_furusato` → `from_rakuten_item` → `cache.set`
+  - 1 食材 1 行 JSON ログ (`{"ingredientId": ..., "count": N, "queryUsed": "...", "elapsedMs": ...}`)
+- [ ] 動作確認: `uv run python scripts/refresh_furusato_cache.py --in-memory --dry-run` で 3 県の全食材について count を出せる
+- **DoC**: スクリプトが完走して JSON ログを 1 行ずつ出す
+- **commit**: `feat(slice5): add refresh_furusato_cache CLI script`
+
+### T-509 ingredients YAML に `search_query` を追加 (0/低件数のみ)
+
+- [ ] `agent/data/ingredients.yaml` のスキーマに optional `search_query: str | None = None` 追加 (data loader 側で許容)
+- [ ] `--dry-run` で 0/低件数 (< 2 件) の食材を可視化
+- [ ] 該当食材だけ `search_query: <県名> <食材名>` パターンで上書き
+- [ ] 再 dry-run で改善を確認
+- [ ] 静的データの test (もし `agent/tests/test_ingredients_data.py` 等あれば) を更新
+- **DoC**: 全 食材で件数 >= 1、再現性のあるログが出る
+- **commit**: `feat(slice5): add searchQuery field to ingredients YAML for furusato AND search`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 4 — Web Firestore ヘルパ + フック
+
+### T-510 `src/lib/firebase/furusato.ts` (read-only ヘルパ)
+
+- [ ] `subscribeFurusatoItems(db, ingredientId, onChange, onError): Unsubscribe`
+  - `furusato_items/{id}` の `onSnapshot`
+  - TTL 切れなら空配列を返す (アプリ側評価)
+  - Timestamp → JS Date 正規化 (savedAt 同様)
+- [ ] テスト: helper を mock せず Firestore lite mock で 1 ケース (返却 shape の検証)
+- **DoC**: vitest green
+- **commit**: `feat(slice5): add Firestore subscribeFurusatoItems helper`
+
+### T-511 `src/hooks/use-furusato-items.ts`
+
+- [ ] `useFurusatoItems(ingredientIds: string[]): { state, items, error }`
+- [ ] `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` で `{ state: 'disabled', items: [], error: null }`
+- [ ] 各 id について `subscribeFurusatoItems` を並列で張る (useEffect で N 個)
+- [ ] 結果を accumulate → flatten + `donationAmount` 昇順 sort
+- [ ] テスト: helper mock で disabled / loading / ready / error の各遷移
+- **DoC**: vitest green
+- **commit**: `feat(slice5): add useFurusatoItems hook`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 5 — UI コンポーネント (採用案 Card B inline)
+
+### T-512 `FurusatoCard` (Card B inline)
+
+- [ ] `src/components/furusato/FurusatoCard.tsx` + CSS:
+  - kinari BG / radius 12 / padding 12 / hairline border
+  - 72×72 サムネ (imageUrl or 🍕 fallback)
+  - RAKUTEN chip (muted) + 自治体 (gothic 10.5 sumi-muted)
+  - mincho 13/600 title (line-clamp 2)
+  - producer (gothic 11 sumi-soft) 任意
+  - 寄附額 (mono 13 sumi + 「円〜」gothic 11)
+  - 在庫切れバッジ (`inStock=false` のとき)
+  - 「取り寄せる ↗」CTA (sumi BG / kinari color / radius 999 / gothic 11/600 + ↗)
+  - `<a href={affiliateUrl ?? url} target="_blank" rel="noopener noreferrer sponsored">` でカード全体をリンク化
+- [ ] テスト: title / muni / 寄附額 / 在庫切れバッジ / リンクの href と rel 検証
+- **DoC**: vitest green + a11y (`role=link`, ↗ icon は aria-hidden)
+- **commit**: `feat(slice5): add FurusatoCard (Card B inline)`
+
+### T-513 `FurusatoSkeleton` + `RakutenCredit`
+
+- [ ] `src/components/furusato/FurusatoSkeleton.tsx` + CSS: shimmer な 72px サムネ + 3 バー
+- [ ] `src/components/furusato/RakutenCredit.tsx` + CSS: 小 R アイコン (内製 SVG) + `POWERED BY 楽天ウェブサービス` (mono 9.5 muted, letter-spacing 2.5em)
+- [ ] テスト: 描画される / a11y は飾り扱い
+- **DoC**: vitest green
+- **commit**: `feat(slice5): add FurusatoSkeleton + RakutenCredit components`
+
+### T-514 `FurusatoSection` (root)
+
+- [ ] `src/components/furusato/FurusatoSection.tsx` + CSS:
+  - `SectionHeader` (jp "取 寄" + hairline + en "FURUSATO")
+  - subcopy: 「このレシピの食材は、ふるさと納税の返礼品としても入手できます。」
+  - state 'disabled' → return null
+  - state 'ready' + items 0 件 → return null (案 X)
+  - state 'loading' → FurusatoSkeleton × 2
+  - state 'ready' + items > 0 → FurusatoCard list (gap 10)
+  - error → ErrorBox + 「楽天ウェブサービスに接続できませんでした」
+  - 最下部に `RakutenCredit` (state !== 'disabled' なら常に出す)
+- [ ] テスト: 4 状態 (disabled / loading / ready 空 / ready N 件) + error / credit 表示
+- **DoC**: vitest green
+- **commit**: `feat(slice5): add FurusatoSection (root) with 4 states`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 6 — DetailClient 組込 + 疎通確認
+
+### T-515 `DetailClient` に `<FurusatoSection>` を組込
+
+- [ ] `app/recipes/[candidateId]/_components/DetailClient.tsx`:
+  - `<StepList>` の section と `<StoryCard>` の間に `<FurusatoSection ingredientIds={...} />` を挿入
+  - `ingredientIds` は `pending.ingredients` を渡す (Slice 5 simple 版)
+- [ ] dev サーバで疎通: `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` → 非表示 / `=on` + Firestore Emulator に手動 seed → カード表示
+- [ ] 既存テストが回る (RecipeHero / DetailClient 周りの regression なし)
+- **DoC**: typecheck / lint / vitest green / dev で目視確認
+- **commit**: `feat(slice5): wire FurusatoSection into DetailClient`
+
+→ **push & CI green 確認**
+
+---
+
+## Phase 7 — seed + README + CI + v0.5.0
+
+### T-516 Firestore Emulator seed スクリプト
+
+- [ ] `scripts/seed-furusato-emulator.ts` (Node, tsx 経由 or pure TS):
+  - Firebase Admin SDK で `furusato_items/{id}` に 3 県のダミーデータを put
+  - dummy items: 各 ingredient 2-3 件、寄附額 / 自治体 / 商品名はリアル風
+  - 走らせるコマンド: `pnpm seed:furusato` (package.json scripts)
+- [ ] README に手順追記 (T-517 と一緒で OK)
+- **DoC**: スクリプトが完走、Emulator UI で確認可能
+- **commit**: `chore(slice5): add Firestore Emulator seed script for furusato`
+
+### T-517 README 全面更新 + Slice 5 ステアリングへのリンク
+
+- [ ] `README.md` の機能リストを Slice 5 で更新
+- [ ] 「開発 — Firebase Emulator」セクションに seed 手順を追記
+- [ ] 「楽天 API 取得手順」セクションを新設:
+  - 楽天デベロッパー登録 → applicationId (UUID) + accessKey (`pk_*`) を取得
+  - `.env` に設定
+  - IP ホワイトリスト要求があったら開発機 IP を登録
+- [ ] 「ふるさと納税連動の運用」セクションを新設:
+  - 3 層分離の説明
+  - `pnpm seed:furusato` (dev 用)
+  - `uv run python agent/scripts/refresh_furusato_cache.py --dry-run`
+  - クレジット表記の理由 (楽天規約 §8)
+- [ ] 関連ドキュメントに Slice 5 ステアリングを追加
+- [ ] 既知の事項に「Slice 5: ふるさと納税連動。env off 既定で safe rollout」を追記
+- **DoC**: 新規開発者が README だけで Slice 5 を動かせる
+- **commit**: `docs(slice5): update README with rakuten setup + furusato workflow`
+
+### T-518 v0.5.0 タグ + 完了
+
+- [ ] `package.json` を 0.5.0 にバンプ
+- [ ] `agent/pyproject.toml` を 0.5.0 にバンプ
+- [ ] `NEXT_PUBLIC_APP_VERSION=0.5.0` を `.env.example` に
+- [ ] CI 全 green を確認 (push 後)
+- [ ] `git tag -a v0.5.0 -m "Slice 5 — Rakuten Furusato connection"` + push v0.5.0
+- **DoC**: 全 CI green / 手動 dev で詳細画面に「🎁 取 寄 / FURUSATO」セクション + カードが出る / タグ push 済
+- **commit**: `chore(slice5): bump to v0.5.0`
+
+→ **push & tag v0.5.0**
+
+---
+
+## Slice 5 完了の DoD (Definition of Done)
+
+1. `NEXT_PUBLIC_FURUSATO_INTEGRATION=on` + Emulator に seed 済 で、詳細画面下部に「取 寄 / FURUSATO」セクションが出て、ふるさと納税カード (Card B inline) が表示される
+2. 各カードの「取り寄せる ↗」CTA をタップすると `affiliateUrl ?? url` が新タブで開く
+3. 在庫切れの item には「在庫切れ」バッジ + opacity 0.65 が表示される
+4. カード下に「POWERED BY 楽天ウェブサービス」クレジット表記が出る
+5. `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` でセクション自体が非表示になる
+6. `uv run python agent/scripts/refresh_furusato_cache.py --in-memory --dry-run` が 3 県の全食材で count を出す (0 件食材なし、retrospective 実績相当)
+7. Firestore Emulator + Admin SDK で `furusato_items/{id}` が書き込める (refresh CLI 本走 or seed script)
+8. Security Rules: `furusato_items/*` は public read OK / client write 不可 (rules test 10 件以上 green)
+9. Python pytest + TS vitest 全 green
+10. CI 全 job (Node / E2E / Rules / Python) green
+11. v0.5.0 タグ push 済
+
+---
+
+## 改訂履歴
+
+| 日付 | 版 | 変更内容 |
+|---|---|---|
+| 2026-05-19 | 1.0 | 初版作成 (Claude Design Card B inline 採用版) |
