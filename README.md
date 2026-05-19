@@ -3,11 +3,11 @@
 ローカル/旬の食材を活かしたピザレシピを提案する **AI エージェント**。
 
 > 地元 × 旬 × 戦略 (王道 / 一歩外す / 大冒険) を起点に、ピザの 3 案を即座に提案する Web アプリ。
-> 現状は **Slice 4 (Firestore + Auth + GCS / ピザ帳)** まで実装済み (v0.4.0)。
+> 現状は **Slice 5 (楽天ふるさと納税連動)** まで実装済み (v0.5.0)。
 
 ---
 
-## 機能 (Slice 4 時点)
+## 機能 (Slice 5 時点)
 
 - ✅ **TOP ページ** — 初回訪問者には「未来の一枚は、あなたの地元にある。」+ 「始める →」、リピーターは /local に自動再開、サインイン済は /library に直行
 - ✅ **地元選択** — 47 都道府県 (現状はキュレーション 3 県)
@@ -20,8 +20,9 @@
 - ✅ **ピザ帳 (Firestore)** — 詳細画面のハートで `users/{uid}/savedRecipes/{candidateId}` に保存。`/library` で savedAt 降順一覧、ハート再 tap で解除
 - ✅ **GCS Storage 連動** — Python `image_agent` が Imagen の PNG を Firebase Storage に put し、`image.ready { url }` で配信 (Slice 4 で `dataUri` から URL に移行)
 - ✅ **Toast / SignInModal / AvatarButton** — Provider ベースのグローバル UI 基盤
-- ✅ **Security Rules** — Firestore: 本人のみ自分の savedRecipes を R/W、Storage: recipes/ public read + client write 不可。`pnpm test:rules` で Emulator 相手にユニットテスト
-- 🚧 Slice 5+: 楽天ふるさと納税連動 / OTel / Cloud Run デプロイ
+- ✅ **Security Rules** — Firestore: 本人のみ自分の savedRecipes を R/W、furusato_items は public read / client write 不可、Storage: recipes/ public read + client write 不可。`pnpm test:rules` で Emulator 相手にユニットテスト
+- ✅ **楽天ふるさと納税連動** (Slice 5) — 詳細レシピ画面に「取 寄 / FURUSATO」セクション。3 層分離 (YAML キュレーション / refresh CLI / Firestore キャッシュ) で楽天 API は手動 refresh からのみ叩く。Web は Firestore を直 read。Card B inline (sumi BG CTA / RAKUTEN chip / クレジット表記)
+- 🚧 Slice 6+: Cloud Run デプロイ / OTel / Vertex AI Evaluation
 
 ---
 
@@ -151,6 +152,68 @@ pnpm test:rules
 
 CI では `firebase emulators:exec --only auth,firestore,storage` で一時起動して走る (`.github/workflows/ci.yml` の `rules` job)。
 
+## 開発 — 楽天ふるさと納税連動 (Slice 5)
+
+詳細レシピ画面の「取 寄 / FURUSATO」セクションは、Firestore `furusato_items/{ingredientId}` を直 read して楽天市場 (アフィリエイト URL) へリンクする。**3 層分離** で楽天 API は **唯一 refresh CLI からしか叩かない**。
+
+### 楽天 API クレデンシャル取得
+
+1. [楽天デベロッパー](https://webservice.rakuten.co.jp/) でアプリ登録
+2. 新エンドポイント (`openapi.rakuten.co.jp/...20260401`) は **UUID 形式 applicationId** + **`pk_*` アクセスキー** の 2 本立て
+3. **IP アドレス制限** に開発機 (devcontainer なら egress IP、`curl https://api.ipify.org` で確認) を登録 — 反映に 5-10 分
+4. `.env` に書く:
+
+```env
+RAKUTEN_APPLICATION_ID=<UUID>
+RAKUTEN_ACCESS_KEY=pk_...
+# RAKUTEN_AFFILIATE_ID= (任意、アフィリエイトリンク利用時)
+NEXT_PUBLIC_FURUSATO_INTEGRATION=on   # UI に表示するため
+```
+
+### Firestore Emulator に seed する
+
+楽天 API を叩いてキャッシュを書き込む手動 CLI:
+
+```bash
+# 楽天 API 接続せずにダミー実行 (IP 登録前の確認用)
+pnpm seed:furusato:dry
+
+# 本走 (Firestore Emulator localhost:8080 に 30 食材 × 最大 3 件 = 約 90 items)
+pnpm seed:furusato
+
+# 特定食材だけ (デバッグ)
+cd agent && uv run python scripts/refresh_furusato_cache.py --only miyagi-oyster
+```
+
+Emulator UI ([http://localhost:4000](http://localhost:4000)) の Firestore タブで `furusato_items/` を確認できる。
+
+### 3 層分離 (運用設計)
+
+```
+YAML (キュレーション)  →  refresh CLI が楽天 API を叩く  →  Firestore キャッシュ
+agent/data/ingredients.yaml      agent/scripts/refresh_furusato_cache.py    furusato_items/{ingredientId}
+                                                                                ↑
+                                          agent runtime / Web SDK は **read のみ**
+```
+
+- 楽天 API はレート制限 1 req/秒 + IP ホワイトリスト制
+- runtime は Firestore キャッシュ (TTL 7 日) を見るので、楽天 API の障害や IP 制限を runtime に伝播させない
+- 週次自動 refresh は Slice 6 (Cloud Run Jobs) で実装予定
+
+### Card B inline + クレジット表記
+
+UI は和紙トーンに馴染ませた Card B (Claude Design 採用案) で実装。`POWERED BY 楽天ウェブサービス` のクレジット表記 (楽天規約 §8 必須) をセクション内フッタに常設。
+
+### `name` と `searchQuery` の分離
+
+楽天 API は AND 検索なので「せり(根付き)」のような連体修飾入りの `name` だと取りこぼす。`agent/data/ingredients.yaml` に optional `searchQuery` を持たせて、表示用 `name` と検索用 keyword を分離する。例:
+
+```yaml
+- id: kochi-myoga
+  name: 茗荷
+  searchQuery: みょうが # ひらがな + AND「ふるさと納税」で 3 件取得
+```
+
 ## Agent 側のテスト
 
 ```bash
@@ -270,6 +333,10 @@ Agent (Python 側):
   - [requirements.md](.steering/20260517-slice4-firestore-auth/requirements.md)
   - [design.md](.steering/20260517-slice4-firestore-auth/design.md)
   - [tasklist.md](.steering/20260517-slice4-firestore-auth/tasklist.md)
+- [Slice 5 ステアリング](.steering/20260519-slice5-furusato/) (楽天ふるさと納税連動、v0.5.0)
+  - [requirements.md](.steering/20260519-slice5-furusato/requirements.md)
+  - [design.md](.steering/20260519-slice5-furusato/design.md)
+  - [tasklist.md](.steering/20260519-slice5-furusato/tasklist.md)
 - [agent/README.md](agent/README.md) — Python サービス単独の手順
 
 ---

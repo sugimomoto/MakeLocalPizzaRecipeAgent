@@ -176,42 +176,38 @@
 
 ### T-512 `FurusatoCard` (Card B inline)
 
-- [ ] `src/components/furusato/FurusatoCard.tsx` + CSS:
+- [x] `src/components/furusato/FurusatoCard.tsx` + CSS (Claude Design Card B sub-variant B1 inline 採用):
   - kinari BG / radius 12 / padding 12 / hairline border
-  - 72×72 サムネ (imageUrl or 🍕 fallback)
-  - RAKUTEN chip (muted) + 自治体 (gothic 10.5 sumi-muted)
+  - 72×72 サムネ (imageUrl or 🎁 fallback)
+  - RAKUTEN chip (muted, mono 8.5, ↗ icon) + 自治体
   - mincho 13/600 title (line-clamp 2)
-  - producer (gothic 11 sumi-soft) 任意
-  - 寄附額 (mono 13 sumi + 「円〜」gothic 11)
-  - 在庫切れバッジ (`inStock=false` のとき)
-  - 「取り寄せる ↗」CTA (sumi BG / kinari color / radius 999 / gothic 11/600 + ↗)
-  - `<a href={affiliateUrl ?? url} target="_blank" rel="noopener noreferrer sponsored">` でカード全体をリンク化
-- [ ] テスト: title / muni / 寄附額 / 在庫切れバッジ / リンクの href と rel 検証
-- **DoC**: vitest green + a11y (`role=link`, ↗ icon は aria-hidden)
-- **commit**: `feat(slice5): add FurusatoCard (Card B inline)`
+  - producer (任意)
+  - 寄附額 (mono 13 + 円〜)
+  - 在庫切れバッジ + opacity 0.65
+  - 「取り寄せる ↗」CTA (sumi BG / kinari color)
+  - `<a href={affiliateUrl ?? url} target="_blank" rel="noopener noreferrer sponsored">` で全体リンク化
+- [x] テスト 8 件 (title / muni / producer / 寄附 / 在庫切れ / link / 画像 fallback)
+- **DoC**: vitest green
+- **commit**: `feat(slice5): add FurusatoCard + Skeleton + RakutenCredit` (0ed28ac)
 
 ### T-513 `FurusatoSkeleton` + `RakutenCredit`
 
-- [ ] `src/components/furusato/FurusatoSkeleton.tsx` + CSS: shimmer な 72px サムネ + 3 バー
-- [ ] `src/components/furusato/RakutenCredit.tsx` + CSS: 小 R アイコン (内製 SVG) + `POWERED BY 楽天ウェブサービス` (mono 9.5 muted, letter-spacing 2.5em)
-- [ ] テスト: 描画される / a11y は飾り扱い
+- [x] `FurusatoSkeleton.tsx`: shimmer な 72px サムネ + 3 バー + 価格行
+- [x] `RakutenCredit.tsx`: 小 R アイコン + 「POWERED BY 楽天ウェブサービス」(mono 9.5 muted)
+- [x] テスト 2 件 (aria-label / 文言)
 - **DoC**: vitest green
-- **commit**: `feat(slice5): add FurusatoSkeleton + RakutenCredit components`
+- **commit**: `feat(slice5): add FurusatoCard + Skeleton + RakutenCredit` (0ed28ac、T-512 同梱)
 
 ### T-514 `FurusatoSection` (root)
 
-- [ ] `src/components/furusato/FurusatoSection.tsx` + CSS:
-  - `SectionHeader` (jp "取 寄" + hairline + en "FURUSATO")
-  - subcopy: 「このレシピの食材は、ふるさと納税の返礼品としても入手できます。」
-  - state 'disabled' → return null
-  - state 'ready' + items 0 件 → return null (案 X)
-  - state 'loading' → FurusatoSkeleton × 2
-  - state 'ready' + items > 0 → FurusatoCard list (gap 10)
-  - error → ErrorBox + 「楽天ウェブサービスに接続できませんでした」
-  - 最下部に `RakutenCredit` (state !== 'disabled' なら常に出す)
-- [ ] テスト: 4 状態 (disabled / loading / ready 空 / ready N 件) + error / credit 表示
+- [x] `FurusatoSection.tsx` + CSS:
+  - SectionHeader (jp "取 寄" + hairline + en "FURUSATO") + subcopy
+  - 4 状態の描画分岐 (disabled / loading / ready 空 / ready N / error)
+  - 案 X: ready 空はセクション非表示
+  - 最下部に RakutenCredit
+- [x] テスト 5 件 (4 状態 + error + credit 維持)
 - **DoC**: vitest green
-- **commit**: `feat(slice5): add FurusatoSection (root) with 4 states`
+- **commit**: `feat(slice5): add FurusatoSection + wire into DetailClient` (a6fb67a)
 
 → **push & CI green 確認**
 
@@ -221,13 +217,12 @@
 
 ### T-515 `DetailClient` に `<FurusatoSection>` を組込
 
-- [ ] `app/recipes/[candidateId]/_components/DetailClient.tsx`:
-  - `<StepList>` の section と `<StoryCard>` の間に `<FurusatoSection ingredientIds={...} />` を挿入
-  - `ingredientIds` は `pending.ingredients` を渡す (Slice 5 simple 版)
-- [ ] dev サーバで疎通: `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` → 非表示 / `=on` + Firestore Emulator に手動 seed → カード表示
-- [ ] 既存テストが回る (RecipeHero / DetailClient 周りの regression なし)
+- [x] `app/recipes/[candidateId]/_components/DetailClient.tsx`:
+  - `<StepList>` の section と `<StoryCard>` の間に `<FurusatoSection ingredientIds={pending?.ingredients ?? []} />` を挿入
+- [x] dev サーバで疎通: `NEXT_PUBLIC_FURUSATO_INTEGRATION=on` で UI 表示確認、Firestore Emulator に 87 items seed 済
+- [x] 既存テストが全 pass (447 件、regression なし)
 - **DoC**: typecheck / lint / vitest green / dev で目視確認
-- **commit**: `feat(slice5): wire FurusatoSection into DetailClient`
+- **commit**: `feat(slice5): add FurusatoSection + wire into DetailClient` (a6fb67a、T-514 同梱)
 
 → **push & CI green 確認**
 
@@ -235,43 +230,36 @@
 
 ## Phase 7 — seed + README + CI + v0.5.0
 
-### T-516 Firestore Emulator seed スクリプト
+### T-516 seed 兼用ラッパスクリプト
 
-- [ ] `scripts/seed-furusato-emulator.ts` (Node, tsx 経由 or pure TS):
-  - Firebase Admin SDK で `furusato_items/{id}` に 3 県のダミーデータを put
-  - dummy items: 各 ingredient 2-3 件、寄附額 / 自治体 / 商品名はリアル風
-  - 走らせるコマンド: `pnpm seed:furusato` (package.json scripts)
-- [ ] README に手順追記 (T-517 と一緒で OK)
-- **DoC**: スクリプトが完走、Emulator UI で確認可能
-- **commit**: `chore(slice5): add Firestore Emulator seed script for furusato`
+- [x] 別途 TS seed スクリプトは作らず、Python `refresh_furusato_cache.py` を seed 兼用化
+- [x] `package.json` scripts に `seed:furusato` (本走) と `seed:furusato:dry` (dry-run) を追加
+- [x] 実 API キーがあれば 87 items が Emulator に書き込まれる (Phase 3 で実証済)
+- **DoC**: `pnpm seed:furusato` で Firestore Emulator に書き込み完走
+- **commit**: T-517 と同梱予定
 
 ### T-517 README 全面更新 + Slice 5 ステアリングへのリンク
 
-- [ ] `README.md` の機能リストを Slice 5 で更新
-- [ ] 「開発 — Firebase Emulator」セクションに seed 手順を追記
-- [ ] 「楽天 API 取得手順」セクションを新設:
-  - 楽天デベロッパー登録 → applicationId (UUID) + accessKey (`pk_*`) を取得
-  - `.env` に設定
-  - IP ホワイトリスト要求があったら開発機 IP を登録
-- [ ] 「ふるさと納税連動の運用」セクションを新設:
-  - 3 層分離の説明
-  - `pnpm seed:furusato` (dev 用)
-  - `uv run python agent/scripts/refresh_furusato_cache.py --dry-run`
-  - クレジット表記の理由 (楽天規約 §8)
-- [ ] 関連ドキュメントに Slice 5 ステアリングを追加
-- [ ] 既知の事項に「Slice 5: ふるさと納税連動。env off 既定で safe rollout」を追記
+- [x] 機能リストを Slice 5 で更新、サブヘッダ「(Slice 5 時点)」に変更
+- [x] 新セクション「開発 — 楽天ふるさと納税連動 (Slice 5)」を追加:
+  - 楽天デベロッパー登録 / IP ホワイトリスト / 必要 env
+  - `pnpm seed:furusato` / `pnpm seed:furusato:dry` / `--only <id>`
+  - 3 層分離の図解と「runtime は Firestore キャッシュ read のみ」
+  - Card B inline + クレジット表記 (楽天規約 §8)
+  - `name` と `searchQuery` の分離 (kochi-myoga の例)
+- [x] 関連ドキュメントに Slice 5 ステアリングを追加
 - **DoC**: 新規開発者が README だけで Slice 5 を動かせる
-- **commit**: `docs(slice5): update README with rakuten setup + furusato workflow`
+- **commit**: 次の `chore(slice5): bump to v0.5.0` で同梱
 
 ### T-518 v0.5.0 タグ + 完了
 
-- [ ] `package.json` を 0.5.0 にバンプ
-- [ ] `agent/pyproject.toml` を 0.5.0 にバンプ
-- [ ] `NEXT_PUBLIC_APP_VERSION=0.5.0` を `.env.example` に
+- [x] `package.json` を 0.5.0 にバンプ
+- [x] `agent/pyproject.toml` を 0.5.0 にバンプ
+- [x] `NEXT_PUBLIC_APP_VERSION=0.5.0` を `.env.example` に
 - [ ] CI 全 green を確認 (push 後)
 - [ ] `git tag -a v0.5.0 -m "Slice 5 — Rakuten Furusato connection"` + push v0.5.0
-- **DoC**: 全 CI green / 手動 dev で詳細画面に「🎁 取 寄 / FURUSATO」セクション + カードが出る / タグ push 済
-- **commit**: `chore(slice5): bump to v0.5.0`
+- **DoC**: 全 CI green / 手動 dev で詳細画面に「取 寄 / FURUSATO」セクション + カードが出る / タグ push 済
+- **commit**: `chore(slice5): wrap-up README + bump to v0.5.0`
 
 → **push & tag v0.5.0**
 
