@@ -52,7 +52,7 @@ if str(_SRC) not in sys.path:
 # .env を読み込む (uv の virtualenv + pydantic-settings が .env を見るので不要だが、
 # RAKUTEN_* / FIRESTORE_EMULATOR_HOST はそのまま os.environ 経由でも見たいので明示)
 try:
-    from dotenv import load_dotenv  # type: ignore[import-not-found]
+    from dotenv import load_dotenv
 except ImportError:
     load_dotenv = None  # type: ignore[assignment]
 
@@ -60,6 +60,7 @@ if load_dotenv is not None:
     load_dotenv(_AGENT_ROOT / ".env", override=False)
     load_dotenv(_AGENT_ROOT.parent / ".env", override=False)
 
+from makelocal_agent.data.ingredients_repository import IngredientsRepository  # noqa: E402
 from makelocal_agent.domain.furusato import FurusatoItem  # noqa: E402
 from makelocal_agent.domain.ingredient import Ingredient  # noqa: E402
 from makelocal_agent.furusato.cache import (  # noqa: E402
@@ -69,7 +70,6 @@ from makelocal_agent.furusato.cache import (  # noqa: E402
 )
 from makelocal_agent.furusato.normalize import from_rakuten_item  # noqa: E402
 from makelocal_agent.furusato.rakuten_client import RakutenClient  # noqa: E402
-from makelocal_agent.data.ingredients_repository import IngredientsRepository  # noqa: E402
 from makelocal_agent.lib.settings import get_rakuten_settings, get_settings  # noqa: E402
 
 
@@ -84,7 +84,7 @@ def _build_keyword(ing: Ingredient) -> str:
     return ing.name
 
 
-def _emit_log(payload: dict) -> None:
+def _emit_log(payload: dict[str, object]) -> None:
     """1 食材につき JSON 1 行を stdout に出す (Cloud Logging 互換)。"""
     print(json.dumps(payload, ensure_ascii=False))
 
@@ -96,7 +96,7 @@ async def _refresh_one(
     ingredient: Ingredient,
     max_items: int,
     dry_run: bool,
-) -> dict:
+) -> dict[str, object]:
     """1 食材について楽天 API を叩いて normalize → cache.set。
 
     Returns:
@@ -204,8 +204,10 @@ async def _async_main(args: argparse.Namespace) -> int:
                     dry_run=args.dry_run,
                 )
                 _emit_log(result)
-                total_items += result["normalizedCount"]
-            except Exception as e:  # noqa: BLE001  # 全食材を続行
+                count = result["normalizedCount"]
+                if isinstance(count, int):
+                    total_items += count
+            except Exception as e:  # 全食材を続行
                 _emit_log(
                     {
                         "ingredientId": ing.id,
