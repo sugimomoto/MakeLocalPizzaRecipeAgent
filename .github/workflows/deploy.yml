@@ -1,0 +1,70 @@
+# =============================================================================
+# Deploy to Cloud Run (Slice 6)
+# =============================================================================
+# main push をトリガに、Web / Agent を **並列** で Cloud Build → Cloud Run
+# にデプロイする。
+#
+# 前提:
+#   - Terraform で Workload Identity Federation (mlpr-github-pool) + provider
+#     "github" + deployer SA への bind が apply 済
+#   - GitHub repo Settings → Secrets and variables → Actions:
+#       * vars.GCP_PROJECT_ID         : GCP project ID
+#       * vars.GCP_WIF_PROVIDER       : WIF provider 完全名
+#         (terraform output workload_identity_provider)
+#       * vars.GCP_DEPLOYER_SA_EMAIL  : mlpr-deployer SA email
+#         (terraform output deployer_sa_email)
+# =============================================================================
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# OIDC token (id-token: write) が必須。content は actions/checkout のみで read。
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: web
+            config: infra/cloudbuild/deploy-web.yaml
+          - service: agent
+            config: infra/cloudbuild/deploy-agent.yaml
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA_EMAIL }}
+          # token format は cloud build 用 (gcloud は impersonation 経由)
+          token_format: access_token
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Submit Cloud Build
+        run: |
+          gcloud builds submit \
+            --project="${{ vars.GCP_PROJECT_ID }}" \
+            --config="${{ matrix.config }}" \
+            --substitutions=_TAG=${{ github.sha }} \
+            .
