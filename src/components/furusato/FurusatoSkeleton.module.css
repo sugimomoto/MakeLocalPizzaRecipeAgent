@@ -1,0 +1,51 @@
+.skeleton {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  border-radius: 12px;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(31, 26, 18, 0.06), rgba(31, 26, 18, 0.1));
+}
+
+.body {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.bar {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 26, 18, 0.05) 0%,
+    rgba(31, 26, 18, 0.1) 50%,
+    rgba(31, 26, 18, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: mlpr-furusato-shimmer 1.4s ease-in-out infinite;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  align-items: center;
+  gap: 12px;
+}
+
+@keyframes mlpr-furusato-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

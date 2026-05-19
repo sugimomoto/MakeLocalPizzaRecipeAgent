@@ -1,0 +1,19 @@
+.credit {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--mlpr-hairline);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mlpr-sumi-muted);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.25em;
+}
