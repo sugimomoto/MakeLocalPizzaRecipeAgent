@@ -67,46 +67,47 @@
 
 ### T-504 `rakuten_client.py` (新エンドポイント版)
 
-- [ ] `agent/src/makelocal_agent/furusato/rakuten_client.py`:
+- [x] `agent/src/makelocal_agent/furusato/rakuten_client.py`:
   - `RAKUTEN_API_BASE = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401"`
   - `RakutenClient` クラス (applicationId UUID + `accessKey` ヘッダ + 1.05s rate limit + `keyword` AND「ふるさと納税」)
   - `search_furusato(keyword, max_items, max_donation_yen)` 実装
-- [ ] `agent/tests/test_rakuten_client.py`: httpx.MockTransport で API レスポンス fixture を使ったテスト
-- **DoC**: pytest green / ruff / mypy strict pass / 1.05s rate limit が観測される (時計を mock してテスト)
-- **commit**: `feat(slice5): add RakutenClient for new endpoint (UUID + accessKey)`
+  - settings 拡張: furusato_integration / use_mock_furusato / firestore_emulator_host + 新規 RakutenSettings
+- [x] `agent/tests/test_rakuten_client.py`: httpx.MockTransport で API レスポンス 10 件
+- **DoC**: pytest green / ruff / mypy strict pass / 1.05s rate limit を時計で観測
+- **commit**: `feat(slice5): add RakutenClient for new endpoint (UUID + accessKey)` (3253330)
 
 ### T-505 `normalize.py` (raw → FurusatoItem)
 
-- [ ] `agent/src/makelocal_agent/furusato/normalize.py`:
+- [x] `agent/src/makelocal_agent/furusato/normalize.py`:
   - `from_rakuten_item(raw, *, ingredient_id, fetched_at)` 関数
   - `{"Item": {...}}` ラップ / 平坦の両方を許容
-  - 自治体抽出 regex (前回プロジェクトから流用)
+  - 自治体抽出 regex (都道府県のみ / 市町村区まで両対応)
   - 「ふるさと納税」未表記の safety net で `None` を返す
-- [ ] `agent/tests/test_furusato_normalize.py`: 各 fixture (ラップ形式 / 平坦 / 必須欠落 / 自治体パース 4 パターン)
+- [x] `agent/tests/test_furusato_normalize.py`: 28 件 (ラップ形式 / 平坦 / 自治体パース 6 パラメタライズ / 必須欠落 / safety net / 画像 URL 3 形式 / fetched_at)
 - **DoC**: pytest green
-- **commit**: `feat(slice5): add normalize.py for Rakuten raw → FurusatoItem`
+- **commit**: `feat(slice5): add normalize.py for Rakuten raw → FurusatoItem` (089c30d)
 
 ### T-506 `cache.py` (Protocol + InMemory + Firestore)
 
-- [ ] `agent/src/makelocal_agent/furusato/cache.py`:
+- [x] `agent/src/makelocal_agent/furusato/cache.py`:
   - `FurusatoCache` Protocol (get / set)
   - `InMemoryFurusatoCache` (テスト・Mock 用)
-  - `FirestoreFurusatoCache` (Admin SDK 経由)
+  - `FirestoreFurusatoCache` (Admin SDK 同期 API を asyncio.to_thread で逃がす)
   - TTL 7 日のアプリ側評価
-- [ ] `agent/tests/test_furusato_cache.py`: InMemory の get/set/TTL 切れ
-- **DoC**: pytest green / Firestore Emulator 接続テストは別途 (Slice 7 で CI 統合)
-- **commit**: `feat(slice5): add FurusatoCache (Protocol + InMemory + Firestore)`
+- [x] `agent/tests/test_furusato_cache.py`: 11 件 (InMemory の get/set/TTL/overwrite/isolation 等)
+- **DoC**: pytest green / Firestore Emulator 接続テストは Slice 6 CI 統合
+- **commit**: `feat(slice5): add FurusatoCache (Protocol + InMemory + Firestore)` (4dfa302)
 
 ### T-507 `tool.py` + DI (`deps.py`)
 
-- [ ] `agent/src/makelocal_agent/furusato/tool.py`:
-  - `lookup_items_by_ingredient_id(ingredient_id)` ADK tool
+- [x] `agent/src/makelocal_agent/furusato/tool.py`:
+  - `lookup_items_by_ingredient_id(ingredient_id)` ADK tool placeholder
   - `_is_disabled()` で `MLPR_FURUSATO_INTEGRATION` を見る
   - cache が inject 済か確認
-- [ ] `agent/src/makelocal_agent/deps.py`: `get_furusato_cache()` factory (`MLPR_USE_MOCK_FURUSATO` で分岐)
-- [ ] `agent/tests/test_furusato_tool.py`: 3 ケース (disabled / cache miss / cache hit)
-- **DoC**: pytest green / mypy
-- **commit**: `feat(slice5): add furusato tool + DI factory`
+- [x] `agent/src/makelocal_agent/deps.py`: `get_furusato_cache()` factory + reset/set_for_testing
+- [x] `agent/tests/test_furusato_tool.py` + test_deps.py 拡張: 16 件 (disabled / cache miss / cache hit / factory 分岐)
+- **DoC**: pytest green / mypy / ruff / format 全 green、232 件 pytest pass
+- **commit**: `feat(slice5): add furusato tool + DI factory` (78f702c)
 
 → **push & CI green 確認**
 
