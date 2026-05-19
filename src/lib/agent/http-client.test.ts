@@ -161,6 +161,64 @@ describe('HttpAgentClient.generateRecipeDetail', () => {
   });
 });
 
+describe('HttpAgentClient Cloud Run ID token (Slice 6)', () => {
+  it('does NOT attach Authorization header when not running on Cloud Run', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8001', isCloudRun: false });
+    await client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] });
+    const init = fetchMock.mock.calls[0]![1]!;
+    const headers = init.headers as Record<string, string>;
+    // dev / test では Authorization は付かない (token なしで agent 直アクセス)
+    expect(headers.authorization).toBeUndefined();
+    expect(headers.Authorization).toBeUndefined();
+  });
+
+  it('attaches "Bearer <id_token>" header when running on Cloud Run', async () => {
+    // google-auth-library を完全に mock。GoogleAuth#getIdTokenClient が
+    // 返す IdTokenClient の getRequestHeaders に Bearer xxx を仕込む。
+    vi.doMock('google-auth-library', () => {
+      class FakeIdTokenClient {
+        async getRequestHeaders() {
+          return new Headers({ Authorization: 'Bearer fake-id-token-xxx' });
+        }
+      }
+      class GoogleAuth {
+        async getIdTokenClient(audience: string) {
+          // audience が baseUrl と一致することを検証
+          if (audience !== 'https://mlpr-agent.run.app') {
+            throw new Error(`unexpected audience: ${audience}`);
+          }
+          return new FakeIdTokenClient();
+        }
+      }
+      return { GoogleAuth };
+    });
+
+    const fetchMock = vi.fn<typeof fetch>(
+      async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    // dynamic import は HttpAgentClient 内部の `await import('google-auth-library')`
+    // を vi.doMock 後に解決させるため、テスト内で再 import する。
+    const { HttpAgentClient: ReloadedClient } = await import('./http-client');
+    const client = new ReloadedClient({
+      baseUrl: 'https://mlpr-agent.run.app',
+      isCloudRun: true,
+    });
+    await client.generateCandidates({ localeId: 'miyagi', ingredients: ['x'] });
+
+    const init = fetchMock.mock.calls[0]![1]!;
+    const headers = init.headers as Record<string, string>;
+    expect(headers.authorization).toBe('Bearer fake-id-token-xxx');
+
+    vi.doUnmock('google-auth-library');
+  });
+});
+
 describe('HttpAgentClient.reroll', () => {
   it('throws if no context was cached', async () => {
     const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });

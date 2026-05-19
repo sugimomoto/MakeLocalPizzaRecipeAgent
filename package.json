@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "firebase": "^12.13.0",
+    "google-auth-library": "^10.6.2",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
