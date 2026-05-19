@@ -33,26 +33,31 @@
 
 ### T-501 Domain 型 (TS + Python) + Zod schema
 
-- [ ] `src/domain/furusato.ts`: `FurusatoItem` 型 + `furusatoItemSchema` (Zod 4)
-- [ ] `agent/src/makelocal_agent/domain/furusato.py`: `FurusatoItem` Pydantic
-- [ ] テスト: TS schema parse / Python model_validate (round-trip)
+- [x] `src/domain/furusato.ts`: `FurusatoItem` / `FurusatoItemsDoc` 型
+- [x] `agent/src/makelocal_agent/domain/furusato.py`: 同じ shape の Pydantic
+- [x] テスト: TS type smoke 3 件 / Python model_validate 11 件 (extra='forbid' / gt=0 / 任意フィールド / round-trip)
+- [x] Zod schema は不要 (Firestore からの read 時に subscribe ヘルパで normalize する設計)
 - **DoC**: vitest + pytest green、両言語で同 shape
-- **commit**: `feat(slice5): add FurusatoItem domain type (TS + Python)`
+- **commit**: `feat(slice5): add FurusatoItem domain type (TS + Python)` (12de635)
 
 ### T-502 Firestore Security Rules: `furusato_items/*` public read / write deny
 
-- [ ] `firestore.rules` に `match /furusato_items/{ingredientId}` を追加
-- [ ] `tests/rules/firestore-rules.test.ts` に Slice 5 用テスト 2 件追加 (read 可 / write 不可)
-- **DoC**: `pnpm test:rules` green (既存 8 + 新規 2 = 10 件以上)
-- **commit**: `feat(slice5): add Firestore rules for furusato_items collection`
+- [x] `firestore.rules` に `match /furusato_items/{ingredientId}` を追加
+- [x] `tests/rules/firestore-rules.test.ts` に Slice 5 用テスト 5 件追加 (未認証 read OK / 認証済み read OK / 未認証 write 不可 / 認証済み write 不可 / delete 不可)
+- **DoC**: `pnpm test:rules` green (既存 8 + Storage 4 + 新規 5 = 17 件)
+- **commit**: `feat(slice5): add Firestore rules for furusato_items collection` (452b287)
 
 ### T-503 env スイッチ + `.env.example` 拡張
 
-- [ ] `.env.example` に `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` / `MLPR_FURUSATO_INTEGRATION=off` / `MLPR_USE_MOCK_FURUSATO=false` / `RAKUTEN_*` を追加 (ダミー値)
-- [ ] `agent/.env.example` (or `agent/src/.../config.py`) に同様
-- [ ] README に Slice 5 env 説明セクションを追加 (詳細は T-517 で本格更新)
+- [x] `.env.example` に Slice 5 セクションを新設:
+  - `NEXT_PUBLIC_FURUSATO_INTEGRATION=off` (Web 既定)
+  - `MLPR_FURUSATO_INTEGRATION=off` (Python 既定)
+  - `MLPR_USE_MOCK_FURUSATO=false`
+  - `RAKUTEN_APPLICATION_ID` / `RAKUTEN_ACCESS_KEY` / `RAKUTEN_AFFILIATE_ID`
+- [x] 楽天デベロッパー登録の取得手順を inline コメントで documented
+- [ ] README は T-517 で本格更新予定
 - **DoC**: `.env.example` をコピーすれば Slice 5 を `off` で安全に試せる
-- **commit**: `chore(slice5): document furusato env vars in .env.example`
+- **commit**: `chore(slice5): document furusato env vars in .env.example` (b7f9aa2)
 
 → **push & CI green 確認**
 
