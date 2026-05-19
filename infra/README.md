@@ -255,6 +255,30 @@ gcloud run deploy mlpr-agent \
 
 以降は GitHub Actions で自動デプロイされる (Phase 6 完了後)。
 
+### 7.1 GitHub Actions の自動デプロイを有効化する
+
+`.github/workflows/deploy.yml` は初期状態では `workflow_dispatch` のみ (手動 trigger)。
+以下の手順で main push 自動デプロイに切替える:
+
+1. **GitHub repo の Settings → Secrets and variables → Actions → Variables** で 3 つ追加:
+   ```
+   GCP_PROJECT_ID         = <your-project-id>
+   GCP_WIF_PROVIDER       = <terraform output workload_identity_provider の値>
+   GCP_DEPLOYER_SA_EMAIL  = <terraform output deployer_sa_email の値>
+   ```
+2. `.github/workflows/deploy.yml` の以下 2 行のコメントを外す:
+   ```yaml
+   # push:
+   #   branches: [main]
+   ```
+   → `push: branches: [main]` を有効化。
+3. main に push すると `deploy` job が起動し、Web / Agent を並列ビルド + Cloud Run 更新。
+
+### 7.2 手動 trigger でテストしたい
+
+Actions タブ → 「Deploy」 ワークフロー → 「Run workflow」 で手動実行できる。
+初回検証や緊急デプロイ時に使う。
+
 ---
 
 ## 8. 動作確認チェックリスト
