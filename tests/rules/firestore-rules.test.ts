@@ -133,3 +133,66 @@ describe('firestore.rules — users/{uid}/savedRecipes/{candidateId}', () => {
     );
   });
 });
+
+describe('firestore.rules — furusato_items/{ingredientId} (Slice 5)', () => {
+  const FURUSATO_PATH = (ingredientId: string) => `furusato_items/${ingredientId}`;
+  const SAMPLE_FURUSATO_DOC = {
+    ingredientId: 'miyagi-oyster',
+    items: [
+      {
+        itemId: 'shop-A:item-1',
+        ingredientId: 'miyagi-oyster',
+        platform: 'rakuten',
+        title: '【ふるさと納税】宮城県松島町 三陸産生牡蠣 1kg',
+        municipality: '宮城県松島町',
+        producer: '松島漁業',
+        donationAmount: 12000,
+        url: 'https://item.rakuten.co.jp/shop/abc/',
+        affiliateUrl: null,
+        imageUrl: null,
+        inStock: true,
+        fetchedAt: '2026-05-19T00:00:00.000Z',
+      },
+    ],
+    refreshedAt: new Date('2026-05-19T00:00:00Z'),
+    ttlExpiresAt: new Date('2026-05-26T00:00:00Z'),
+  };
+
+  it('unauthenticated client can read furusato_items (public read)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), FURUSATO_PATH('miyagi-oyster')), SAMPLE_FURUSATO_DOC);
+    });
+    const guest = testEnv.unauthenticatedContext();
+    await assertSucceeds(getDoc(doc(guest.firestore(), FURUSATO_PATH('miyagi-oyster'))));
+  });
+
+  it('authenticated client can also read', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), FURUSATO_PATH('miyagi-oyster')), SAMPLE_FURUSATO_DOC);
+    });
+    const user = testEnv.authenticatedContext('user-a');
+    await assertSucceeds(getDoc(doc(user.firestore(), FURUSATO_PATH('miyagi-oyster'))));
+  });
+
+  it('unauthenticated client cannot write into furusato_items', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(
+      setDoc(doc(guest.firestore(), FURUSATO_PATH('miyagi-oyster')), SAMPLE_FURUSATO_DOC),
+    );
+  });
+
+  it('authenticated client also cannot write (only refresh script via Admin SDK)', async () => {
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(
+      setDoc(doc(user.firestore(), FURUSATO_PATH('miyagi-oyster')), SAMPLE_FURUSATO_DOC),
+    );
+  });
+
+  it('authenticated client cannot delete', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), FURUSATO_PATH('miyagi-oyster')), SAMPLE_FURUSATO_DOC);
+    });
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(deleteDoc(doc(user.firestore(), FURUSATO_PATH('miyagi-oyster'))));
+  });
+});
