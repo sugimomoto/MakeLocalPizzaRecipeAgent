@@ -1,0 +1,101 @@
+/* DetailMakeCTA — /recipes/[id] の「作ってみる」CTA カード (Slice 7、案 A 採用)
+ * 設計: design/slice7-screens.jsx DetailCTA_A @ L851
+ */
+
+.card {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.makeButton {
+  flex: 1;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--mlpr-shu);
+  color: #fff;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 18px rgba(200, 65, 42, 0.32),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  transition: transform 90ms ease;
+}
+
+.makeButton:active {
+  transform: scale(0.98);
+}
+
+.makeButton:disabled {
+  background: rgba(31, 26, 18, 0.08);
+  color: var(--mlpr-sumi-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.makeButton:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 3px;
+}
+
+.heartButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--mlpr-hairline);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--mlpr-shu);
+  cursor: pointer;
+}
+
+.heartButton:hover {
+  background: rgba(31, 26, 18, 0.04);
+}
+
+.heartButton:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
+
+.heartButton--filled {
+  background: rgba(200, 65, 42, 0.08);
+  border-color: rgba(200, 65, 42, 0.3);
+}
+
+.hint {
+  margin-top: 8px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 10.5px;
+  color: var(--mlpr-sumi-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.signInLink {
+  color: var(--mlpr-shu);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -17,13 +17,14 @@ import { useEffect, useRef, useState } from 'react';
 import { AvatarButton } from '@/components/auth/AvatarButton';
 import { StrategySeal } from '@/components/candidate/StrategySeal';
 import { FurusatoSection } from '@/components/furusato/FurusatoSection';
-import { Button } from '@/components/primitives/Button';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
+import { DetailMakeCTA, type DetailMakeCTAState } from '@/components/recipe/DetailMakeCTA';
 import { MaterialList } from '@/components/recipe/MaterialList';
 import { MetaStrip } from '@/components/recipe/MetaStrip';
 import { RecipeHero, type HeartSavedState } from '@/components/recipe/RecipeHero';
 import { StepList } from '@/components/recipe/StepList';
 import { StoryCard } from '@/components/recipe/StoryCard';
+import { HeaderRow } from '@/components/shell/HeaderRow';
 import { findPrefecture } from '@/data/prefectures';
 import { STRATEGY_LABELS } from '@/domain/candidate';
 import { useRecipeDetailStream } from '@/hooks/use-recipe-detail-stream';
@@ -197,10 +198,28 @@ export function DetailClient({ candidateId }: DetailClientProps) {
     }
   };
 
+  // Slice 7: DetailMakeCTA の state を auth + saved 状態から導出
+  const makeCtaState: DetailMakeCTAState =
+    saved.state === 'unauthenticated' ? 'guest' : saved.state === 'saved' ? 'ready' : 'unsaved';
+  const handleMakeClick = (): void => {
+    if (saved.state === 'unauthenticated') {
+      openModal();
+      return;
+    }
+    if (saved.state !== 'saved') {
+      toast.push({
+        kind: 'info',
+        message: '先にハートで保存すると、振り返り帳に作った記録を残せます',
+      });
+      return;
+    }
+    router.push(`/feedback/${encodeURIComponent(candidateId)}`);
+  };
+
   return (
     <div className={styles.shell}>
       <div className={styles.topRow}>
-        <AvatarButton />
+        <HeaderRow title="詳細レシピ" rightSlot={<AvatarButton />} />
       </div>
       <RecipeHero
         imageUrl={stream.imageUrl}
@@ -251,23 +270,14 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         <StoryCard story={stream.story} />
       </div>
 
-      <div className={styles.stickyCtas}>
-        <div className={styles.stickyInner}>
-          <Button
-            variant="shu"
-            size="md"
-            style={{ flex: 1 }}
-            onClick={() => {
-              // 「作ってみる」は Slice 5+ で調理開始フローに置き換え予定。
-              // 一旦 alert で導線だけ残す。
-              if (typeof window !== 'undefined') {
-                window.alert('作ってみる (準備中)');
-              }
-            }}
-          >
-            作ってみる →
-          </Button>
-        </div>
+      <div className={styles.makeCtaWrap}>
+        <DetailMakeCTA
+          state={makeCtaState}
+          heartFilled={saved.state === 'saved'}
+          onMakeClick={handleMakeClick}
+          onHeartClick={() => void handleHeart()}
+          onSignInRequest={openModal}
+        />
       </div>
     </div>
   );

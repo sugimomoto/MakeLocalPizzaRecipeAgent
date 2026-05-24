@@ -89,21 +89,12 @@
   font-size: 13px;
 }
 
-.stickyCtas {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 12px 20px 24px;
-  background: linear-gradient(to bottom, rgba(245, 239, 225, 0) 0%, rgba(245, 239, 225, 0.96) 35%);
-  z-index: 10;
-}
-
-.stickyInner {
+/* Slice 6 まで bottom 固定の sticky CTA だったが、Slice 7 で
+ * DetailMakeCTA カード (案 A、本文内インライン) に置換した。 */
+.makeCtaWrap {
+  padding: 0 20px 32px;
   max-width: 480px;
   margin: 0 auto;
-  display: flex;
-  gap: 10px;
 }
 
 @keyframes skeletonPulse {
