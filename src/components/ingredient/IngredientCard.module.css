@@ -9,18 +9,40 @@
 }
 
 .placeholder {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: var(--mlpr-radius-md);
+  /* 和紙地 (washi + 軽い highlight) + 微妙な紙繊維テクスチャ風グラデ */
   background:
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+    radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.5) 0%, transparent 60%),
+    radial-gradient(circle at 75% 80%, rgba(31, 26, 18, 0.04) 0%, transparent 50%),
     color-mix(in srgb, var(--mlpr-washi-deep) 70%, var(--mlpr-mokushi) 30%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--mlpr-font-mincho);
-  font-size: 14px;
-  color: var(--mlpr-sumi-soft);
+  overflow: hidden;
+}
+
+/* 季節色のリボン (placeholder の上端、4px の細帯) */
+.seasonRibbon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+/* カテゴリ絵文字 — 大きめに、和紙の中央 */
+.emoji {
+  font-size: 44px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(31, 26, 18, 0.12));
+  /* iOS / macOS では native emoji が綺麗、Linux/Win も color emoji フォールバック */
+  font-family:
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', sans-serif;
 }
 
 .name {
