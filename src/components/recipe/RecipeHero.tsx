@@ -50,9 +50,34 @@ export function RecipeHero({
         <div
           className={styles.skeleton}
           role="status"
+          aria-live="polite"
           aria-label={imageError ? '画像生成に失敗しました' : '画像生成中'}
         >
-          {imageError && <span className={styles.errorBadge}>画像生成は失敗しました</span>}
+          {imageError ? (
+            <span className={styles.errorBadge}>画像生成は失敗しました</span>
+          ) : (
+            <div className={styles.loading} aria-hidden="true">
+              <span className={styles.loadingIcon}>
+                <svg width="32" height="32" viewBox="0 0 24 24" focusable="false">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="14 42"
+                  />
+                </svg>
+              </span>
+              <span className={styles.loadingText}>
+                画像生成中
+                <span className={styles.loadingDots} aria-hidden="true" />
+              </span>
+              <span className={styles.loadingHint}>Imagen が焼き上げ中…</span>
+            </div>
+          )}
         </div>
       )}
 

@@ -39,6 +39,76 @@
   }
 }
 
+/* Slice 7: シマーだけだと「読み込み中」かどうか分かりにくいので、
+   中央に明示的なローディング UI (回るアイコン + テキスト + 補助文) を重ねる。
+   Imagen の生成は 5-10 秒かかるためユーザに進行中であることを伝える。 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--mlpr-sumi-soft, rgba(31, 26, 18, 0.7));
+  font-family: var(--mlpr-font-mincho, serif);
+}
+
+.loadingIcon {
+  display: inline-flex;
+  animation: spin 1.4s linear infinite;
+  color: var(--mlpr-shu, #b23a48);
+}
+
+.loadingText {
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: var(--mlpr-sumi, #1f1a12);
+}
+
+.loadingDots::after {
+  content: '...';
+  display: inline-block;
+  width: 1.6em;
+  text-align: left;
+  animation: dots 1.6s steps(4, end) infinite;
+}
+
+.loadingHint {
+  font-family: var(--mlpr-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--mlpr-sumi-muted, rgba(31, 26, 18, 0.55));
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingIcon,
+  .skeleton {
+    animation: none;
+  }
+}
+
 .errorBadge {
   font-family: var(--mlpr-font-mono, monospace);
   font-size: 11px;

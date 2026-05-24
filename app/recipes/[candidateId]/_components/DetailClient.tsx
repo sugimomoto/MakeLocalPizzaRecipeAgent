@@ -325,9 +325,9 @@ export function DetailClient({ candidateId }: DetailClientProps) {
           <StepList steps={stream.steps} />
         </section>
 
-        <FurusatoSection ingredientIds={pending?.ingredients ?? []} />
-
         <StoryCard story={stream.story} />
+
+        <FurusatoSection ingredientIds={pending?.ingredients ?? []} />
       </div>
 
       <div className={styles.makeCtaWrap}>
