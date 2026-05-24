@@ -6,14 +6,10 @@
   min-height: 100vh;
 }
 
-/* RecipeHero の上に独立して配置するトップ行。
-   以前は position: absolute で画像領域に重ねていたが、RecipeHero の
-   右上ハートと衝突するため通常の flow に戻す。 */
+/* Slice 7: AvatarButton 単体 → 統一 HeaderRow を出すための薄い wrapper。
+   旧 flex+justify-content:flex-end は HeaderRow を右端ピルに縮める原因だったため削除。 */
 .topRow {
-  padding: 10px 14px 8px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  padding: 12px 0 0;
 }
 
 .body {
