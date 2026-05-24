@@ -55,7 +55,7 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   const { status, user } = useAuth();
   const { openModal } = useSignInModal();
   const toast = useToast();
-  const { state, saved, recipe, recipeReady, initial, save } = useFeedback(candidateId);
+  const { state, saved, recipe, recipeReady, initial, save, remove } = useFeedback(candidateId);
 
   // controlled form state (initial で hydrate)
   const [form, setForm] = useState<FeedbackFormValue>(initial);
@@ -167,6 +167,26 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'unknown';
       toast.push({ kind: 'warning', message: `記録に失敗しました (${msg})` });
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (): Promise<void> => {
+    if (submitting) return;
+    if (typeof window !== 'undefined') {
+      const ok = window.confirm(
+        'この振り返り (フィードバック) を取り消します。\nピザ自体は保存帳に残ります。よろしいですか？',
+      );
+      if (!ok) return;
+    }
+    setSubmitting(true);
+    try {
+      await remove();
+      toast.push({ kind: 'success', message: '振り返りを取り消しました' });
+      router.push('/journal');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'unknown';
+      toast.push({ kind: 'warning', message: `取り消しに失敗しました (${msg})` });
       setSubmitting(false);
     }
   };
@@ -358,6 +378,20 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
         />
         <div className={styles.noteCounter}>{(form.note ?? '').length} / 500</div>
       </div>
+
+      {/* 削除リンク (Slice 7 後追加) — saved (= 既存記録) のときだけ出す */}
+      {saved ? (
+        <div className={styles.dangerZone}>
+          <button
+            type="button"
+            className={styles.dangerLink}
+            onClick={() => void handleDelete()}
+            disabled={submitting}
+          >
+            この振り返りを取り消す
+          </button>
+        </div>
+      ) : null}
 
       <div className={styles.ctaWrap}>
         <button

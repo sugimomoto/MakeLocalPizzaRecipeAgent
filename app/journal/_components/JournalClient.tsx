@@ -25,7 +25,6 @@ import { useSavedRecipes } from '@/hooks/use-saved-recipes';
 import { useSavedRecipesJournal } from '@/hooks/use-saved-recipes-journal';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
-import { writePendingRecipeFromSaved } from '@/lib/saved-recipe-nav';
 
 import styles from './JournalClient.module.css';
 
@@ -84,9 +83,11 @@ export function JournalClient(): JSX.Element {
     };
   }, [items, all.items]);
 
+  // 振り返り帳のカードクリック = 「入力した内容を確認 / 編集」が主用途。
+  // /recipes (詳細レシピ) に飛ばすと feedback が見えないので、既存入力を読み込んで
+  // 編集できる /feedback 画面に直接遷移する (Slice 7 後修正)。
   const handleOpen = (recipe: SavedRecipe): void => {
-    writePendingRecipeFromSaved(recipe);
-    router.push(`/recipes/${encodeURIComponent(recipe.candidateId)}`);
+    router.push(`/feedback/${encodeURIComponent(recipe.candidateId)}`);
   };
 
   // 認証中

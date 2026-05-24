@@ -9,10 +9,12 @@
 
 import {
   deleteDoc,
+  deleteField,
   doc,
   onSnapshot,
   serverTimestamp,
   setDoc,
+  updateDoc,
   type DocumentData,
   type DocumentSnapshot,
   type Firestore,
@@ -120,6 +122,26 @@ export async function saveDraft(
 
 /** draft 削除 (submit 成功 / ユーザー discard) */
 export async function deleteDraft(db: Firestore, uid: string, candidateId: string): Promise<void> {
+  try {
+    await deleteDoc(draftDocRef(db, uid, candidateId));
+  } catch {
+    /* 不在は無視 */
+  }
+}
+
+/**
+ * フィードバックだけ削除 — SavedRecipe 自体は保存帳に残す。
+ *
+ * Slice 7 後追加: 振り返り帳の「記録を取り消す」用。同時に drafts/{id} も削除。
+ * savedRecipes/{id}.feedback フィールド単体を deleteField() で消すため
+ * 親 doc は残る (= /library での保存表示は維持される)。
+ */
+export async function deleteFeedback(
+  db: Firestore,
+  uid: string,
+  candidateId: string,
+): Promise<void> {
+  await updateDoc(savedDocRef(db, uid, candidateId), { feedback: deleteField() });
   try {
     await deleteDoc(draftDocRef(db, uid, candidateId));
   } catch {

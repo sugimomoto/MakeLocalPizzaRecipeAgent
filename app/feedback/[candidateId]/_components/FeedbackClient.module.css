@@ -367,3 +367,34 @@
   color: var(--mlpr-sumi-muted);
   letter-spacing: 0.3px;
 }
+
+/* Slice 7 後追加: 削除リンク。CTA バーの上 (非 fixed コンテンツ最下部) に置いて、
+   下部 sticky の「記録を更新する」と誤タップしないよう距離を取る */
+.dangerZone {
+  padding: 18px 20px 4px;
+  text-align: center;
+}
+
+.dangerLink {
+  background: transparent;
+  border: none;
+  color: var(--mlpr-shu);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(178, 58, 72, 0.45);
+  text-underline-offset: 3px;
+}
+
+.dangerLink:hover {
+  color: var(--mlpr-shu-deep, #8a2e36);
+  text-decoration-color: rgba(178, 58, 72, 0.8);
+}
+
+.dangerLink:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -24,7 +24,7 @@ import {
 } from '@/domain/feedback';
 import { useAuth } from '@/hooks/use-auth';
 import { getFirebaseDb } from '@/lib/firebase/client';
-import { deleteDraft, saveFeedback, subscribeDraft } from '@/lib/firebase/feedback';
+import { deleteDraft, deleteFeedback, saveFeedback, subscribeDraft } from '@/lib/firebase/feedback';
 import { subscribeSavedRecipe } from '@/lib/firebase/saved-recipe';
 
 import type { SavedRecipe } from '@/domain/saved-recipe';
@@ -50,6 +50,8 @@ export type UseFeedbackResult = {
   initial: FeedbackFormValue;
   /** submit (saveFeedback + draft 削除)。saved がなければ isFirst=true */
   save: (payload: FeedbackFormValue) => Promise<void>;
+  /** フィードバックだけ削除 (SavedRecipe は残す)。Slice 7 後追加 */
+  remove: () => Promise<void>;
   /** draft だけ手動破棄 (UI からは通常呼ばない、テスト / 緊急用) */
   discardDraft: () => Promise<void>;
   /** 直近のエラー (Toast 用) */
@@ -156,6 +158,17 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
     [user, candidateId, recipe],
   );
 
+  const remove = useCallback(async (): Promise<void> => {
+    if (!user) throw new Error('not authenticated');
+    try {
+      await deleteFeedback(getFirebaseDb(), user.uid, candidateId);
+    } catch (err) {
+      const e = err instanceof Error ? err : new Error(String(err));
+      setError(e);
+      throw e;
+    }
+  }, [user, candidateId]);
+
   const discardDraft = useCallback(async (): Promise<void> => {
     if (!user) return;
     try {
@@ -176,5 +189,16 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
   // FEEDBACK_AXIS_ORDER は使うけど直接エクスポートはしない、参照確保
   void FEEDBACK_AXIS_ORDER;
 
-  return { state, saved, draft, recipe, recipeReady, initial, save, discardDraft, error };
+  return {
+    state,
+    saved,
+    draft,
+    recipe,
+    recipeReady,
+    initial,
+    save,
+    remove,
+    discardDraft,
+    error,
+  };
 }
