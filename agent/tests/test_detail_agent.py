@@ -74,7 +74,7 @@ class TestRunRecipeDetail:
             return_value=RecipeDetailLlmOutput(
                 title="t",
                 meta=RecipeMeta(
-                    servings="4 人分", duration="45m", bakingTemp="270°C", difficulty="★★☆"
+                    servings="ピザ 1 枚分", duration="45m", bakingTemp="270°C", difficulty="★★☆"
                 ),
                 materials=[RecipeMaterial(name=f"n{i}", quantity=f"{i}g") for i in range(1, 4)],
                 steps=[f"step{i}" for i in range(1, 4)],

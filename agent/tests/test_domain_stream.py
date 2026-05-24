@@ -142,7 +142,7 @@ class TestRecipeEvents:
             "type": "recipe.meta",
             "recipeId": "r_1",
             "meta": {
-                "servings": "4 人分",
+                "servings": "ピザ 1 枚分",
                 "duration": "45m",
                 "bakingTemp": "270°C",
                 "difficulty": "★★☆",

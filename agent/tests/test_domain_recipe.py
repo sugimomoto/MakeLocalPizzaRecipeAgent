@@ -13,7 +13,7 @@ from makelocal_agent.domain.recipe import (
 
 
 def _meta() -> RecipeMeta:
-    return RecipeMeta(servings="4 人分", duration="45m", bakingTemp="270°C", difficulty="★★☆")
+    return RecipeMeta(servings="ピザ 1 枚分", duration="45m", bakingTemp="270°C", difficulty="★★☆")
 
 
 def _materials(n: int = 5) -> list[RecipeMaterial]:
@@ -42,14 +42,14 @@ class TestRecipeMaterial:
 class TestRecipeMeta:
     def test_accepts_typical_values(self) -> None:
         m = _meta()
-        assert m.servings == "4 人分"
+        assert m.servings == "ピザ 1 枚分"
         assert m.duration == "45m"
         assert m.bakingTemp == "270°C"
         assert m.difficulty == "★★☆"
 
     @pytest.mark.parametrize("field", ["servings", "duration", "bakingTemp", "difficulty"])
     def test_rejects_empty_field(self, field: str) -> None:
-        base = {"servings": "4 人分", "duration": "45m", "bakingTemp": "270°C", "difficulty": "★★☆"}
+        base = {"servings": "ピザ 1 枚分", "duration": "45m", "bakingTemp": "270°C", "difficulty": "★★☆"}
         base[field] = ""
         with pytest.raises(ValidationError):
             RecipeMeta(**base)

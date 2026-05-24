@@ -1,8 +1,11 @@
 /**
- * MetaStrip — 詳細画面の俯瞰メタ (人数 / 所要 / 焼成温度 / 難易度) 4 セル横並び。
+ * MetaStrip — 詳細画面の俯瞰メタ (枚数 / 所要 / 焼成温度 / 難易度) 4 セル横並び。
  *
  * meta が null の間は薄いプレースホルダ ("—") を出す。
  * mono 数字とミニラベルの組合せ (CandidatesClient.module.css の和洋ミックスに揃える)。
+ *
+ * label "MAKES": ピザは枚単位で焼くため「サーブ人数」より「作る枚数」が自然
+ * (ユーザ要望、2026-05-24)。
  */
 
 import styles from './MetaStrip.module.css';
@@ -17,7 +20,7 @@ const PLACEHOLDER = '—';
 
 export function MetaStrip({ meta }: MetaStripProps) {
   const cells: Array<{ label: string; value: string }> = [
-    { label: 'SERVES', value: meta?.servings ?? PLACEHOLDER },
+    { label: 'MAKES', value: meta?.servings ?? PLACEHOLDER },
     { label: 'TIME', value: meta?.duration ?? PLACEHOLDER },
     { label: 'TEMP', value: meta?.bakingTemp ?? PLACEHOLDER },
     { label: 'LEVEL', value: meta?.difficulty ?? PLACEHOLDER },

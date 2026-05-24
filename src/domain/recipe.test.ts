@@ -13,7 +13,7 @@ describe('RecipeMaterial type shape', () => {
 describe('RecipeMeta type shape', () => {
   it('allows all 4 display strings', () => {
     const meta: RecipeMeta = {
-      servings: '4 人分',
+      servings: 'ピザ 1 枚分',
       duration: '45m',
       bakingTemp: '270°C',
       difficulty: '★★☆',

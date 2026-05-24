@@ -25,7 +25,7 @@ const HAPPY_EVENTS: StreamEvent[] = [
   {
     type: 'recipe.meta',
     recipeId: 'c_test',
-    meta: { servings: '4 人分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
+    meta: { servings: 'ピザ 1 枚分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
   },
   {
     type: 'recipe.materials',
@@ -95,7 +95,7 @@ describe('useRecipeDetailStream', () => {
 
     await waitFor(() => expect(result.current.state).toBe('allDone'));
     expect(result.current.title).toBe('松島の牡蠣ピザ');
-    expect(result.current.meta?.servings).toBe('4 人分');
+    expect(result.current.meta?.servings).toBe('ピザ 1 枚分');
     expect(result.current.materials?.length).toBe(3);
     expect(result.current.steps?.length).toBe(3);
     expect(result.current.story?.headline).toBe('松島の夜。');

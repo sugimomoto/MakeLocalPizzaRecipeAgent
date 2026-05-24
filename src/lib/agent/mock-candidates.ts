@@ -244,7 +244,7 @@ async function* buildRecipeDetailEvents(
   yield {
     type: 'recipe.meta',
     recipeId,
-    meta: { servings: '4 人分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
+    meta: { servings: 'ピザ 1 枚分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' },
   };
 
   await delay(pseudoDelay(seed, ++idx, delayRange));

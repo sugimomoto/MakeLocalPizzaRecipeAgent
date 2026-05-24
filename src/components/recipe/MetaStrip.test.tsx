@@ -14,10 +14,15 @@ describe('MetaStrip', () => {
   it('renders the 4 values from meta', () => {
     render(
       <MetaStrip
-        meta={{ servings: '4 人分', duration: '45m', bakingTemp: '270°C', difficulty: '★★☆' }}
+        meta={{
+          servings: 'ピザ 1 枚分',
+          duration: '45m',
+          bakingTemp: '270°C',
+          difficulty: '★★☆',
+        }}
       />,
     );
-    expect(screen.getByText('4 人分')).toBeInTheDocument();
+    expect(screen.getByText('ピザ 1 枚分')).toBeInTheDocument();
     expect(screen.getByText('45m')).toBeInTheDocument();
     expect(screen.getByText('270°C')).toBeInTheDocument();
     expect(screen.getByText('★★☆')).toBeInTheDocument();
@@ -26,7 +31,7 @@ describe('MetaStrip', () => {
 
   it('shows the 4 fixed English labels', () => {
     render(<MetaStrip meta={null} />);
-    expect(screen.getByText('SERVES')).toBeInTheDocument();
+    expect(screen.getByText('MAKES')).toBeInTheDocument();
     expect(screen.getByText('TIME')).toBeInTheDocument();
     expect(screen.getByText('TEMP')).toBeInTheDocument();
     expect(screen.getByText('LEVEL')).toBeInTheDocument();
