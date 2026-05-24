@@ -20,7 +20,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { StrategySeal } from '@/components/candidate/StrategySeal';
+import { FurusatoMark } from '@/components/brand/FurusatoMark';
 import { Button } from '@/components/primitives/Button';
 import { useAuth } from '@/hooks/use-auth';
 import { useLocale } from '@/hooks/use-locale';
@@ -56,22 +56,19 @@ export function TopClient(): React.JSX.Element | null {
 
   return (
     <div className={styles.shell}>
-      <div className={styles.ornament} aria-hidden>
-        <div className={styles.sealWrap}>
-          <StrategySeal strategy="exploit" size={48} />
-        </div>
-        <div className={styles.sealWrap}>
-          <StrategySeal strategy="tune" size={48} />
-        </div>
-        <div className={styles.sealWrap}>
-          <StrategySeal strategy="explore" size={48} />
-        </div>
+      {/* Slice 7: 戦略印 3 つ → ふるさとピザ帳のブランドマークに置換 */}
+      <div className={styles.markRow} aria-hidden>
+        <FurusatoMark variant="B" size={104} />
       </div>
 
       <div className={styles.center}>
         <p className={styles.eyebrow} aria-hidden>
           地 元 × ピ ザ × AI
         </p>
+        <div className={styles.brandLine}>
+          <span className={styles.brandJp}>ふるさとピザ帳</span>
+          <span className={styles.brandEn}>FURUSATO PIZZA-CHŌ</span>
+        </div>
         <h1 className={styles.title}>
           未来の一枚は、
           <br />
@@ -82,7 +79,7 @@ export function TopClient(): React.JSX.Element | null {
           <br />
           AI があなただけのピザを 3 案提案。
           <br />
-          気に入った 1 枚は「ピザ帳」に残せます。
+          気に入った 1 枚は「ふるさとピザ帳」に残せます。
         </p>
       </div>
 
@@ -101,7 +98,7 @@ export function TopClient(): React.JSX.Element | null {
       </div>
 
       <p className={styles.footer} aria-hidden>
-        MAKE LOCAL PIZZA RECIPE AGENT · 2026
+        FURUSATO PIZZA-CHŌ · 2026
       </p>
     </div>
   );

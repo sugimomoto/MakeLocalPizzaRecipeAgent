@@ -8,24 +8,41 @@
   align-items: stretch;
 }
 
-/* 3 戦略印オーナメント (薄く中央寄せ) */
-.ornament {
+/* Slice 7: ふるさとピザ帳のブランドマーク (中央配置) */
+.markRow {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 16px;
-  padding: 8px 0 0;
-  opacity: 0.42;
-}
-
-.sealWrap {
-  transform: scale(0.7);
+  padding: 24px 0 0;
 }
 
 /* タイトル / コピー */
 .center {
   text-align: center;
-  padding: 48px 0 0;
+  padding: 20px 0 0;
+}
+
+/* Slice 7: ブランド名と英表記の併記行 (eyebrow の下) */
+.brandLine {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.brandJp {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 4px;
+}
+
+.brandEn {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 3px;
 }
 
 .eyebrow {
