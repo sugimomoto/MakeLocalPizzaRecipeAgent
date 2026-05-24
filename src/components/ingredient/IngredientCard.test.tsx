@@ -22,10 +22,13 @@ describe('IngredientCard', () => {
     expect(screen.getByText(/一関の山あい/)).toBeInTheDocument();
   });
 
-  it('displays one badge per season', () => {
+  it('displays a primary season badge + a category badge', () => {
+    // design 仕様: 代表季節 (seasons[0]) 1 つ + カテゴリ 1 つの Badge を出す。
+    // SERI.seasons=['winter', 'spring'] なので「冬」だけが Badge に出る (「春」は隠す)。
     render(<IngredientCard ingredient={SERI} selected={false} onToggle={() => undefined} />);
     expect(screen.getByText('冬')).toBeInTheDocument();
-    expect(screen.getByText('春')).toBeInTheDocument();
+    expect(screen.queryByText('春')).not.toBeInTheDocument();
+    expect(screen.getByText('野菜')).toBeInTheDocument();
   });
 
   it('aria-pressed reflects selected', () => {
