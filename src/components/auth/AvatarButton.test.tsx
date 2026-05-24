@@ -1,19 +1,22 @@
 /**
- * AvatarButton のテスト:
+ * AvatarButton (Slice 7 仕様) のテスト:
  * - 3 状態 (loading / unauthenticated / authenticated) の描画分岐
- * - unauthenticated → onClick で useSignInModal.openModal が呼ばれる
- * - authenticated → onClick で router.push('/library') が呼ばれる
+ * - unauthenticated → onClick で useSignInModal.openModal
+ * - authenticated → onClick で Dropdown が開く (HeaderDropdown が出現)
+ * - Dropdown 内のサインアウト押下で useAuth().signOut() が呼ばれる
  * - photoURL があれば <img>、無ければイニシャル
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AvatarButton } from './AvatarButton';
 
 const pushMock = vi.fn();
+const usePathnameMock = vi.fn(() => '/library');
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: pushMock }),
+  useRouter: () => ({ push: pushMock, back: vi.fn(), replace: vi.fn() }),
+  usePathname: () => usePathnameMock(),
 }));
 
 const openModalMock = vi.fn();
@@ -21,7 +24,12 @@ vi.mock('@/hooks/use-sign-in-modal', () => ({
   useSignInModal: () => ({ isOpen: false, openModal: openModalMock, close: vi.fn() }),
 }));
 
-// useAuth は test ごとに状態を差し替えたいので let で持つ
+const toastPushMock = vi.fn();
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ push: toastPushMock }),
+}));
+
+// useAuth は test ごとに状態を差し替える
 type AuthState = {
   status: 'loading' | 'unauthenticated' | 'authenticated';
   user: {
@@ -32,17 +40,21 @@ type AuthState = {
   } | null;
 };
 let authState: AuthState = { status: 'loading', user: null };
+const signOutMock = vi.fn();
 vi.mock('@/hooks/use-auth', () => ({
   useAuth: () => ({
     ...authState,
     signInWithGoogle: vi.fn(),
-    signOut: vi.fn(),
+    signOut: signOutMock,
   }),
 }));
 
 beforeEach(() => {
   pushMock.mockReset();
   openModalMock.mockReset();
+  signOutMock.mockReset();
+  toastPushMock.mockReset();
+  usePathnameMock.mockReturnValue('/library');
   authState = { status: 'loading', user: null };
 });
 
@@ -51,16 +63,14 @@ afterEach(() => {
 });
 
 describe('AvatarButton', () => {
-  it('renders an aria-hidden placeholder while status is loading', () => {
+  it('loading 時はプレースホルダのみ (button なし)', () => {
     authState = { status: 'loading', user: null };
     const { container } = render(<AvatarButton />);
-    // button は出ない
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    // 何かしらの要素は描画されている (レイアウト保持)
     expect(container.firstChild).toBeTruthy();
   });
 
-  it('renders a "サインイン" link when unauthenticated', async () => {
+  it('unauthenticated 時は「サインイン」リンク、クリックで openModal', async () => {
     authState = { status: 'unauthenticated', user: null };
     const user = userEvent.setup();
     render(<AvatarButton />);
@@ -71,29 +81,72 @@ describe('AvatarButton', () => {
     expect(openModalMock).toHaveBeenCalledTimes(1);
   });
 
-  it('renders initials avatar when authenticated without photoURL', async () => {
+  it('authenticated 時 (no photoURL) はイニシャル + chevron、クリックで Dropdown 展開', async () => {
     authState = {
       status: 'authenticated',
-      user: {
-        uid: 'u-1',
-        displayName: 'Kazu',
-        email: 'kazu@example.com',
-        photoURL: null,
-      },
+      user: { uid: 'u-1', displayName: 'Kazu', email: 'kazu@example.com', photoURL: null },
     };
     const user = userEvent.setup();
     render(<AvatarButton />);
 
-    const btn = screen.getByRole('button', { name: /Kazu のピザ帳を開く/ });
-    expect(btn).toBeInTheDocument();
-    expect(btn).toHaveTextContent('K');
-    expect(btn.querySelector('img')).toBeNull();
+    const trigger = screen.getByRole('button', { name: 'ユーザーメニュー' });
+    expect(trigger).toBeInTheDocument();
+    expect(trigger).toHaveTextContent('K');
+    expect(trigger.querySelector('img')).toBeNull();
 
-    await user.click(btn);
-    expect(pushMock).toHaveBeenCalledWith('/library');
+    // 初期は Dropdown 非表示
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+    await user.click(trigger);
+
+    // Dropdown が出現
+    const menu = await screen.findByRole('menu', { name: 'ユーザーメニュー' });
+    expect(menu).toBeInTheDocument();
+    // 3 つの menuitem (library / journal / サインアウト)
+    const items = screen.getAllByRole('menuitem');
+    expect(items).toHaveLength(3);
+    expect(items[0]).toHaveTextContent('ピザ帳 (保存)');
+    expect(items[1]).toHaveTextContent('振り返り帳 (作った)');
+    expect(items[2]).toHaveTextContent('サインアウト');
   });
 
-  it('renders an <img> when photoURL is provided', () => {
+  it('Dropdown 内「振り返り帳」クリックで router.push("/journal")', async () => {
+    authState = {
+      status: 'authenticated',
+      user: { uid: 'u-1', displayName: 'Kazu', email: 'kazu@example.com', photoURL: null },
+    };
+    const user = userEvent.setup();
+    render(<AvatarButton />);
+
+    await user.click(screen.getByRole('button', { name: 'ユーザーメニュー' }));
+    const journalItem = await screen.findByRole('menuitem', { name: /振り返り帳/ });
+    await user.click(journalItem);
+
+    expect(pushMock).toHaveBeenCalledWith('/journal');
+  });
+
+  it('Dropdown 内サインアウトで signOut + info Toast', async () => {
+    signOutMock.mockResolvedValueOnce(undefined);
+    authState = {
+      status: 'authenticated',
+      user: { uid: 'u-1', displayName: 'Kazu', email: 'kazu@example.com', photoURL: null },
+    };
+    const user = userEvent.setup();
+    render(<AvatarButton />);
+
+    await user.click(screen.getByRole('button', { name: 'ユーザーメニュー' }));
+    const signOutItem = await screen.findByRole('menuitem', { name: /サインアウト/ });
+    await user.click(signOutItem);
+
+    expect(signOutMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(toastPushMock).toHaveBeenCalledWith(
+        expect.objectContaining({ kind: 'info', message: 'サインアウトしました。' }),
+      );
+    });
+  });
+
+  it('photoURL があれば <img> を出す', () => {
     authState = {
       status: 'authenticated',
       user: {
@@ -104,13 +157,12 @@ describe('AvatarButton', () => {
       },
     };
     const { container } = render(<AvatarButton />);
-
     const img = container.querySelector('img');
     expect(img).toBeTruthy();
     expect(img?.getAttribute('src')).toBe('https://example.com/me.png');
   });
 
-  it('falls back to the email local-part when displayName is null', () => {
+  it('displayName 無 + email 有なら email のローカル部 (大文字) をイニシャルに', () => {
     authState = {
       status: 'authenticated',
       user: {
@@ -121,17 +173,15 @@ describe('AvatarButton', () => {
       },
     };
     render(<AvatarButton />);
-    // aria-label には email が入る
-    const btn = screen.getByRole('button', { name: /matsushima@example.com/ });
-    expect(btn).toHaveTextContent('M');
+    expect(screen.getByRole('button', { name: 'ユーザーメニュー' })).toHaveTextContent('M');
   });
 
-  it('falls back to "？" when neither displayName nor email is available', () => {
+  it('displayName / email 両方 null なら「？」', () => {
     authState = {
       status: 'authenticated',
       user: { uid: 'u-1', displayName: null, email: null, photoURL: null },
     };
     render(<AvatarButton />);
-    expect(screen.getByRole('button')).toHaveTextContent('？');
+    expect(screen.getByRole('button', { name: 'ユーザーメニュー' })).toHaveTextContent('？');
   });
 });

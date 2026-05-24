@@ -64,3 +64,31 @@
   color: #fff;
   line-height: 1;
 }
+
+/* Slice 7: AvatarButton 全体を inline-flex で chevron と並べる */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  padding: 0 4px 0 0;
+  cursor: pointer;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+  border-radius: 24px;
+}
+
+.chevron {
+  display: inline-flex;
+  color: var(--mlpr-sumi-muted);
+}
+
+/* Dropdown を画面右上に絶対配置するためのアンカー */
+.dropdownAnchor {
+  position: relative;
+  display: inline-block;
+}
