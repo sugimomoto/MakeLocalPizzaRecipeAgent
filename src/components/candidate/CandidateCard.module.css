@@ -19,6 +19,16 @@
     0 6px 18px rgba(178, 58, 72, 0.18);
 }
 
+/* Why: Card.module.css の .interactive:hover が box-shadow を上書きして
+   選択中の赤枠を消してしまうため、選択中はホバー時も赤枠を必ず保つ。
+   .cardActive を 2 回連ねて specificity を上げ、CSS Modules のバンドル
+   順序に依存せず .interactive:hover に勝たせる。 */
+.cardActive.cardActive:hover {
+  box-shadow:
+    0 0 0 2px var(--mlpr-shu),
+    0 16px 32px -14px rgba(31, 26, 18, 0.32);
+}
+
 .activeBadge {
   position: absolute;
   top: -10px;
