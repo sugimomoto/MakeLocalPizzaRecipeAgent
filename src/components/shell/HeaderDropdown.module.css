@@ -1,0 +1,163 @@
+/* =============================================================================
+ * HeaderDropdown — Avatar 押下で開くメニュー (Slice 7)
+ * 設計: design/slice7-screens.jsx HeaderDropdown @ L96
+ * =============================================================================*/
+
+.menu {
+  position: absolute;
+  top: 60px;
+  right: 14px;
+  width: 248px;
+  background: var(--mlpr-kinari);
+  border-radius: 14px;
+  border: 1px solid var(--mlpr-hairline);
+  box-shadow:
+    0 18px 44px rgba(31, 26, 18, 0.2),
+    0 4px 10px rgba(31, 26, 18, 0.08);
+  overflow: hidden;
+  z-index: 8;
+  outline: none;
+}
+
+.userRow {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--mlpr-hairline);
+  background: linear-gradient(180deg, rgba(200, 65, 42, 0.04), transparent);
+}
+
+.userInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.userName {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userEmail {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9.5px;
+  color: var(--mlpr-sumi-muted);
+  margin-top: 3px;
+  letter-spacing: 0.4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 13px;
+  color: var(--mlpr-sumi);
+  font-weight: 600;
+  border-top: 1px solid var(--mlpr-hairline);
+  position: relative;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+
+.item:first-child {
+  border-top: none;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: rgba(31, 26, 18, 0.04);
+  outline: none;
+}
+
+.item--active {
+  background: rgba(200, 65, 42, 0.07);
+}
+
+.activeBar {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--mlpr-shu);
+  border-radius: 2px;
+}
+
+.itemIcon {
+  font-size: 16px;
+  line-height: 1;
+  width: 18px;
+  text-align: center;
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemJp {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.2;
+}
+
+.itemEn {
+  font-family: var(--mlpr-font-mono);
+  font-size: 8.5px;
+  color: var(--mlpr-sumi-muted);
+  margin-top: 2px;
+  letter-spacing: 1.2px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--mlpr-hairline);
+}
+
+.signOut {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+
+.signOut:hover,
+.signOut:focus-visible {
+  background: rgba(31, 26, 18, 0.04);
+  color: var(--mlpr-sumi-soft);
+  outline: none;
+}
+
+.signOutIcon {
+  width: 18px;
+  text-align: center;
+  font-size: 13px;
+}

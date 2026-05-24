@@ -1,0 +1,109 @@
+/* =============================================================================
+ * HeaderRow — 全画面共通の戻る + タイトル + 右スロット (Slice 7)
+ * 設計: design/slice7-screens.jsx HeaderRow7 @ L42
+ * =============================================================================*/
+
+.wrapper {
+  position: relative;
+  z-index: 4;
+  padding: 6px 12px 0;
+}
+
+.bar {
+  height: 48px;
+  padding: 0 6px;
+  background: var(--mlpr-kinari);
+  border-radius: 12px;
+  border: 1px solid var(--mlpr-hairline);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bar--dark {
+  background: rgba(31, 26, 18, 0.55);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.backChip {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: rgba(31, 26, 18, 0.04);
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--mlpr-sumi);
+  transition: background-color 120ms ease;
+}
+
+.backChip:hover {
+  background: rgba(31, 26, 18, 0.08);
+}
+
+.backChip:active {
+  background: rgba(31, 26, 18, 0.12);
+}
+
+.backChip--dark {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbf7ed;
+}
+
+.backChip--dark:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.backChip--hidden {
+  visibility: hidden;
+}
+
+.center {
+  text-align: center;
+  min-width: 0;
+  flex: 1;
+  padding: 0 8px;
+}
+
+.brand {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-shu);
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.brand--dark {
+  color: #e8b97a;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 1.2px;
+  margin-top: 3px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.title--noBrand {
+  margin-top: 0;
+}
+
+.title--dark {
+  color: #fbf7ed;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
