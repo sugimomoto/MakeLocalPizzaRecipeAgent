@@ -1,6 +1,8 @@
 /* FeedbackClient — /feedback/[id] (Slice 7) */
 
 .shell {
+  max-width: 480px;
+  margin: 0 auto;
   min-height: 100vh;
   padding-bottom: 140px;
   position: relative;
@@ -194,7 +196,8 @@
   bottom: 32px;
   background: linear-gradient(to bottom, rgba(242, 233, 214, 0), rgba(242, 233, 214, 0.96) 35%);
   padding: 22px 0 4px;
-  max-width: 393px;
+  /* 他画面の shell に合わせて 480px センター揃え (旧 393px は iOS frame 想定) */
+  max-width: 448px;
   margin: 0 auto;
 }
 

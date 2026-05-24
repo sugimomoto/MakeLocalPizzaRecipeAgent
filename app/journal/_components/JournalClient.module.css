@@ -1,6 +1,8 @@
 /* JournalClient — /journal 振り返り帳 (Slice 7) */
 
 .shell {
+  max-width: 480px;
+  margin: 0 auto;
   min-height: 100vh;
   padding-bottom: 50px;
 }
