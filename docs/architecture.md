@@ -478,3 +478,4 @@ flowchart LR
 | --- | --- | --- |
 | 2026-05-13 | 1.0 | 初版作成(MakeLocalPizzaRecipeAgent のリフレッシュ仕様に基づく)。Web/BFF (Next.js) と Agent (Python ADK) を Cloud Run 2 サービスとして明示的に分離。戦略軸別の評価ループ、楽天 API 3層分離、無認証 Quick Tap、Imagen の詳細遷移時のみ生成を要件化。 |
 | 2026-05-24 | 1.1 | サービス名を「ふるさとピザ帳」に確定 (Slice 7、FR-7-8)。表向きの表記はヘッダ更新のみ。技術スタック・リソース命名は変更なし (mlpr-\* prefix 維持)。 |
+| 2026-05-24 | 1.2 | Slice 7 完了 (v0.7.0)。`/feedback/[id]` 画面 + `/journal` ルート + 統一 HeaderRow + FurusatoMark を追加。Firestore に `users/{uid}/drafts/{candidateId}` subcollection を新設 (3 秒 debounce auto-save)。Security Rules も同 subcollection 用の本人 R/W ルールを追加。新規 routes は全て client-only (force-dynamic 不要)。 |

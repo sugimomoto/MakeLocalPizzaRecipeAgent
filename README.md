@@ -3,9 +3,9 @@
 ローカル/旬の食材を活かしたピザレシピを提案する **AI エージェント**。
 
 > 地元 × 旬 × 戦略 (王道 / 一歩外す / 大冒険) を起点に、ピザの 3 案を即座に提案する Web アプリ。
-> 現状は **Slice 6 (Cloud Run × 2 本番デプロイ + IaC + 可観測性)** まで実装済み (v0.6.0)。
+> 現状は **Slice 7 (「作ってみた」フィードバック + 振り返り帳 + 統一 Header + ブランド「ふるさとピザ帳」確立)** まで実装済み (v0.7.0)。
 
-## 公開 URL (Slice 6)
+## 公開 URL
 
 - Web: `https://mlpr-web-<HASH>.a.run.app` (本番 Cloud Run / asia-northeast1)
 - Agent: 公開しない (`internal-only` ingress、Web の SA からのみ ID トークン経由でアクセス)
@@ -14,7 +14,7 @@
 
 ---
 
-## 機能 (Slice 6 時点)
+## 機能 (Slice 7 時点)
 
 - ✅ **TOP ページ** — 初回訪問者には「未来の一枚は、あなたの地元にある。」+ 「始める →」、リピーターは /local に自動再開、サインイン済は /library に直行
 - ✅ **地元選択** — 47 都道府県 (現状はキュレーション 3 県)
@@ -33,7 +33,12 @@
 - ✅ **Terraform IaC** — `infra/terraform/` flat 構造の 1 state。SA × 3 / AR repo / Storage bucket / Secret Manager (楽天キー 3 本) / WIF pool + provider / Cloud Run × 2 をまとめて apply
 - ✅ **Cloud Build CI/CD** — main push → GitHub Actions → WIF impersonation → Cloud Build × 2 並列 → Cloud Run 自動 deploy。SA 鍵不要 (OIDC)
 - ✅ **Cloud Trace + Cloud Logging** — Next.js `instrumentation.ts` (OTel sdk-node) と Python `lib/observability.py` (OTel + CloudTraceSpanExporter) で W3C traceparent を伝播。Cloud Logging には JSON structured log に `logging.googleapis.com/trace` を inject、Trace と相互リンク
-- 🚧 Slice 7+: Vertex AI Gen AI Evaluation / 戦略軸別品質モニタリング
+- ✅ **「作ってみた」フィードバック** (Slice 7) — 詳細画面「作ってみる」CTA から `/feedback/[id]` へ。★ (0〜5) + 観点別評価 4 軸 (味 / 見た目 / ストーリー / また作りたい) + 多選択チップ 3 群 (効いた点 / 次は調整したい / ゲストの反応) + ゲスト数 を入力可能。3 秒 debounce で localStorage + Firestore `drafts/{recipeId}` に自動保存
+- ✅ **振り返り帳** (Slice 7) — 新ルート `/journal`、フィードバック記録ありレシピを ★ 評価カードで一覧 (cookedAt 降順)。Stat 3 タイル (作った数 / 平均★ / 効いた点トップ) + filter chips + 0 件時の Empty 状態
+- ✅ **保存帳 ⇄ 振り返り帳の対** (Slice 7) — `/library` を「保存帳」にリネーム、「作った」サブバッジ表示。両画面間を `CrossLink` ピルで相互ナビ
+- ✅ **統一 HeaderRow + Dropdown** (Slice 7) — 全画面 (TOP 除く) に共通の戻る + タイトル + Avatar+▾。Dropdown に「ピザ帳 (保存)」「振り返り帳 (作った)」「サインアウト」。a11y (Esc / ↑↓ / outside click) 対応
+- ✅ **ブランド「ふるさとピザ帳」確立** (Slice 7) — FurusatoMark コンポーネント (変型 B 採用、≤18px で A にフォールバック) + Wordmark (horizontal / stacked / vertical) + favicon / apple-touch-icon
+- 🚧 Slice 8+: Vertex AI Gen AI Evaluation / 戦略軸別品質モニタリング / 写真添付
 
 ---
 
