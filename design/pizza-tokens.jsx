@@ -248,3 +248,188 @@ const Pizzas = {
 };
 
 Object.assign(window, { T, WASHI_NOISE, Washi, Icon, Chip, StrategySeal, PizzaDisk, Pizzas });
+
+// ====================================================================
+// Brand mark · 「ふるさとピザ帳」 logo system
+// ====================================================================
+// Three-layer pizza disk + 「ふ」 hanko stamp. Used at sizes 16px..1024px.
+// Variant B is the adopted brand mark; A/C/D are kept for niche uses
+// (favicon fallback, vertical stamp, slice illustration).
+//
+// Pizza palette (local; not promoted to brand tokens — only used by MarkB)
+const PIZZA_PAL = {
+  crust:    '#E2A35F',
+  crustEdge:'#B36A2B',
+  sauce:    '#A8331C',
+  cheese:   '#F4C944',
+  cheeseHi: '#FBE08A',
+  pepp:     '#D44A2A',
+  peppDark: '#A33218',
+  basil:    '#5B7C3A',
+};
+
+// Variant A · 和印 · ふ — round hanko with mincho 「ふ」 (used at <=16px favicon)
+function MarkA({ size = 64, dark = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="ふるさとピザ帳" role="img">
+      <circle cx="50" cy="50" r="46" fill={T.shu}/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#FBF7ED" strokeWidth="0.6" opacity="0.4"/>
+      <circle cx="50" cy="50" r="42" fill="none" stroke="#FBF7ED" strokeWidth="0.5" opacity="0.65"/>
+      <text x="50" y="68" textAnchor="middle" fontFamily={T.mincho}
+        fontWeight="600" fontSize="56" fill="#FBF7ED">ふ</text>
+      <circle cx="78" cy="78" r="3.4" fill="#FBF7ED" opacity="0.85"/>
+    </svg>
+  );
+}
+
+// Variant B · 円窓ピザ + 和印 — ADOPTED brand mark
+function MarkB({ size = 64 }) {
+  const P = PIZZA_PAL;
+  const cx = 50, cy = 50;
+  const peppAngles = [0, 60, 120, 180, 240, 300];
+  const basilAngles = [30, 150, 270];
+  const peppR = 18;
+  const basilR = 27;
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="ふるさとピザ帳" role="img">
+      {/* crust */}
+      <circle cx={cx} cy={cy} r="48" fill={P.crust}/>
+      <circle cx={cx} cy={cy} r="44.5" fill={P.crustEdge} opacity="0.55"/>
+      {/* sauce ring */}
+      <circle cx={cx} cy={cy} r="43" fill={P.sauce}/>
+      {/* cheese */}
+      <circle cx={cx} cy={cy} r="39" fill={P.cheese}/>
+      {/* cheese highlights */}
+      <ellipse cx="38" cy="36" rx="6"   ry="3.4" fill={P.cheeseHi} opacity="0.55" transform="rotate(-20 38 36)"/>
+      <ellipse cx="62" cy="42" rx="5"   ry="2.8" fill={P.cheeseHi} opacity="0.5"  transform="rotate(25 62 42)"/>
+      <ellipse cx="44" cy="62" rx="5.5" ry="3"   fill={P.cheeseHi} opacity="0.5"  transform="rotate(15 44 62)"/>
+      {/* pepperoni — hex */}
+      {peppAngles.map(deg => {
+        const a = (deg - 90) * Math.PI / 180;
+        const x = cx + Math.cos(a) * peppR;
+        const y = cy + Math.sin(a) * peppR;
+        return (
+          <g key={`p${deg}`}>
+            <circle cx={x} cy={y} r="6.8" fill={P.peppDark} opacity="0.7"/>
+            <circle cx={x} cy={y} r="6.2" fill={P.pepp}/>
+            <circle cx={x - 2.0} cy={y - 1.2} r="0.9" fill={P.peppDark} opacity="0.7"/>
+            <circle cx={x + 1.6} cy={y + 1.8} r="0.7" fill={P.peppDark} opacity="0.6"/>
+            <circle cx={x + 0.4} cy={y - 2.4} r="0.6" fill={P.peppDark} opacity="0.5"/>
+          </g>
+        );
+      })}
+      {/* basil leaves */}
+      {basilAngles.map(deg => {
+        const a = (deg - 90) * Math.PI / 180;
+        const x = cx + Math.cos(a) * basilR;
+        const y = cy + Math.sin(a) * basilR;
+        return (
+          <g key={`b${deg}`} transform={`translate(${x} ${y}) rotate(${deg + 90})`}>
+            <ellipse cx="0" cy="0" rx="4.2" ry="2.1" fill={P.basil}/>
+            <line x1="-3.5" y1="0" x2="3.5" y2="0" stroke="#3F5028" strokeWidth="0.4" opacity="0.7"/>
+          </g>
+        );
+      })}
+      <g transform="translate(50 50) rotate(45)">
+        <ellipse cx="0" cy="0" rx="3" ry="1.5" fill={P.basil}/>
+      </g>
+      {/* 和印 ふ stamp at lower-right rim */}
+      <ellipse cx="78.5" cy="78.5" rx="11" ry="2.6" fill="rgba(31,26,18,0.22)"/>
+      <circle cx="78" cy="76" r="11.5" fill={T.shu}/>
+      <circle cx="78" cy="76" r="11.5" fill="none" stroke="#FBF7ED" strokeWidth="0.55" opacity="0.45"/>
+      <circle cx="78" cy="76" r="9.8"  fill="none" stroke="#FBF7ED" strokeWidth="0.5"  opacity="0.7"/>
+      <text x="78" y="80.4" textAnchor="middle" fontFamily={T.mincho}
+        fontWeight="700" fontSize="13.5" fill="#FBF7ED">ふ</text>
+    </svg>
+  );
+}
+
+// Variant C · 帳印 (vertical square stamp)
+function MarkC({ size = 64 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="ふるさとピザ帳" role="img">
+      <rect x="6" y="6" width="88" height="88" rx="14" fill={T.shu}/>
+      <rect x="6" y="6" width="88" height="88" rx="14" fill="none" stroke="#FBF7ED" strokeWidth="1.2" opacity="0.45"/>
+      <rect x="11" y="11" width="78" height="78" rx="10" fill="none" stroke="#FBF7ED" strokeWidth="0.8" opacity="0.55"/>
+      <g fontFamily={T.mincho} fontWeight="600" fill="#FBF7ED">
+        <text x="65" y="28" textAnchor="middle" fontSize="20">ふ</text>
+        <text x="65" y="50" textAnchor="middle" fontSize="20">る</text>
+        <text x="65" y="72" textAnchor="middle" fontSize="20">さ</text>
+      </g>
+      <g fontFamily={T.mincho} fontWeight="700" fill="#FBF7ED">
+        <text x="35" y="36" textAnchor="middle" fontSize="22">ピ</text>
+        <text x="35" y="62" textAnchor="middle" fontSize="22">ザ</text>
+        <text x="35" y="88" textAnchor="middle" fontSize="22">帳</text>
+      </g>
+    </svg>
+  );
+}
+
+// Variant D · 一切れ印 (slice as bookmark)
+function MarkD({ size = 64 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="ふるさとピザ帳" role="img">
+      <circle cx="50" cy="50" r="47" fill={T.kinari} stroke={T.sumi} strokeWidth="2"/>
+      <path d="M50 50 L50 6 A44 44 0 0 1 90 38 Z" fill={T.shu}/>
+      <circle cx="60" cy="22" r="2.5" fill="#F2E5BF"/>
+      <circle cx="72" cy="30" r="2.2" fill="#F2E5BF"/>
+      <ellipse cx="66" cy="38" rx="2.8" ry="1.2" fill="#3F5028" transform="rotate(30 66 38)"/>
+      <path d="M50 6 A44 44 0 0 1 90 38" fill="none" stroke={T.shuDeep} strokeWidth="2.5" strokeLinecap="round"/>
+      <text x="38" y="78" fontFamily={T.mincho} fontWeight="700" fontSize="36" fill={T.sumi}>ふ</text>
+    </svg>
+  );
+}
+
+// Primary entrypoint. Default = adopted Variant B.
+// Auto-fallback to A at 16px since the pizza detail collapses.
+function FurusatoMark({ variant, size = 64, dark }) {
+  const v = variant || (size <= 18 ? 'A' : 'B');
+  if (v === 'A') return <MarkA size={size} dark={dark}/>;
+  if (v === 'C') return <MarkC size={size}/>;
+  if (v === 'D') return <MarkD size={size}/>;
+  return <MarkB size={size}/>;
+}
+
+// Wordmark — 3 typographic orientations
+function Wordmark({ kind = 'horizontal', dark = false, size = 1 }) {
+  const ink = dark ? '#FBF7ED' : T.sumi;
+  const sub = dark ? 'rgba(251,247,237,0.6)' : T.sumiMuted;
+  const accent = T.shu;
+  if (kind === 'vertical') {
+    return (
+      <div style={{
+        writingMode: 'vertical-rl', fontFamily: T.mincho, fontWeight: 600,
+        fontSize: 22 * size, color: ink, letterSpacing: 8 * size,
+        display: 'inline-flex', alignItems: 'center', gap: 6 * size,
+      }}>
+        <span style={{ color: accent, fontFamily: T.mono, fontSize: 9 * size, letterSpacing: 4 * size,
+          writingMode: 'vertical-rl' }}>FURUSATO</span>
+        <span>ふるさとピザ帳</span>
+      </div>
+    );
+  }
+  if (kind === 'stacked') {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontFamily: T.mono, fontSize: 10 * size, color: accent, letterSpacing: 6 * size }}>
+          FURUSATO PIZZA-CHŌ
+        </div>
+        <div style={{ fontFamily: T.mincho, fontSize: 22 * size, fontWeight: 600, color: ink,
+          letterSpacing: 3 * size, marginTop: 4 * size }}>
+          ふるさとピザ帳
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 8 * size }}>
+      <span style={{ fontFamily: T.mincho, fontSize: 20 * size, fontWeight: 600, color: ink,
+        letterSpacing: 2 * size }}>ふるさとピザ帳</span>
+      <span style={{ fontFamily: T.mono, fontSize: 9 * size, color: sub, letterSpacing: 3 * size }}>
+        FURUSATO PIZZA-CHŌ
+      </span>
+    </div>
+  );
+}
+
+Object.assign(window, { MarkA, MarkB, MarkC, MarkD, FurusatoMark, Wordmark, PIZZA_PAL });

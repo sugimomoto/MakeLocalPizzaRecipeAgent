@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>ふるさとピザ帳 — Slice 7 提案</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #F2E9D6; }
+  body { font-family: "Zen Kaku Gothic New", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>window.__MLPR_NO_AUTOMOUNT = true;</script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="pizza-tokens.jsx"></script>
+<script type="text/babel" src="prototype-app.jsx"></script>
+<script type="text/babel" src="slice4-screens.jsx"></script>
+<script type="text/babel" src="slice7-screens.jsx"></script>
+
+<script type="text/babel">
+const W = 393;
+const H = 852;
+
+function Intro() {
+  return (
+    <div style={{
+      width: 1040, padding: '24px 36px 28px', marginLeft: 60, marginBottom: 36,
+      background: '#FBF7ED', borderRadius: 4,
+      boxShadow: '0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)',
+      fontFamily: T.gothic, color: T.sumi, lineHeight: 1.7,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 6, height: 26, background: T.shu, borderRadius: 3 }}/>
+        <span style={{ fontFamily: T.mincho, fontSize: 11, color: T.shu, letterSpacing: 6 }}>SLICE 7 · 振り返り帳と統一ヘッダ</span>
+      </div>
+      <div style={{ fontFamily: T.mincho, fontSize: 28, fontWeight: 600, marginTop: 10, letterSpacing: 0.5 }}>
+        ふるさとピザ帳 — Slice 7 デザイン提案
+      </div>
+      <div style={{ marginTop: 14, fontSize: 13.5, color: T.sumiSoft, maxWidth: 900 }}>
+        Slice 7 で新規追加する 4 つの画面・コンポーネントを 1 セクションで並べました。
+        <b style={{ color: T.sumi }}>「保存 (ハート) → 作る → 振り返る (★)」</b>の流れを、
+        統一 HeaderRow / Dropdown と <b style={{ color: T.sumi }}>保存帳 ⇄ 振り返り帳</b> の対で表現。
+        既存の和紙・墨・朱・山吹・抹茶トークン (<code>pizza-tokens.jsx</code>) のみで構成しています。
+      </div>
+      <div style={{ marginTop: 14, display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 12 }}>
+        {[
+          ['保存帳', '#C8412A', 'SAVED — ハート保存リスト'],
+          ['振り返り帳', '#607744', 'JOURNAL — ★ 評価付き記録'],
+          ['HeaderRow', '#1F1A12', '全画面共通の戻る + タイトル + Avatar'],
+        ].map(([n, c, sub]) => (
+          <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderRadius: 10, background: 'rgba(31,26,18,0.03)',
+            border: '1px solid rgba(31,26,18,0.06)' }}>
+            <div style={{ width: 8, height: 28, borderRadius: 2, background: c }}/>
+            <div>
+              <div style={{ fontFamily: T.mincho, fontSize: 13, fontWeight: 600 }}>{n}</div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.sumiMuted, marginTop: 2 }}>{sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <Intro/>
+
+      <DCSection id="s7-header" title="① 統一 HeaderRow (★最優先)" subtitle="左 BackChip · 中央 タイトル · 右 Avatar+▾ / メニューに 保存帳 + 振り返り帳">
+        <DCArtboard id="s7-header-showcase" label="01 · HeaderRow v2 · 3 状態 + Dropdown" width={W} height={H}>
+          <HeaderShowcaseV2/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-library" title="② /library = 保存帳" subtitle="HeaderRow + 横断リンク + 既存カード">
+        <DCArtboard id="s7-library" label="02 · 保存帳 (Library refresh)" width={W} height={H}>
+          <LibraryRefresh/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-journal" title="③ /journal = 振り返り帳 (新規)" subtitle="★ 評価付きの「作った 1 枚」一覧 — empty + populated">
+        <DCArtboard id="s7-journal-empty" label="03 · 振り返り帳 (空)" width={W} height={H}>
+          <JournalEmpty/>
+        </DCArtboard>
+        <DCArtboard id="s7-journal-list" label="04 · 振り返り帳 (3 件)" width={W} height={H}>
+          <JournalList/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-feedback" title="④ /feedback/[id] = フィードバック記録" subtitle="★ 入力 / 観点別ドット / チップ多選択 / 自動下書き">
+        <DCArtboard id="s7-feedback-empty" label="05 · フィードバック (初回・空)" width={W} height={H}>
+          <FeedbackEmpty/>
+        </DCArtboard>
+        <DCArtboard id="s7-feedback-filled" label="06 · フィードバック (編集再開)" width={W} height={H}>
+          <FeedbackFilled/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-detail-cta" title="⑤ 詳細画面の「作ってみる」CTA" subtitle="2 案 (A: インライン / B: 浮遊スティッキー) × 3 状態">
+        <DCArtboard id="s7-detail-cta" label="07 · 作ってみる CTA · 2 案比較" width={W} height={H}>
+          <DetailCTAShowcase/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-brand" title="⑦ ブランドマーク (新規)" subtitle="「ふるさとピザ帳」の印 — 4 案 + ワードマーク + アプリケーション">
+        <DCArtboard id="s7-brand" label="08 · Brand Mark · 4 variants" width={1120} height={1320}>
+          <BrandMarkShowcase/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-top" title="⑧ TOP (ブランドマーク適用)" subtitle="推奨案 (変型 A · 和印) をヒーローに適用">
+        <DCArtboard id="s7-top" label="09 · TOP (ブランドマーク入り)" width={W} height={H}>
+          <TopRefresh/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="s7-spec" title="⑨ 確定したインタラクション仕様" subtitle="実装に取り込みやすいよう、デザイン側で詰めたもの">
+        <DCArtboard id="s7-spec" label="09 · Interaction Spec" width={760} height={H}>
+          <SpecCard/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Interaction Spec — markdown-like card (for handoff)
+// ─────────────────────────────────────────────────────────────
+function SpecCard() {
+  const Section = ({ jp, en, children }) => (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+        <span style={{ fontFamily: T.mincho, fontSize: 15, fontWeight: 600, color: T.sumi, letterSpacing: 1 }}>{jp}</span>
+        <span style={{ fontFamily: T.mono, fontSize: 10, color: T.sumiMuted, letterSpacing: 2 }}>{en}</span>
+      </div>
+      <div style={{ marginTop: 8, padding: '12px 14px', background: T.kinari, borderRadius: 10,
+        border: `1px solid ${T.hairline}`, fontSize: 12.5, color: T.sumiSoft, lineHeight: 1.85 }}>
+        {children}
+      </div>
+    </div>
+  );
+  const Code = ({ children }) => (
+    <span style={{ fontFamily: T.mono, fontSize: 11.5, padding: '1px 5px', borderRadius: 4,
+      background: 'rgba(31,26,18,0.06)', color: T.sumi }}>{children}</span>
+  );
+
+  return (
+    <div style={{ width: 760, minHeight: 852, background: T.washi, backgroundImage: WASHI_NOISE,
+      backgroundBlendMode: 'multiply', padding: '36px 40px 40px', fontFamily: T.gothic,
+      color: T.sumi, boxSizing: 'border-box' }}>
+      <div style={{ fontFamily: T.mono, fontSize: 11, color: T.shu, letterSpacing: 5 }}>SLICE 7 · INTERACTION SPEC</div>
+      <div style={{ fontFamily: T.mincho, fontSize: 26, fontWeight: 600, color: T.sumi,
+        marginTop: 8, lineHeight: 1.3 }}>
+        デザインで確定した<br/>インタラクション仕様
+      </div>
+
+      <Section jp="Overall ★ (総合評価)" en="STARS · 1–5">
+        · タップで該当 ★ まで一括点灯 (1〜5)。<Code>aria-checked</Code> が真の数 = 値。<br/>
+        · 同じ★ を再タップで <b style={{ color: T.shu }}>0 にクリア</b>。空 (0) は「未評価」として保存される。<br/>
+        · 半星 / ドラッグはサポートしない (誤入力を避けるため)。<br/>
+        · キーボード : フォーカス時 <Code>1〜5</Code> 数字キー、<Code>←→</Code> で増減。<Code>0</Code> で解除。<br/>
+        · 値 0 のときは記録 CTA を <b>無効化 (透明度 0.55)</b>、CTA 下に「★ を 1 つ以上つけると記録できます」を表示。
+      </Section>
+
+      <Section jp="観点別評価 (味 / 見た目 / ストーリー / また作りたい)" en="AXES · 5-STEP DOTS">
+        · 各観点は <b>5 つのドット ●</b>。任意のドットをタップで「その位置までを点灯」<br/>
+        · 同じ位置のドットを再タップで <b>1 段戻す</b> (= n→n-1)。0 まで戻せる。<br/>
+        · キーボード : ドットグループにフォーカス → <Code>←→</Code> で増減、<Code>Home/End</Code> で 0/5。<br/>
+        · 値 0 のときはラベル右側に <b>"—"</b> を表示し、点数の不在を明示。<br/>
+        · 観点ごとに独立して保存される (一括ではない)。
+      </Section>
+
+      <Section jp="多選択チップ (効いた点 / 次は調整したい / ゲストの反応)" en="MULTI-CHIPS">
+        · タップで選択/解除。塗りトーンは <b>matcha / yamabuki / shu</b> を踏襲。<br/>
+        · スクロールは <b>横ではなく wrap (折り返し)</b> — 全選択肢が見える方が記録時の体験が良い。<br/>
+        · 上限 : 各群 6 個まで選択可。7 個目で <Code>aria-disabled</Code> + Toast「6 個までです」<br/>
+        · 各群の見出し右に <b>選択数 (n)</b> を出す (現状空のときは出さない)。
+      </Section>
+
+      <Section jp="ゲスト数 (任意)" en="GUEST COUNT">
+        · 既定値 <Code>—</Code> (= 未入力)。<Code>−</Code> / <Code>+</Code> ボタンで 1〜20 の範囲を増減。<br/>
+        · 「任意」のラベルを右側に常駐 — 必須入力ではないことを明示。<br/>
+        · 0 と空の差を持たない (0 を入れたい場面がない)。
+      </Section>
+
+      <Section jp="下書き保存" en="DRAFT">
+        · 明示的な「下書きを保存」ボタンは <b>廃止</b>。<br/>
+        · 変更があるたび 3 秒 debounce で <b>localStorage に自動保存</b>、サインイン中は同時に Firestore <Code>drafts/{`{recipeId}`}</Code> に upsert。<br/>
+        · ヘッダ下のミニラベルに「自動保存 12 秒前」を出して可視化。<br/>
+        · 保存 (= submit) は CTA でのみ。submit 成功時に draft を破棄。
+      </Section>
+
+      <Section jp="カメラ (Slice 7 では no-op)" en="CAMERA · PLACEHOLDER">
+        · アイコンは表示するが「準備中」ラベルを付ける (mini hero の右上に小さなバッジ)。<br/>
+        · タップ時は <Code>info</Code> Toast「写真の添付は Slice 8 で対応します」を出す。
+      </Section>
+
+      <Section jp="HeaderRow Dropdown" en="HEADER MENU · A11Y">
+        · トリガ : Avatar+▾ をタップ。展開中は ▾ → ▴ に切替。<br/>
+        · 閉じる条件 : (a) 外側クリック (b) <Code>Esc</Code> (c) メニュー項目選択 (d) Avatar 再タップ<br/>
+        · <Code>role="menu"</Code> + 各行 <Code>role="menuitem"</Code>。<Code>↑↓</Code> 巡回、<Code>Enter</Code> で確定。<br/>
+        · 初期 focus = 1 行目 (ピザ帳)。<br/>
+        · 現在ルートに <b>朱の縦バー</b> + 薄塗りで強調 (active 表現)。
+      </Section>
+
+      <Section jp="保存帳 ⇄ 振り返り帳の往き来" en="CROSS-LINK">
+        · 両画面の hero 直下に小さな <b>CrossLink ピル</b> を置く (相互配置)。<br/>
+        · ピル中の数字は実カウント (5 件 / 2 件) — 同期がズレないようサーバから取得。<br/>
+        · 振り返り帳の元レシピは保存帳に <b>必ず存在</b>している前提 (作る前にハート必須ではないが、作った=自動で保存も付ける運用)。
+      </Section>
+
+      <div style={{ marginTop: 24, padding: '14px 16px', borderRadius: 12,
+        background: 'rgba(96,119,68,0.10)', border: `1px solid rgba(96,119,68,0.22)`,
+        fontSize: 12, color: '#3F5028', lineHeight: 1.75 }}>
+        <b style={{ fontFamily: T.mincho, fontSize: 13 }}>運用ルール (要相談)</b><br/>
+        · 「作った」(= フィードバック保存) はハート保存と <b>独立</b> に扱う。ハート無しでも振り返り帳には載る。<br/>
+        · ただし保存帳カードには「<span style={{ color: T.matcha, fontWeight: 700 }}>作った</span>」サブバッジを出して可視化 (本提案で実装済)。
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

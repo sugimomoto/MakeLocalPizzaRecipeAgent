@@ -210,6 +210,39 @@ Slice 7 のスコープは「**画面 + Firestore 記録**」に絞り、LLM 連
 - Dropdown は **outside click / Esc キー** で閉じる。`role="menu"` + 各 item は `role="menuitem"`。
 - ドロップダウンの z-index は SignInModal の下、Toast の下、トップに来すぎないように。
 
+### FR-7-9: TOP refresh + ブランドマーク導入
+
+Claude Design からの返答 ([`design/slice7-screens.jsx`](../../design/slice7-screens.jsx) `TopRefresh` /
+`BrandMarkShowcase` / [`design/pizza-tokens.jsx`](../../design/pizza-tokens.jsx) `FurusatoMark`)
+に基づき、TOP 画面の刷新とブランドマークの確立も Slice 7 で実装する。
+
+#### ブランドマーク (FurusatoMark コンポーネント)
+
+- **採用案**: 変型 B — **円窓ピザ + 和印「ふ」** ([`design/pizza-tokens.jsx`](../../design/pizza-tokens.jsx) `MarkB` @ L286)
+  - 六方対称のチーズ + ペパロニ + バジル + 右下に朱の「ふ」印
+  - 朱 (`T.shu`) + 生成り (`T.kinari`) + ピザパレット (`PIZZA_PAL`) のみ、グラデなし
+- **16px 以下のフォールバック**: 変型 A — **和印「ふ」のみ** (`MarkA` @ L272)
+  - 細部脱落を避けるため `FurusatoMark variant={size <= 18 ? 'A' : 'B'}` で自動切替
+- **Wordmark 3 種** (`Wordmark` @ L394): horizontal / stacked / vertical
+- **共通制約**:
+  - 色: `T.shu` (朱) + `T.kinari` (生成り) のみ。ダーク背景時は反転
+  - クリアスペース: 印章のフチからアートボード端まで ≧ 0.1 × W
+  - App Icon 用: 背景に和紙テクスチャ、印は中央 70% (Apple HIG safe zone 準拠)
+
+#### TOP refresh ([`design/slice7-screens.jsx`](../../design/slice7-screens.jsx) `TopRefresh` @ L1205)
+
+- 画面上部に **FurusatoMark variant B (size 104)** をヒーロー装飾として配置
+- ブランドキャプション「**ふるさとピザ帳** / FURUSATO PIZZA-CHŌ」を中央に併記
+- タグライン「未来の一枚は、あなたの地元にある。」は維持
+- 既存 CTA 「始める →」 + 「サインインしてピザ帳を開く」リンクのレイアウト更新
+- 既存の 3 つの strategy seal 装飾は **削除** (新規ブランドマークで置換)
+
+#### Favicon / OG image / metadata
+
+- favicon に変型 A (16/32px) を導入 (`app/icon.png` or `app/favicon.ico`)
+- `app/layout.tsx` の `metadata.title` を「ふるさとピザ帳」に
+- OG image の更新は Slice 8 以降 (Slice 7 では metadata 文言のみ)
+
 ### FR-7-8: サービス名を「ふるさとピザ帳」に確定
 
 これまで仮称として `Make Local Pizza Recipe Agent` (リポジトリ名そのまま) を
@@ -235,6 +268,35 @@ Slice 7 のスコープは「**画面 + Firestore 記録**」に絞り、LLM 連
 - `mlpr-*` 系のリソース prefix (Terraform 全 SA / AR / Bucket 等の rename はコスト過大)
 
 サービス名 = 表向きのブランド / 内部識別子 = 既存の技術名 という二層構成で進める。
+
+### FR-7-10: デザイン受領を反映したインタラクション仕様 (確定)
+
+Claude Design の `slice7-screens.html` 内 `SpecCard` ([`design/slice7-screens.html`](../../design/slice7-screens.html) L142〜)
+で詰められたインタラクション仕様を、本要件として固定する。
+
+| 部位 | 仕様 |
+|---|---|
+| **Overall ★** (1〜5) | タップで該当 ★ まで一括点灯。同じ ★ を再タップで **0 にクリア**。半星 / ドラッグなし。キーボードは 1〜5 数字キー + ←→ で増減 + 0 でクリア。値 0 のとき CTA disabled |
+| **観点別評価ドット** (味 / 見た目 / ストーリー / また作りたい) | 5 つの ● をタップで「その位置まで点灯」。同じ位置 ● を再タップで **1 段戻す** (n→n-1)。←→ で増減 / Home/End で 0/5 |
+| **多選択チップ** (効いた点 / 次は調整したい / ゲストの反応) | タップ toggle、wrap (横スクロールしない)、塗りトーンは matcha / yamabuki / shu 踏襲、**各群上限 6 個** (7 個目で aria-disabled + Toast「6 個までです」)、見出し右に選択数 (0 のときは非表示) |
+| **ゲスト数** | デフォルト `—` (未入力)、`−` / `+` で 1〜20。0 と空の区別なし、必須ではない |
+| **下書き保存** | **明示的「下書き」ボタンは廃止**。3 秒 debounce で localStorage に自動保存、サインイン中は同時に Firestore `users/{uid}/drafts/{recipeId}` に upsert。ヘッダ下に「自動保存 12 秒前」を表示。submit 成功時に draft を破棄 |
+| **カメラ** | アイコン表示 + 「準備中」バッジ。タップで info Toast「写真の添付は Slice 8 で対応します」。Slice 7 では no-op |
+| **HeaderRow Dropdown** | Avatar+▾ クリックで展開、▾↔▴ 切替。外側クリック / Esc / 項目選択 / Avatar 再タップで閉じる。`role="menu"` + 各行 `role="menuitem"`、↑↓ 巡回、Enter で確定、初期 focus は 1 行目 (ピザ帳)、現在ルートに朱の縦バー + 薄塗り |
+| **保存帳 ⇄ 振り返り帳 cross-link** | 両画面の hero 直下に小さな `CrossLink` ピル (相互配置)。ピル中の数字は実カウント |
+| **作った vs ハート** | フィードバック保存 (= 「作った」) はハート保存と **独立**。ハートなしでも振り返り帳に載る。ただし保存帳カードには「作った」サブバッジ (matcha 色のドット + テキスト) を出す |
+
+### FR-7-11: Firestore 下書き subcollection 追加
+
+FR-7-10 の自動保存仕様に伴い、下書き用の Firestore 構造を追加:
+
+- パス: `users/{uid}/drafts/{recipeId}` (recipeId = candidateId)
+- shape: FR-7-4 の `feedback` と同じ shape を持つ partial (各フィールド optional)
+- Security Rules: `users/{uid}/drafts/{recipeId}` も本人のみ R/W (savedRecipes と同じパターンを追加)
+- ライフサイクル:
+  - フィードバック画面で値が変わるたびに 3 秒 debounce で `setDoc({merge: true})` (サインイン中のみ)
+  - submit 成功時に `deleteDoc(drafts/{recipeId})`
+  - `/feedback/[id]` 開いた時は **saved feedback を優先**、なければ draft、なければ空
 
 ## 6. スコープ外
 

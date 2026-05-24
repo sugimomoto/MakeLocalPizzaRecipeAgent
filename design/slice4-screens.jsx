@@ -76,26 +76,29 @@ function TopScreen() {
     <Phone>
       <div style={{ height: 54 }}/>
 
-      {/* top ornament: 3 seals */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 16, padding: '24px 0 0',
-        opacity: 0.42 }}>
-        {['exploit', 'tune', 'explore'].map(k => (
-          <div key={k} style={{ transform: 'scale(0.7)' }}>
-            <StrategySeal kind={k} size={48}/>
-          </div>
-        ))}
+      {/* brand mark hero */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0 0' }}>
+        <FurusatoMark variant="B" size={96}/>
       </div>
 
       {/* center content */}
-      <div style={{ padding: '60px 32px 0', textAlign: 'center' }}>
+      <div style={{ padding: '20px 32px 0', textAlign: 'center' }}>
         <div style={{ fontFamily: T.mono, fontSize: 11, color: T.shu, letterSpacing: 6, fontWeight: 500 }}>
-          地 元 × ピ ザ × AI
+          地 元 × ピ ザ × A I
         </div>
-        <div style={{ fontFamily: T.mincho, fontSize: 36, fontWeight: 600, color: T.sumi,
-          marginTop: 26, lineHeight: 1.35, letterSpacing: 1 }}>
+        <div style={{ margin: '14px auto 0', display: 'inline-flex', alignItems: 'baseline', gap: 10 }}>
+          <span style={{ fontFamily: T.mincho, fontSize: 15, fontWeight: 600, color: T.sumi, letterSpacing: 4 }}>
+            ふるさとピザ帳
+          </span>
+          <span style={{ fontFamily: T.mono, fontSize: 9, color: T.sumiMuted, letterSpacing: 3 }}>
+            FURUSATO PIZZA-CHŌ
+          </span>
+        </div>
+        <div style={{ fontFamily: T.mincho, fontSize: 32, fontWeight: 600, color: T.sumi,
+          marginTop: 22, lineHeight: 1.35, letterSpacing: 1 }}>
           未来の一枚は、<br/>あなたの地元にある。
         </div>
-        <div style={{ fontSize: 13, color: T.sumiSoft, marginTop: 24, lineHeight: 1.85, letterSpacing: 0.3 }}>
+        <div style={{ fontSize: 13, color: T.sumiSoft, marginTop: 20, lineHeight: 1.85, letterSpacing: 0.3 }}>
           地元の食材と季節から、<br/>
           AI があなただけのピザを 3 案提案。<br/>
           気に入った 1 枚は「ピザ帳」に残せます。
@@ -122,7 +125,7 @@ function TopScreen() {
       {/* footer */}
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 50, textAlign: 'center',
         fontFamily: T.mono, fontSize: 10, color: T.sumiMuted, letterSpacing: 3 }}>
-        MAKE LOCAL PIZZA RECIPE AGENT · 2026
+        FURUSATO PIZZA-CHŌ · 2026
       </div>
     </Phone>
   );
