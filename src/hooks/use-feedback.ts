@@ -42,6 +42,10 @@ export type UseFeedbackResult = {
   draft: FeedbackDraft | null;
   /** 親 SavedRecipe 全体 (Hero / 既存表示用)。null=未保存 */
   recipe: SavedRecipe | null;
+  /** SavedRecipe subscribe の初回 snapshot が届いたか。recipe が null のときに
+   *  「未受信 (subscribe 初期化中)」と「受信したが doc 不在 (= 未保存)」を区別する用。
+   *  /feedback 側のリダイレクト判定で重要 (Slice 7 後追加)。 */
+  recipeReady: boolean;
   /** 画面の初期値: saved > draft > empty */
   initial: FeedbackFormValue;
   /** submit (saveFeedback + draft 削除)。saved がなければ isFirst=true */
@@ -88,12 +92,15 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
   const { status, user } = useAuth();
   const [state, setState] = useState<UseFeedbackState>('loading');
   const [recipe, setRecipe] = useState<SavedRecipe | null>(null);
+  const [recipeReady, setRecipeReady] = useState(false);
   const [draft, setDraft] = useState<FeedbackDraft | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
     setError(null);
+    // candidateId / user 切替時は subscribe 初回 snapshot まで「未受信」扱い
+    setRecipeReady(false);
 
     if (status === 'loading') {
       setState('loading');
@@ -114,7 +121,10 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
       db,
       user.uid,
       candidateId,
-      (next) => setRecipe(next),
+      (next) => {
+        setRecipe(next);
+        setRecipeReady(true);
+      },
       (err) => setError(err),
     );
     const unsubDraft = subscribeDraft(
@@ -166,5 +176,5 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
   // FEEDBACK_AXIS_ORDER は使うけど直接エクスポートはしない、参照確保
   void FEEDBACK_AXIS_ORDER;
 
-  return { state, saved, draft, recipe, initial, save, discardDraft, error };
+  return { state, saved, draft, recipe, recipeReady, initial, save, discardDraft, error };
 }

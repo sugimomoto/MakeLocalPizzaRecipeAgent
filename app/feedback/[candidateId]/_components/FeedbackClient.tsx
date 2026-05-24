@@ -55,7 +55,7 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   const { status, user } = useAuth();
   const { openModal } = useSignInModal();
   const toast = useToast();
-  const { state, saved, recipe, initial, save } = useFeedback(candidateId);
+  const { state, saved, recipe, recipeReady, initial, save } = useFeedback(candidateId);
 
   // controlled form state (initial で hydrate)
   const [form, setForm] = useState<FeedbackFormValue>(initial);
@@ -91,9 +91,13 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
     }
   }, [state, openModal, router]);
 
-  // SavedRecipe が無い (= ハート未保存) → /library に戻す
+  // SavedRecipe が無い (= ハート未保存) → /library に戻す。
+  // Slice 7 修正: subscribe の初回 snapshot を受け取るまではリダイレクト判定を保留。
+  // 旧版は state==='idle' 直後に recipe===null (= subscribe 初期化中) を「未保存」と
+  // 誤判定して /feedback 着地直後に /library へ蹴られる回帰があった。
   useEffect(() => {
     if (state !== 'idle') return;
+    if (!recipeReady) return;
     if (recipe === null) {
       toast.push({
         kind: 'warning',
@@ -101,7 +105,7 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
       });
       router.replace('/library');
     }
-  }, [state, recipe, toast, router]);
+  }, [state, recipeReady, recipe, toast, router]);
 
   // auto-save (3 秒 debounce)
   const { lastSavedAt } = useFeedbackDraft(candidateId, form, state === 'idle' && !submitting);
