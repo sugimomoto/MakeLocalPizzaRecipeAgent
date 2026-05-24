@@ -43,13 +43,29 @@ function writePendingRecipeFromSaved(recipe: SavedRecipe): void {
       candidateId: recipe.candidateId,
       strategy: recipe.strategy,
       title: recipe.title,
-      // Slice 4 では詳細スナップショットを保存していないので、再生成時に必要な
-      // 最小限フィールドのみダミー値で埋める (再生成時に上書きされる)。
-      concept: '',
-      keyIngredients: [],
-      sceneTags: [],
-      why: '',
+      // Slice 6 で SavedRecipe に candidate snapshot を追加。
+      // 旧 doc (snapshot 無し) は空文字 / 空配列で fall back し、
+      // /recipes 側で再生成判定 (hasFullSnapshot) が false になり
+      // 強制再生成ではなく degraded 表示にすることもできるが、現状は
+      // detail 再生成パスは廃止 (DetailClient 側で saved を直接 hydrate)。
+      concept: recipe.concept ?? '',
+      keyIngredients: recipe.keyIngredients ?? [],
+      sceneTags: recipe.sceneTags ?? [],
+      why: recipe.why ?? '',
     },
+    // Slice 6: detail snapshot を sessionStorage 経由で DetailClient に渡す
+    // (Firestore から直接拾うのではなく、/library → /recipes の遷移時に
+    //  pending として一緒に運ぶ。これで DetailClient は単一のソースから読める)
+    savedSnapshot:
+      recipe.meta && recipe.materials && recipe.steps && recipe.story
+        ? {
+            meta: recipe.meta,
+            materials: recipe.materials,
+            steps: recipe.steps,
+            story: recipe.story,
+            imageUrl: recipe.imageUrl,
+          }
+        : undefined,
   };
   window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(payload));
 }

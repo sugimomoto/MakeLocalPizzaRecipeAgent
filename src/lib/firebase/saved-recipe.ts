@@ -59,7 +59,28 @@ function normalizeSavedRecipe(data: DocumentData): SavedRecipe {
     savedAt,
   };
   if (Array.isArray(data['ingredients'])) {
-    return { ...base, ingredients: data['ingredients'] as NonNullable<SavedRecipe['ingredients']> };
+    base.ingredients = data['ingredients'] as NonNullable<SavedRecipe['ingredients']>;
+  }
+  // Slice 6: candidate / recipe detail スナップショット (optional)
+  if (typeof data['concept'] === 'string') base.concept = data['concept'];
+  if (Array.isArray(data['keyIngredients'])) {
+    base.keyIngredients = data['keyIngredients'] as string[];
+  }
+  if (Array.isArray(data['sceneTags'])) {
+    base.sceneTags = data['sceneTags'] as string[];
+  }
+  if (typeof data['why'] === 'string') base.why = data['why'];
+  if (data['meta'] && typeof data['meta'] === 'object') {
+    base.meta = data['meta'] as NonNullable<SavedRecipe['meta']>;
+  }
+  if (Array.isArray(data['materials'])) {
+    base.materials = data['materials'] as NonNullable<SavedRecipe['materials']>;
+  }
+  if (Array.isArray(data['steps'])) {
+    base.steps = data['steps'] as NonNullable<SavedRecipe['steps']>;
+  }
+  if (data['story'] && typeof data['story'] === 'object') {
+    base.story = data['story'] as NonNullable<SavedRecipe['story']>;
   }
   return base;
 }

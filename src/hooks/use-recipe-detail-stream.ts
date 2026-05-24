@@ -53,7 +53,22 @@ type Action =
   | { type: 'event'; event: RecipeDetailStreamEvent }
   | { type: 'done' }
   | { type: 'error'; error: string }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'hydrate'; snapshot: HydrateSnapshot };
+
+/**
+ * Slice 6: 保存済みスナップショットから state を一気に組み立てる用ペイロード。
+ * ストリームを叩かず /library から開いたときに使う。
+ */
+export type HydrateSnapshot = {
+  recipeId: string;
+  title: string;
+  meta: RecipeMeta;
+  materials: RecipeMaterial[];
+  steps: string[];
+  story: RecipeStory;
+  imageUrl: string;
+};
 
 function applyEvent(state: State, event: RecipeDetailStreamEvent): State {
   switch (event.type) {
@@ -109,6 +124,20 @@ function reducer(state: State, action: Action): State {
       return { ...state, state: 'error', error: action.error };
     case 'reset':
       return initialState;
+    case 'hydrate':
+      // 保存済みスナップショットから state を一気に組み立てる (Slice 6)
+      return {
+        state: 'allDone',
+        recipeId: action.snapshot.recipeId,
+        title: action.snapshot.title,
+        meta: action.snapshot.meta,
+        materials: action.snapshot.materials,
+        steps: action.snapshot.steps,
+        story: action.snapshot.story,
+        imageUrl: action.snapshot.imageUrl,
+        imageError: null,
+        error: null,
+      };
   }
 }
 
@@ -124,6 +153,8 @@ export type UseRecipeDetailStreamResult = {
   imageError: string | null;
   error: string | null;
   start: (input: GenerateRecipeDetailInput) => Promise<void>;
+  /** Slice 6: 保存済みスナップショットから即時に state を組み立てる (HTTP 呼ばない) */
+  hydrate: (snapshot: HydrateSnapshot) => void;
   reset: () => void;
 };
 
@@ -181,6 +212,11 @@ export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
     dispatch({ type: 'reset' });
   }, []);
 
+  const hydrate = useCallback((snapshot: HydrateSnapshot) => {
+    abortRef.current?.abort();
+    dispatch({ type: 'hydrate', snapshot });
+  }, []);
+
   return {
     state: state.state,
     recipeId: state.recipeId,
@@ -193,6 +229,7 @@ export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
     imageError: state.imageError,
     error: state.error,
     start,
+    hydrate,
     reset,
   };
 }

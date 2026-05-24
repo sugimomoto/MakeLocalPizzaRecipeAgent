@@ -35,12 +35,24 @@ import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 import styles from './DetailClient.module.css';
 
 import type { Candidate } from '@/domain/candidate';
+import type { RecipeMaterial, RecipeMeta, RecipeStory } from '@/domain/recipe';
+
+/** /library から開いたときに DetailClient へ運ばれる詳細スナップショット */
+type SavedSnapshot = {
+  meta: RecipeMeta;
+  materials: RecipeMaterial[];
+  steps: string[];
+  story: RecipeStory;
+  imageUrl: string;
+};
 
 type PendingRecipe = {
   candidateId: string;
   localeId: string;
   ingredients: string[];
   candidate: Candidate;
+  /** /library 経由のみ。Slice 6 追加 */
+  savedSnapshot?: SavedSnapshot;
 };
 
 export type DetailClientProps = {
@@ -90,6 +102,20 @@ export function DetailClient({ candidateId }: DetailClientProps) {
     // 初回マウントの初期化なので setState を effect 内で行う (startedRef でガード済)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPending(p);
+    if (p.savedSnapshot) {
+      // Slice 6: /library 経由は保存済みスナップショットから hydrate
+      // (再生成・LLM 呼び出し不要)
+      stream.hydrate({
+        recipeId: p.candidateId,
+        title: p.candidate.title,
+        meta: p.savedSnapshot.meta,
+        materials: p.savedSnapshot.materials,
+        steps: p.savedSnapshot.steps,
+        story: p.savedSnapshot.story,
+        imageUrl: p.savedSnapshot.imageUrl,
+      });
+      return;
+    }
     void stream.start({
       candidateId: p.candidateId,
       localeId: p.localeId,
@@ -122,12 +148,23 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       // 詳細がまだ届く前の早押しはガード
       return;
     }
+    // Slice 6: 詳細スナップショット (materials/steps/story) も一緒に
+    // Firestore に保存して、/library から再訪問時に再生成不要にする。
+    // stream.state === 'recipeDone' or 'allDone' まで揃っていれば詳細を保存。
+    // (recipeDone = テキスト揃った時点、画像はまだ来てなくても保存可)
+    if (stream.state !== 'recipeDone' && stream.state !== 'allDone') {
+      toast.push({
+        kind: 'warning',
+        message: '詳細レシピが揃うまでお待ちください',
+      });
+      return;
+    }
     try {
       if (saved.state === 'saved') {
         await saved.unsave();
         toast.push({ kind: 'success', message: '保存を解除しました' });
       } else {
-        // unsaved
+        // unsaved → 候補 + 詳細スナップショットを Firestore へ
         const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
         await saved.save({
           candidateId,
@@ -137,6 +174,16 @@ export function DetailClient({ candidateId }: DetailClientProps) {
           strategy: candidate.strategy,
           imageUrl: stream.imageUrl ?? '',
           ingredients: pending.ingredients,
+          // 候補スナップショット
+          concept: candidate.concept,
+          keyIngredients: candidate.keyIngredients,
+          sceneTags: candidate.sceneTags,
+          why: candidate.why,
+          // 詳細スナップショット (recipeDone まで揃ったタイミングのもの)
+          ...(stream.meta && { meta: stream.meta }),
+          ...(stream.materials && { materials: stream.materials }),
+          ...(stream.steps && { steps: stream.steps }),
+          ...(stream.story && { story: stream.story }),
         });
         toast.push({ kind: 'success', message: 'ピザ帳に保存しました' });
       }
