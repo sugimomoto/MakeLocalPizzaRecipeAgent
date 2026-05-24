@@ -32,6 +32,7 @@ from ..domain.stream import (
     RecipeTitleEvent,
     StreamEvent,
 )
+from ..lib.logging import get_logger
 from ..lib.storage import StorageClient
 from .detail_agent import run_recipe_detail
 from .image_agent import run_image_for_candidate
@@ -102,6 +103,17 @@ async def generate_recipe_detail(
             )
             await queue.put(ImageReadyEvent(recipeId=recipe_id, url=image_url))
         except Exception as e:
+            # Cloud Logging に stack を残して根因を追えるようにする
+            # (NDJSON 側には IMAGEN_FAIL イベントで簡潔なメッセージのみ流す)
+            get_logger().error(
+                "image generation failed",
+                context={
+                    "recipe_id": recipe_id,
+                    "candidate_title": candidate.title,
+                    "error_type": type(e).__name__,
+                    "error": str(e),
+                },
+            )
             await queue.put(
                 ImageErrorEvent(
                     recipeId=recipe_id,
