@@ -232,14 +232,16 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       <div className={styles.topRow}>
         <HeaderRow title="詳細レシピ" rightSlot={<AvatarButton />} />
       </div>
-      <RecipeHero
-        imageUrl={stream.imageUrl}
-        imageError={stream.imageError}
-        onBack={() => router.back()}
-        onSave={() => void handleHeart()}
-        savedState={heartState}
-        altText={displayTitle ?? 'pizza'}
-      />
+      <div className={styles.heroWrap}>
+        <RecipeHero
+          imageUrl={stream.imageUrl}
+          imageError={stream.imageError}
+          onBack={() => router.back()}
+          onSave={() => void handleHeart()}
+          savedState={heartState}
+          altText={displayTitle ?? 'pizza'}
+        />
+      </div>
 
       <div className={styles.body}>
         <header className={styles.header}>

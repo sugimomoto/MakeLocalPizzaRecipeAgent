@@ -9,7 +9,13 @@
 /* Slice 7: AvatarButton 単体 → 統一 HeaderRow を出すための薄い wrapper。
    旧 flex+justify-content:flex-end は HeaderRow を右端ピルに縮める原因だったため削除。 */
 .topRow {
-  padding: 12px 0 0;
+  padding: 12px 0 10px;
+}
+
+/* HeaderRow と幅を揃えるため 12px の左右 inset を入れて RecipeHero を包む。
+   .hero 側 (overflow: hidden) に border-radius を付与しているので角丸も揃う。 */
+.heroWrap {
+  padding: 0 12px;
 }
 
 .body {

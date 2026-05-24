@@ -4,6 +4,7 @@
   aspect-ratio: 4 / 3;
   background: var(--mlpr-washi, #f5efe1);
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .image {
