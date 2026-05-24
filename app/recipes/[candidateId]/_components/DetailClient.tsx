@@ -31,6 +31,7 @@ import { useRecipeDetailStream } from '@/hooks/use-recipe-detail-stream';
 import { useSavedRecipe } from '@/hooks/use-saved-recipe';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
+import { readRecipeDetailCache, writeRecipeDetailCache } from '@/lib/cache/stream-cache';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
 import styles from './DetailClient.module.css';
@@ -103,9 +104,12 @@ export function DetailClient({ candidateId }: DetailClientProps) {
     // 初回マウントの初期化なので setState を effect 内で行う (startedRef でガード済)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPending(p);
+
+    // 復元優先順 (Slice 7 でキャッシュ層を追加):
+    //   1. savedSnapshot (/library 経由、Firestore 永続データ)
+    //   2. sessionStorage cache (同タブ内リロード復元)
+    //   3. stream.start (初回生成、Vertex AI + Imagen 呼び出し)
     if (p.savedSnapshot) {
-      // Slice 6: /library 経由は保存済みスナップショットから hydrate
-      // (再生成・LLM 呼び出し不要)
       stream.hydrate({
         recipeId: p.candidateId,
         title: p.candidate.title,
@@ -117,6 +121,13 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       });
       return;
     }
+
+    const cached = readRecipeDetailCache(candidateId);
+    if (cached) {
+      stream.hydrate(cached);
+      return;
+    }
+
     void stream.start({
       candidateId: p.candidateId,
       localeId: p.localeId,
@@ -124,6 +135,42 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       candidate: p.candidate,
     });
   }, [candidateId, router, stream]);
+
+  // stream が allDone (テキスト + 画像揃った状態) になったら sessionStorage に書き込み。
+  // リロードしても同じ結果が即時表示される。画像がエラー (imageError) の場合でも
+  // テキスト部分はキャッシュしておきたいので state は recipeDone も含めるが、その時は
+  // imageUrl が空になるので useEffect 側でガード。
+  useEffect(() => {
+    if (stream.state !== 'allDone') return;
+    if (
+      !stream.title ||
+      !stream.meta ||
+      !stream.materials ||
+      !stream.steps ||
+      !stream.story ||
+      !stream.imageUrl
+    ) {
+      return;
+    }
+    writeRecipeDetailCache(candidateId, {
+      recipeId: candidateId,
+      title: stream.title,
+      meta: stream.meta,
+      materials: stream.materials,
+      steps: stream.steps,
+      story: stream.story,
+      imageUrl: stream.imageUrl,
+    });
+  }, [
+    candidateId,
+    stream.state,
+    stream.title,
+    stream.meta,
+    stream.materials,
+    stream.steps,
+    stream.story,
+    stream.imageUrl,
+  ]);
 
   const candidate = pending?.candidate ?? null;
   const strategyLabel = candidate ? STRATEGY_LABELS[candidate.strategy].japaneseLabel : null;

@@ -58,6 +58,24 @@ export type QuickTapSessionPayload = {
   candidates: Candidate[];
 };
 
+/**
+ * 候補ストリーム途中状態 (use-quicktap-stream の reducer state)。
+ *
+ * NDJSON events で title/concept/... が段階的に埋まる。完成時 isDone=true。
+ * sessionStorage キャッシュ (stream-cache.ts) と hook の reducer の両者から
+ * 参照される共通型なので domain 層に置く。
+ */
+export type PartialCandidate = {
+  candidateId: string;
+  strategy: Strategy;
+  title?: string;
+  concept?: string;
+  keyIngredients?: string[];
+  sceneTags?: string[];
+  why?: string;
+  isDone: boolean;
+};
+
 export function isStrategy(value: unknown): value is Strategy {
   return typeof value === 'string' && (STRATEGIES as readonly string[]).includes(value);
 }

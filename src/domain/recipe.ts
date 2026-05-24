@@ -25,3 +25,20 @@ export type RecipeStory = {
   headline: string;
   body: string;
 };
+
+/**
+ * 詳細レシピの完成スナップショット。
+ *
+ * use-recipe-detail-stream の hydrate 入力 (/library 経由 + sessionStorage
+ * キャッシュ復元) と stream-cache.ts の両者から参照される共通型のため
+ * domain 層に置く。
+ */
+export type RecipeDetailSnapshot = {
+  recipeId: string;
+  title: string;
+  meta: RecipeMeta;
+  materials: RecipeMaterial[];
+  steps: string[];
+  story: RecipeStory;
+  imageUrl: string;
+};

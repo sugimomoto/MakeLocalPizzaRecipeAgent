@@ -31,3 +31,28 @@ export const PENDING_SESSION_KEY = 'mlpr.pendingSession.v1';
  * だけで取り回せる)。
  */
 export const PENDING_RECIPE_KEY = 'mlpr.pendingRecipe.v1';
+
+/**
+ * /candidates/[sessionId] の生成結果キャッシュ (Slice 7 リロード対策)。
+ *
+ * フルキー: `mlpr.cache.candidates.v1::{sessionId}`
+ * payload: `{ candidates: PartialCandidate[] }` (3 案、全 isDone)
+ *
+ * リロード時に再生成 (Vertex AI 呼び出し) を回避するため、stream が `done`
+ * 状態に到達したタイミングで sessionStorage に書き込む。タブを閉じたら
+ * 自然に消える = 新しいセッションでは再生成される。
+ *
+ * 「ふり直す」CTA は明示的に再生成する意図なので、押下時にこのキーを削除。
+ */
+export const CANDIDATES_CACHE_PREFIX = 'mlpr.cache.candidates.v1::';
+
+/**
+ * /recipes/[candidateId] の生成結果キャッシュ (Slice 7 リロード対策)。
+ *
+ * フルキー: `mlpr.cache.recipe.v1::{candidateId}`
+ * payload: HydrateSnapshot (title / meta / materials / steps / story / imageUrl)
+ *
+ * リロード時に再生成 (Vertex AI + Imagen 呼び出し) を回避するため、stream が
+ * `allDone` 状態に到達したタイミングで sessionStorage に書き込む。
+ */
+export const RECIPE_CACHE_PREFIX = 'mlpr.cache.recipe.v1::';

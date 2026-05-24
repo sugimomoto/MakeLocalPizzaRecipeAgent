@@ -21,6 +21,11 @@ import { Button } from '@/components/primitives/Button';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
 import { HeaderRow } from '@/components/shell/HeaderRow';
 import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
+import {
+  clearCandidatesCache,
+  readCandidatesCache,
+  writeCandidatesCache,
+} from '@/lib/cache/stream-cache';
 import { PENDING_RECIPE_KEY, PENDING_SESSION_KEY } from '@/lib/storage-keys';
 
 import styles from './CandidatesClient.module.css';
@@ -63,6 +68,16 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
 
   useEffect(() => {
     if (startedRef.current) return;
+    // Slice 7: リロード時の再生成回避。先にキャッシュ (sessionStorage) を見る。
+    // キャッシュがあれば pending session が無くてもリロード復元できるようにする
+    // (pending session は /ingredients → /candidates 遷移時の中継のため、リロード
+    //  後は既に消費されているケースがある)。
+    const cached = readCandidatesCache(sessionId);
+    if (cached) {
+      startedRef.current = true;
+      stream.hydrate(sessionId, cached);
+      return;
+    }
     const pending = readPendingSession(sessionId);
     if (!pending) {
       router.replace('/ingredients');
@@ -71,6 +86,14 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
     startedRef.current = true;
     void stream.start({ localeId: pending.localeId, ingredients: pending.ingredients });
   }, [sessionId, router, stream]);
+
+  // stream が 'done' に達したら sessionStorage キャッシュへ書き込み。リロード時に
+  // 同じ結果が即時に復元される。reroll で再生成された場合も最新版で上書きされる。
+  useEffect(() => {
+    if (stream.state !== 'done') return;
+    if (stream.candidates.length === 0) return;
+    writeCandidatesCache(sessionId, stream.candidates);
+  }, [stream.state, stream.candidates, sessionId]);
 
   // 焼成中: state が idle/streaming で、まだ 1 件も完成 (isDone) していない間。
   // 第 1 候補が isDone になったらカード一覧を表示する (Gemini の構造化出力は一括返却なので
@@ -90,7 +113,11 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
           <button
             type="button"
             className={styles.rerollLink}
-            onClick={() => void stream.reroll(sessionId)}
+            onClick={() => {
+              // ユーザの明示的な再生成意図 → 古いキャッシュを破棄
+              clearCandidatesCache(sessionId);
+              void stream.reroll(sessionId);
+            }}
             disabled={stream.state === 'streaming'}
           >
             <span aria-hidden="true">↻</span> ふり直す

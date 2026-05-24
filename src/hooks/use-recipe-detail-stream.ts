@@ -17,7 +17,12 @@ import { useCallback, useReducer, useRef } from 'react';
 import { RecipeDetailStreamEventSchema, type RecipeDetailStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
 
-import type { RecipeMaterial, RecipeMeta, RecipeStory } from '@/domain/recipe';
+import type {
+  RecipeDetailSnapshot,
+  RecipeMaterial,
+  RecipeMeta,
+  RecipeStory,
+} from '@/domain/recipe';
 import type { GenerateRecipeDetailInput } from '@/lib/agent/client';
 
 export type RecipeDetailStreamState = 'idle' | 'streaming' | 'recipeDone' | 'allDone' | 'error';
@@ -59,16 +64,12 @@ type Action =
 /**
  * Slice 6: 保存済みスナップショットから state を一気に組み立てる用ペイロード。
  * ストリームを叩かず /library から開いたときに使う。
+ *
+ * Slice 7: lib/cache/stream-cache.ts でも同じ shape を使うため、型本体は
+ * domain/recipe.ts の RecipeDetailSnapshot に集約。ここは hook 利用者向けの
+ * 互換 alias。
  */
-export type HydrateSnapshot = {
-  recipeId: string;
-  title: string;
-  meta: RecipeMeta;
-  materials: RecipeMaterial[];
-  steps: string[];
-  story: RecipeStory;
-  imageUrl: string;
-};
+export type HydrateSnapshot = RecipeDetailSnapshot;
 
 function applyEvent(state: State, event: RecipeDetailStreamEvent): State {
   switch (event.type) {

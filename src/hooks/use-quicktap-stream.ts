@@ -17,19 +17,12 @@ import { useCallback, useReducer, useRef } from 'react';
 import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
 
-import type { Strategy } from '@/domain/candidate';
+import type { PartialCandidate } from '@/domain/candidate';
 import type { GenerateCandidatesInput } from '@/lib/agent/client';
 
-export type PartialCandidate = {
-  candidateId: string;
-  strategy: Strategy;
-  title?: string;
-  concept?: string;
-  keyIngredients?: string[];
-  sceneTags?: string[];
-  why?: string;
-  isDone: boolean;
-};
+// PartialCandidate は domain/candidate.ts に移行 (lib/cache/stream-cache が
+// 参照するため、レイヤー順序の都合)。後方互換のために hook 経由でも参照可能。
+export type { PartialCandidate };
 
 export type StreamState = 'idle' | 'streaming' | 'done' | 'error';
 
@@ -52,7 +45,8 @@ type Action =
   | { type: 'event'; event: CandidateStreamEvent }
   | { type: 'done' }
   | { type: 'error'; error: string }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'hydrate'; sessionId: string; candidates: PartialCandidate[] };
 
 function applyEvent(
   candidates: PartialCandidate[],
@@ -134,6 +128,14 @@ function reducer(state: State, action: Action): State {
       return { ...state, state: 'error', error: action.error };
     case 'reset':
       return initialState;
+    case 'hydrate':
+      // sessionStorage キャッシュから即時に state を 'done' で復元 (Slice 7 リロード対策)
+      return {
+        state: 'done',
+        sessionId: action.sessionId,
+        candidates: action.candidates,
+        error: null,
+      };
   }
 }
 
@@ -152,6 +154,8 @@ export type UseQuickTapStreamResult = {
   start: (input: GenerateCandidatesInput) => Promise<void>;
   reroll: (sessionId?: string) => Promise<void>;
   reset: () => void;
+  /** sessionStorage キャッシュから 'done' 状態で復元 (Slice 7 リロード対策) */
+  hydrate: (sessionId: string, candidates: PartialCandidate[]) => void;
 };
 
 async function consumeStream(
@@ -233,6 +237,11 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
     dispatch({ type: 'reset' });
   }, []);
 
+  const hydrate = useCallback((sessionId: string, candidates: PartialCandidate[]) => {
+    abortRef.current?.abort();
+    dispatch({ type: 'hydrate', sessionId, candidates });
+  }, []);
+
   return {
     state: state.state,
     sessionId: state.sessionId,
@@ -241,5 +250,6 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
     start,
     reroll,
     reset,
+    hydrate,
   };
 }
