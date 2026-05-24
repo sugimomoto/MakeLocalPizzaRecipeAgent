@@ -248,14 +248,20 @@ export function DetailClient({ candidateId }: DetailClientProps) {
   // Slice 7: DetailMakeCTA の state を auth + saved 状態から導出
   const makeCtaState: DetailMakeCTAState =
     saved.state === 'unauthenticated' ? 'guest' : saved.state === 'saved' ? 'ready' : 'unsaved';
+
+  // 「作ってみる」: 未保存なら同タップで Firestore へ save → 完了後に /feedback へ。
+  // 旧実装は handleHeart 経由で save していたが、handleHeart は throw せず Toast
+  // で握りつぶすため、上位の `await` だけでは save 完了を確実に待てず、結果として
+  // /feedback 遷移後に saved.state が 'unsaved' のまま見える問題があった。
+  // ここでは saved.save() を直接 await して resolve を待ち、その後で push する。
   const handleMakeClick = async (): Promise<void> => {
     if (saved.state === 'unauthenticated') {
       openModal();
       return;
     }
-    // 未保存なら自動でハート保存してから /feedback に進む (1 タップで完結する UX)。
-    // 詳細スナップショットが揃う前は handleHeart 側で warning が出るので、
-    // ここでは詳細が揃っていることを先に確認する。
+    if (saved.state === 'loading') return;
+    if (!pending || !candidate || !displayTitle) return;
+
     if (saved.state !== 'saved') {
       if (stream.state !== 'recipeDone' && stream.state !== 'allDone') {
         toast.push({
@@ -265,9 +271,28 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         return;
       }
       try {
-        await handleHeart();
-      } catch {
-        // handleHeart 内で Toast を出すのでここでは握りつぶす
+        const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
+        await saved.save({
+          candidateId,
+          title: displayTitle,
+          localeId: pending.localeId,
+          prefecture,
+          strategy: candidate.strategy,
+          imageUrl: stream.imageUrl ?? '',
+          ingredients: pending.ingredients,
+          concept: candidate.concept,
+          keyIngredients: candidate.keyIngredients,
+          sceneTags: candidate.sceneTags,
+          why: candidate.why,
+          ...(stream.meta && { meta: stream.meta }),
+          ...(stream.materials && { materials: stream.materials }),
+          ...(stream.steps && { steps: stream.steps }),
+          ...(stream.story && { story: stream.story }),
+        });
+        toast.push({ kind: 'success', message: 'ピザ帳に保存しました' });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : '保存処理に失敗しました';
+        toast.push({ kind: 'warning', message: `保存に失敗しました (${message})` });
         return;
       }
     }
@@ -314,6 +339,16 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         )}
 
         <MetaStrip meta={stream.meta} />
+
+        {/* 上部 CTA — 下まで降りなくても押せるように Slice 7 で追加。
+            同じ state / handler を共有するので、下部 CTA と挙動が完全一致する */}
+        <DetailMakeCTA
+          state={makeCtaState}
+          heartFilled={saved.state === 'saved'}
+          onMakeClick={() => void handleMakeClick()}
+          onHeartClick={() => void handleHeart()}
+          onSignInRequest={openModal}
+        />
 
         <section className={styles.section}>
           <SectionLabel jp="食 材" {...(stream.materials && { count: stream.materials.length })} />
