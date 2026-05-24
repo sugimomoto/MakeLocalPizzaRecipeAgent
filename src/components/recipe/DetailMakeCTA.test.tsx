@@ -43,7 +43,7 @@ describe('DetailMakeCTA', () => {
     expect(onSignIn).toHaveBeenCalledTimes(1);
   });
 
-  it('state=unsaved: 「保存しなくても作れます」ヒント表示', () => {
+  it('state=unsaved: 「押すと自動でピザ帳に保存」ヒント表示 (Slice 7 改修後)', () => {
     render(
       <DetailMakeCTA
         state="unsaved"
@@ -52,7 +52,7 @@ describe('DetailMakeCTA', () => {
         onHeartClick={() => {}}
       />,
     );
-    expect(screen.getByText(/保存しなくても作れます/)).toBeTruthy();
+    expect(screen.getByText(/押すと自動でピザ帳に保存/)).toBeTruthy();
   });
 
   it('heartFilled=true で aria-pressed=true + label が「外す」', () => {

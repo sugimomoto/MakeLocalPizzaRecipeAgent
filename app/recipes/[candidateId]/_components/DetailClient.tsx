@@ -201,17 +201,28 @@ export function DetailClient({ candidateId }: DetailClientProps) {
   // Slice 7: DetailMakeCTA の state を auth + saved 状態から導出
   const makeCtaState: DetailMakeCTAState =
     saved.state === 'unauthenticated' ? 'guest' : saved.state === 'saved' ? 'ready' : 'unsaved';
-  const handleMakeClick = (): void => {
+  const handleMakeClick = async (): Promise<void> => {
     if (saved.state === 'unauthenticated') {
       openModal();
       return;
     }
+    // 未保存なら自動でハート保存してから /feedback に進む (1 タップで完結する UX)。
+    // 詳細スナップショットが揃う前は handleHeart 側で warning が出るので、
+    // ここでは詳細が揃っていることを先に確認する。
     if (saved.state !== 'saved') {
-      toast.push({
-        kind: 'info',
-        message: '先にハートで保存すると、振り返り帳に作った記録を残せます',
-      });
-      return;
+      if (stream.state !== 'recipeDone' && stream.state !== 'allDone') {
+        toast.push({
+          kind: 'warning',
+          message: '詳細レシピが揃うまでお待ちください',
+        });
+        return;
+      }
+      try {
+        await handleHeart();
+      } catch {
+        // handleHeart 内で Toast を出すのでここでは握りつぶす
+        return;
+      }
     }
     router.push(`/feedback/${encodeURIComponent(candidateId)}`);
   };
@@ -274,7 +285,7 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         <DetailMakeCTA
           state={makeCtaState}
           heartFilled={saved.state === 'saved'}
-          onMakeClick={handleMakeClick}
+          onMakeClick={() => void handleMakeClick()}
           onHeartClick={() => void handleHeart()}
           onSignInRequest={openModal}
         />
