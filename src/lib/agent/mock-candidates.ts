@@ -14,7 +14,12 @@
 
 import { encodeNdjsonStream } from './stream';
 
-import type { AgentClient, GenerateCandidatesInput, GenerateRecipeDetailInput } from './client';
+import type {
+  AgentClient,
+  GenerateCandidatesInput,
+  GenerateRecipeDetailInput,
+  RerollInput,
+} from './client';
 import type { Strategy } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
 
@@ -176,16 +181,20 @@ export class MockAgentClient implements AgentClient {
     );
   }
 
-  reroll(sessionId: string): Promise<ReadableStream<Uint8Array>> {
-    const nextSalt = (this.rerollCounters.get(sessionId) ?? 0) + 1;
-    this.rerollCounters.set(sessionId, nextSalt);
-    // 元の sessionId を入力扱いの salt として、新しい sessionId を発行
-    const input: GenerateCandidatesInput = { localeId: sessionId, ingredients: [] };
-    const newSessionId = buildSessionId(input, nextSalt);
+  reroll(input: RerollInput): Promise<ReadableStream<Uint8Array>> {
+    const { sourceSessionId, localeId, ingredients } = input;
+    const nextSalt = (this.rerollCounters.get(sourceSessionId) ?? 0) + 1;
+    this.rerollCounters.set(sourceSessionId, nextSalt);
+    const candidateInput: GenerateCandidatesInput = { localeId, ingredients };
+    const newSessionId = buildSessionId(candidateInput, nextSalt);
     const seed = hashStringToInt(newSessionId);
     return Promise.resolve(
       encodeNdjsonStream(
-        buildEvents(input, { sessionId: newSessionId, delayRange: this.delayRange, seed }),
+        buildEvents(candidateInput, {
+          sessionId: newSessionId,
+          delayRange: this.delayRange,
+          seed,
+        }),
       ),
     );
   }

@@ -18,7 +18,12 @@
  *   から ID トークンを発行 (audience 指定)。
  */
 
-import type { AgentClient, GenerateCandidatesInput, GenerateRecipeDetailInput } from './client';
+import type {
+  AgentClient,
+  GenerateCandidatesInput,
+  GenerateRecipeDetailInput,
+  RerollInput,
+} from './client';
 import type { IdTokenClient } from 'google-auth-library';
 
 export type HttpAgentClientOptions = {
@@ -89,24 +94,29 @@ export class HttpAgentClient implements AgentClient {
     return this.postNdjson(`/agent/recipes/${encodeURIComponent(input.candidateId)}`, body);
   }
 
-  async reroll(sourceSessionId: string): Promise<ReadableStream<Uint8Array>> {
-    const ctx = this.rerollContext.get(sourceSessionId);
-    if (!ctx) {
-      throw new Error(
-        `HttpAgentClient.reroll: no context cached for sessionId=${sourceSessionId}. ` +
-          `generateCandidates must be called first within the same process.`,
-      );
-    }
+  async reroll(input: RerollInput): Promise<ReadableStream<Uint8Array>> {
+    // Slice 7: in-memory cache に依存せずクライアントから明示的に渡された
+    // context (localeId / ingredients) を優先。cache がヒットすればそちらでも
+    // 良いが、Cloud Run マルチインスタンスや Next.js HMR 再起動を考えると
+    // 入力ベースで動く方が堅牢。
+    const ctx = {
+      localeId: input.localeId,
+      ingredients: input.ingredients,
+    };
     const newSessionId = await this.generateRandomSessionId();
-    // 新 sessionId にもコンテキストを引き継ぐ (連続 reroll 対応)
+    // 新 sessionId にもコンテキストを引き継ぐ (同一プロセス内連続 reroll の最適化用、optional)
     this.rerollContext.set(newSessionId, ctx);
 
-    return this.postNdjson('/agent/reroll', {
-      sourceSessionId,
+    const body: Record<string, unknown> = {
+      sourceSessionId: input.sourceSessionId,
       sessionId: newSessionId,
       localeId: ctx.localeId,
       ingredients: ctx.ingredients,
-    });
+    };
+    if (input.guestSessionId !== undefined) body.guestSessionId = input.guestSessionId;
+    if (input.userId !== undefined) body.userId = input.userId;
+
+    return this.postNdjson('/agent/reroll', body);
   }
 
   private async postNdjson(

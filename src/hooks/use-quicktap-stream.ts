@@ -152,7 +152,10 @@ export type UseQuickTapStreamResult = {
   candidates: PartialCandidate[];
   error: string | null;
   start: (input: GenerateCandidatesInput) => Promise<void>;
-  reroll: (sessionId?: string) => Promise<void>;
+  reroll: (
+    sessionId: string,
+    context: { localeId: string; ingredients: string[] },
+  ) => Promise<void>;
   reset: () => void;
   /** sessionStorage キャッシュから 'done' 状態で復元 (Slice 7 リロード対策) */
   hydrate: (sessionId: string, candidates: PartialCandidate[]) => void;
@@ -205,31 +208,30 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
   }, []);
 
   const reroll = useCallback(
-    async (sourceSessionId?: string) => {
-      const sid = sourceSessionId ?? state.sessionId;
-      if (!sid) {
-        dispatch({ type: 'error', error: 'no source sessionId for reroll' });
-        return;
-      }
-
+    async (sourceSessionId: string, context: { localeId: string; ingredients: string[] }) => {
       abortRef.current?.abort();
       const ac = new AbortController();
       abortRef.current = ac;
 
-      dispatch({ type: 'start', sessionId: sid });
+      dispatch({ type: 'start', sessionId: sourceSessionId });
 
       try {
-        const res = await fetch(`/api/quicktap/sessions/${encodeURIComponent(sid)}/reroll`, {
-          method: 'POST',
-          signal: ac.signal,
-        });
+        const res = await fetch(
+          `/api/quicktap/sessions/${encodeURIComponent(sourceSessionId)}/reroll`,
+          {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(context),
+            signal: ac.signal,
+          },
+        );
         await consumeStream(res, dispatch, abortRef);
       } catch (err) {
         if (ac.signal.aborted) return;
         dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
       }
     },
-    [state.sessionId],
+    [],
   );
 
   const reset = useCallback(() => {

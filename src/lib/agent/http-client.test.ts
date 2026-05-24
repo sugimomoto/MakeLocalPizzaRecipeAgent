@@ -220,25 +220,19 @@ describe('HttpAgentClient Cloud Run ID token (Slice 6)', () => {
 });
 
 describe('HttpAgentClient.reroll', () => {
-  it('throws if no context was cached', async () => {
-    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
-    await expect(client.reroll('unknown')).rejects.toThrow(/no context cached/);
-  });
-
-  it('POSTs to /agent/reroll with sourceSessionId + new sessionId + cached localeId/ingredients', async () => {
+  it('POSTs to /agent/reroll with sourceSessionId + new sessionId + provided context', async () => {
     const fetchMock = vi.fn<typeof fetch>(
       async () => new Response(ndjsonBody(SAMPLE), { status: 200 }),
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const cache = new Map<string, { localeId: string; ingredients: string[] }>();
-    cache.set('sess_orig', { localeId: 'miyagi', ingredients: ['miyagi-seri'] });
-    const client = new HttpAgentClient({
-      baseUrl: 'http://localhost:8080',
-      rerollContextCache: cache,
+    const client = new HttpAgentClient({ baseUrl: 'http://localhost:8080' });
+    // Slice 7: context は client から明示渡し (旧 in-memory cache 依存はやめた)
+    await client.reroll({
+      sourceSessionId: 'sess_orig',
+      localeId: 'miyagi',
+      ingredients: ['miyagi-seri'],
     });
-
-    await client.reroll('sess_orig');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const call = fetchMock.mock.calls[0]!;
     const url = call[0];

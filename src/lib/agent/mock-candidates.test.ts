@@ -103,9 +103,21 @@ describe('MockAgentClient.generateCandidates', () => {
 });
 
 describe('MockAgentClient.reroll', () => {
+  // Slice 7: reroll は context (localeId / ingredients) を必須化
+  const CTX_ABC = {
+    sourceSessionId: 'sess_abc',
+    localeId: 'miyagi',
+    ingredients: ['miyagi-seri'],
+  };
+  const CTX_XYZ = {
+    sourceSessionId: 'sess_xyz',
+    localeId: 'miyagi',
+    ingredients: ['miyagi-seri'],
+  };
+
   it('returns a different sessionId than the input sessionId', async () => {
     const client = new MockAgentClient({ delayRange: FAST });
-    const events = await collect(await client.reroll('sess_abc'));
+    const events = await collect(await client.reroll(CTX_ABC));
     const first = events[0];
     if (first?.type !== 'session.start') throw new Error('expected session.start first');
     expect(first.sessionId).not.toBe('sess_abc');
@@ -113,8 +125,8 @@ describe('MockAgentClient.reroll', () => {
 
   it('successive rerolls of the same sessionId yield distinct sessionIds', async () => {
     const client = new MockAgentClient({ delayRange: FAST });
-    const a = await collect(await client.reroll('sess_xyz'));
-    const b = await collect(await client.reroll('sess_xyz'));
+    const a = await collect(await client.reroll(CTX_XYZ));
+    const b = await collect(await client.reroll(CTX_XYZ));
     const sa = a[0]?.type === 'session.start' ? a[0].sessionId : '';
     const sb = b[0]?.type === 'session.start' ? b[0].sessionId : '';
     expect(sa).not.toBe(sb);

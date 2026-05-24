@@ -19,7 +19,6 @@ import { AvatarButton } from '@/components/auth/AvatarButton';
 import { CameraPlaceholder } from '@/components/feedback/CameraPlaceholder';
 import { ChipGroup } from '@/components/feedback/ChipGroup';
 import { DotsInput } from '@/components/feedback/DotsInput';
-import { GuestCountInput } from '@/components/feedback/GuestCountInput';
 import { StarInput } from '@/components/feedback/StarInput';
 import { HeaderRow } from '@/components/shell/HeaderRow';
 import {
@@ -184,10 +183,7 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
           </div>
           <div className={styles.heroBody}>
             <div className={styles.heroTitle}>{recipe?.title ?? '読み込み中...'}</div>
-            <div className={styles.heroMeta}>
-              {cookedAtText}
-              {form.guestCount ? ` · ゲスト ${form.guestCount} 名` : ''}
-            </div>
+            <div className={styles.heroMeta}>{cookedAtText}</div>
             <div className={styles.starsRow}>
               <StarInput
                 value={form.overallRating}
@@ -201,14 +197,6 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
           </div>
           <CameraPlaceholder />
         </div>
-      </div>
-
-      {/* guest count */}
-      <div className={styles.guestCountRow}>
-        <GuestCountInput
-          value={form.guestCount}
-          onChange={(v) => setForm((f) => ({ ...f, guestCount: v }))}
-        />
       </div>
 
       {/* axes */}

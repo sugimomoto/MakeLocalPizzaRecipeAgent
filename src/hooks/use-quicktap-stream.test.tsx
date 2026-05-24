@@ -179,23 +179,20 @@ describe('useQuickTapStream', () => {
     expect(result.current.sessionId).toBe('sess_x');
 
     await act(async () => {
-      await result.current.reroll();
+      await result.current.reroll('sess_x', { localeId: 'miyagi', ingredients: ['miyagi-seri'] });
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     const rerollUrl = fetchMock.mock.calls[1]![0];
     expect(rerollUrl).toBe('/api/quicktap/sessions/sess_x/reroll');
-    expect(result.current.sessionId).toBe('sess_y');
-  });
-
-  it('reroll() without sessionId emits error', async () => {
-    vi.stubGlobal('fetch', vi.fn());
-    const { result } = renderHook(() => useQuickTapStream());
-    await act(async () => {
-      await result.current.reroll();
+    // Slice 7: reroll の context (localeId / ingredients) を body で送る
+    const rerollOpts = fetchMock.mock.calls[1]![1] as { body?: string };
+    expect(rerollOpts.body).toBeDefined();
+    expect(JSON.parse(rerollOpts.body!)).toEqual({
+      localeId: 'miyagi',
+      ingredients: ['miyagi-seri'],
     });
-    expect(result.current.state).toBe('error');
-    expect(result.current.error).toContain('no source sessionId');
+    expect(result.current.sessionId).toBe('sess_y');
   });
 
   it('reset() returns the hook to idle/empty', async () => {

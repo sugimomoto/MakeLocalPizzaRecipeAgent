@@ -38,9 +38,22 @@ export type GenerateRecipeDetailInput = {
   userId?: string;
 };
 
+/**
+ * Reroll 入力 — Cloud Run マルチインスタンス・Next.js HMR 再起動・ブラウザリロード
+ * いずれの場合でも server in-memory cache に頼らず動かすため、ctx を必須化。
+ * (Slice 2 では client が in-memory map に依存していたが Slice 7 で明示化)
+ */
+export type RerollInput = {
+  sourceSessionId: string;
+  localeId: LocaleId;
+  ingredients: IngredientId[];
+  guestSessionId?: string;
+  userId?: string;
+};
+
 export interface AgentClient {
   generateCandidates(input: GenerateCandidatesInput): Promise<ReadableStream<Uint8Array>>;
-  reroll(sessionId: string): Promise<ReadableStream<Uint8Array>>;
+  reroll(input: RerollInput): Promise<ReadableStream<Uint8Array>>;
   /** Slice 3: 詳細レシピ + Imagen 画像 NDJSON を返す。 */
   generateRecipeDetail(input: GenerateRecipeDetailInput): Promise<ReadableStream<Uint8Array>>;
 }

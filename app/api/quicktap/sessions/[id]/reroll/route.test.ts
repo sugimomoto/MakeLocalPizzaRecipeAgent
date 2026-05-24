@@ -7,8 +7,11 @@ import { POST } from './route';
 import type { StreamEvent } from '@/domain/schemas';
 
 function makeRequest(sessionId: string): Request {
+  // Slice 7: reroll は context (localeId / ingredients) を body 必須化
   return new Request(`http://localhost/api/quicktap/sessions/${sessionId}/reroll`, {
     method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ localeId: 'miyagi', ingredients: ['miyagi-seri'] }),
   });
 }
 

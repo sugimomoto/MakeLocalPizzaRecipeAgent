@@ -116,7 +116,18 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
             onClick={() => {
               // ユーザの明示的な再生成意図 → 古いキャッシュを破棄
               clearCandidatesCache(sessionId);
-              void stream.reroll(sessionId);
+              // Slice 7: 旧仕様は server in-memory cache 依存で 500 になっていた。
+              // クライアント側 (sessionStorage) に持っている pending session の
+              // context を明示渡しでサーバへ渡す。
+              const pending = readPendingSession(sessionId);
+              if (!pending) {
+                router.replace('/ingredients');
+                return;
+              }
+              void stream.reroll(sessionId, {
+                localeId: pending.localeId,
+                ingredients: pending.ingredients,
+              });
             }}
             disabled={stream.state === 'streaming'}
           >
