@@ -134,6 +134,66 @@ describe('firestore.rules — users/{uid}/savedRecipes/{candidateId}', () => {
   });
 });
 
+// Slice 7 追加: フィードバック下書き subcollection
+describe('firestore.rules — users/{uid}/drafts/{candidateId} (Slice 7)', () => {
+  const DRAFT_PATH = (uid: string, candidateId: string) => `users/${uid}/drafts/${candidateId}`;
+
+  const SAMPLE_DRAFT = {
+    overallRating: 4,
+    axes: { taste: 4, look: 4, story: 0, again: 0 },
+    whatWorked: ['見た目'],
+    updatedAt: new Date(),
+  };
+
+  it('owner can write their own draft', async () => {
+    const owner = testEnv.authenticatedContext('user-a');
+    await assertSucceeds(
+      setDoc(doc(owner.firestore(), DRAFT_PATH('user-a', 'cand-1')), SAMPLE_DRAFT),
+    );
+  });
+
+  it('owner can read their own draft', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), DRAFT_PATH('user-a', 'cand-1')), SAMPLE_DRAFT);
+    });
+    const owner = testEnv.authenticatedContext('user-a');
+    await assertSucceeds(getDoc(doc(owner.firestore(), DRAFT_PATH('user-a', 'cand-1'))));
+  });
+
+  it('owner can delete their own draft (submit 成功時に呼ばれる)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), DRAFT_PATH('user-a', 'cand-1')), SAMPLE_DRAFT);
+    });
+    const owner = testEnv.authenticatedContext('user-a');
+    await assertSucceeds(deleteDoc(doc(owner.firestore(), DRAFT_PATH('user-a', 'cand-1'))));
+  });
+
+  it("other user cannot read someone else's draft", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), DRAFT_PATH('user-a', 'cand-1')), SAMPLE_DRAFT);
+    });
+    const intruder = testEnv.authenticatedContext('user-b');
+    await assertFails(getDoc(doc(intruder.firestore(), DRAFT_PATH('user-a', 'cand-1'))));
+  });
+
+  it("other user cannot write into someone else's draft", async () => {
+    const intruder = testEnv.authenticatedContext('user-b');
+    await assertFails(
+      setDoc(doc(intruder.firestore(), DRAFT_PATH('user-a', 'cand-2')), SAMPLE_DRAFT),
+    );
+  });
+
+  it('unauthenticated client cannot read draft', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(getDoc(doc(guest.firestore(), DRAFT_PATH('user-a', 'cand-1'))));
+  });
+
+  it('unauthenticated client cannot write draft', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(setDoc(doc(guest.firestore(), DRAFT_PATH('user-a', 'cand-1')), SAMPLE_DRAFT));
+  });
+});
+
 describe('firestore.rules — furusato_items/{ingredientId} (Slice 5)', () => {
   const FURUSATO_PATH = (ingredientId: string) => `furusato_items/${ingredientId}`;
   const SAMPLE_FURUSATO_DOC = {

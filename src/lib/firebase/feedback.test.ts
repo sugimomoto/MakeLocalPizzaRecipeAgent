@@ -19,10 +19,9 @@ const deleteDocMock = vi.fn<(...args: unknown[]) => Promise<void>>();
 const onSnapshotMock = vi.fn();
 const serverTimestampMock = vi.fn(() => '__SERVER_TIMESTAMP__');
 
-type FirebaseFirestoreModule = typeof import('firebase/firestore');
-
 vi.mock('firebase/firestore', async (orig) => {
-  const real = await orig<FirebaseFirestoreModule>();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports -- orig generic で必要
+  const real = await orig<typeof import('firebase/firestore')>();
   return {
     ...real,
     doc: (...a: unknown[]) => docMock(...a),

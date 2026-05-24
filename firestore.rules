@@ -1,15 +1,23 @@
 rules_version = '2';
 
-// Make Local Pizza Recipe Agent — Firestore Security Rules
+// ふるさとピザ帳 (MakeLocalPizzaRecipeAgent) — Firestore Security Rules
 //
 // データモデル:
 //   users/{uid}/savedRecipes/{candidateId}   - Slice 4 ピザ帳 (本人のみ R/W)
+//   users/{uid}/drafts/{candidateId}         - Slice 7 フィードバック下書き (本人のみ R/W)
 //   furusato_items/{ingredientId}            - Slice 5 楽天ふるさと納税キャッシュ
 //                                              (public read / client write 不可)
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Slice 4: ピザ帳
+    // Slice 4: ピザ帳 (Slice 7 で feedback フィールドが追加されるが、
+    // 同一 doc 内 merge save のためルール変更なし)
     match /users/{uid}/savedRecipes/{candidateId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Slice 7: フィードバック下書き (3 秒 debounce で自動保存)
+    // 本人のみ R/W、未認証 / 他人は完全 deny。
+    match /users/{uid}/drafts/{candidateId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
