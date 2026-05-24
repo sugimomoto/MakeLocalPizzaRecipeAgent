@@ -33,6 +33,9 @@
   font-family: var(--mlpr-font-gothic);
   font-size: 11px;
   color: var(--mlpr-sumi-soft);
+  /* ScreenHero (padding: 12px 24px 6px) のタイトル左端と揃える。
+     旧 padding 無しは shell の 0px から始まって左端にはみ出して見えていた。 */
+  padding: 0 24px;
   margin: 6px 0 0;
 }
 .selectionCount strong {
