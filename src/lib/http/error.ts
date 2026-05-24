@@ -45,8 +45,15 @@ export const apiError = {
 /**
  * route handler の catch から呼ぶ。ApiError なら status 維持、
  * それ以外は internal にフォールバック。
+ *
+ * 非 ApiError は Cloud Logging に追跡できるよう必ず stderr に出力する
+ * (Cloud Run は stderr を WARN/ERROR severity でキャプチャ)。
  */
 export function toErrorResponse(error: unknown): Response {
+  if (!isApiError(error)) {
+    console.error('[toErrorResponse] unhandled error:', error);
+  }
+
   const apiErr = isApiError(error)
     ? error
     : new ApiError(500, 'INTERNAL_ERROR', 'unexpected internal error');
