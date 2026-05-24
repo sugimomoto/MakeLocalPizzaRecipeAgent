@@ -81,11 +81,7 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
   return (
     <div className={styles.shell}>
       <div className={styles.topRowOuter}>
-        <HeaderRow
-          title="候補 3 案"
-          onBack={() => router.push('/ingredients')}
-          rightSlot={<AvatarButton />}
-        />
+        <HeaderRow title="候補 3 案" rightSlot={<AvatarButton />} />
       </div>
       {/* Slice 7 改修前の sub row (tap badge + 「ふり直す」) を維持 */}
       <div className={styles.topRow}>

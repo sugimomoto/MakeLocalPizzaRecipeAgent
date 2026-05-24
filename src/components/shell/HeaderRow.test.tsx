@@ -4,9 +4,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { HeaderRow } from './HeaderRow';
 
+const pushMock = vi.fn();
 const backMock = vi.fn();
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ back: backMock, push: vi.fn(), replace: vi.fn() }),
+  useRouter: () => ({ back: backMock, push: pushMock, replace: vi.fn() }),
 }));
 
 describe('HeaderRow', () => {
@@ -25,25 +26,26 @@ describe('HeaderRow', () => {
     expect(screen.getByText('保存帳')).toBeTruthy();
   });
 
-  it('back ボタンを押すと onBack が呼ばれる (明示渡し)', async () => {
+  it('ホームボタンを押すと onBack が呼ばれる (明示渡し)', async () => {
     const onBack = vi.fn();
     render(<HeaderRow title="食材を選ぶ" onBack={onBack} />);
     const user = userEvent.setup();
-    await user.click(screen.getByLabelText('戻る'));
+    await user.click(screen.getByLabelText('TOP に戻る'));
     expect(onBack).toHaveBeenCalledTimes(1);
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it('onBack 未指定ならホーム (/) に push する', async () => {
+    render(<HeaderRow title="食材を選ぶ" />);
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText('TOP に戻る'));
+    expect(pushMock).toHaveBeenCalledWith('/');
     expect(backMock).not.toHaveBeenCalled();
   });
 
-  it('onBack 未指定なら router.back() を呼ぶ', async () => {
-    render(<HeaderRow title="食材を選ぶ" />);
-    const user = userEvent.setup();
-    await user.click(screen.getByLabelText('戻る'));
-    expect(backMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('hideBack で back ボタンを visibility:hidden + tabIndex=-1 にする', () => {
+  it('hideBack でホームボタンを visibility:hidden + tabIndex=-1 にする', () => {
     render(<HeaderRow title="ホーム" hideBack />);
-    const btn = screen.getByLabelText('戻る');
+    const btn = screen.getByLabelText('TOP に戻る');
     expect(btn.tabIndex).toBe(-1);
     expect(btn.className).toContain('backChip--hidden');
   });
