@@ -44,10 +44,17 @@ export function SignInModal(): React.JSX.Element {
       toast.push({ kind: 'info', message: 'サインインしました。ピザ帳が使えます。' });
     } catch (e) {
       // popup を閉じた場合等は無音にしたいが、明示エラーは Toast 警告で通知
+      // Firebase Auth は { code: 'auth/...', message: ... } 形式の FirebaseError を投げる
+      const code = (e as { code?: string })?.code;
       const message = e instanceof Error ? e.message : 'サインインに失敗しました';
       // popup-closed-by-user は警告にしない (ユーザの能動的 dismiss)
       if (/popup-closed-by-user|cancelled-popup-request/.test(message)) return;
-      toast.push({ kind: 'warning', message: 'サインインに失敗しました。再度お試しください。' });
+      // 本番デバッグ用: Firebase の auth/... コードを Toast に乗せる
+      console.error('[SignInModal] sign-in error:', code, e);
+      toast.push({
+        kind: 'warning',
+        message: `サインインに失敗しました (${code ?? 'unknown'})。再度お試しください。`,
+      });
     }
   };
 
