@@ -1,0 +1,86 @@
+/* GuestCountInput — −/+ で 1..20 のゲスト数 (Slice 7) */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0 0;
+}
+
+.label {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  letter-spacing: 1px;
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 30px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mlpr-sumi-soft);
+  font-family: var(--mlpr-font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(31, 26, 18, 0.04);
+}
+
+.button:disabled {
+  color: var(--mlpr-sumi-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.value {
+  width: 36px;
+  text-align: center;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  border-left: 1px solid var(--mlpr-hairline);
+  border-right: 1px solid var(--mlpr-hairline);
+  line-height: 30px;
+  user-select: none;
+}
+
+.value--empty {
+  color: var(--mlpr-sumi-muted);
+}
+
+.unit {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11px;
+  color: var(--mlpr-sumi-muted);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.optional {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1px;
+}

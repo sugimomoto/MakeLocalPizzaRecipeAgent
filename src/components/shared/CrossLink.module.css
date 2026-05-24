@@ -1,0 +1,73 @@
+/* CrossLink — 保存帳 ⇄ 振り返り帳 の往復ピル (Slice 7) */
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 12px;
+  border-radius: 999px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  box-shadow: 0 1px 2px rgba(31, 26, 18, 0.04);
+  text-decoration: none;
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    transform 90ms ease;
+}
+
+.link:hover {
+  background: var(--mlpr-washi-soft);
+}
+
+.link:active {
+  transform: scale(0.98);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  color: var(--accent, var(--mlpr-shu));
+  background: color-mix(in srgb, var(--accent, var(--mlpr-shu)) 10%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: var(--mlpr-font-mincho);
+  font-weight: 700;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  line-height: 1.1;
+}
+
+.meta {
+  font-family: var(--mlpr-font-mono);
+  font-size: 8.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.chev {
+  color: var(--mlpr-sumi-soft);
+  margin-left: 2px;
+  display: inline-flex;
+}

@@ -1,0 +1,37 @@
+/* DotsInput — 5 段階のドット (Slice 7) */
+
+.root {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: transparent;
+  outline: none;
+  border: 1.5px solid transparent;
+}
+
+.root:focus-visible {
+  background: rgba(31, 26, 18, 0.04);
+  border-color: var(--mlpr-shu);
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: transparent;
+  border: 1.5px solid var(--mlpr-hairline);
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 90ms ease;
+}
+
+.dot:active {
+  transform: scale(0.9);
+}
+
+.dot--filled {
+  background: var(--mlpr-shu);
+  border-color: var(--mlpr-shu);
+}

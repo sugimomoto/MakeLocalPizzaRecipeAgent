@@ -1,0 +1,39 @@
+/* StarInput — タップで点灯 / 同じ★再タップで 0 クリア (Slice 7) */
+
+.root {
+  display: inline-flex;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 2px 0;
+}
+
+.root:focus-within {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.star {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  color: var(--mlpr-sumi-muted);
+  transition: transform 90ms ease;
+}
+
+.star:active {
+  transform: scale(0.92);
+}
+
+.star--filled {
+  color: var(--mlpr-yamabuki);
+}
+
+.star:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

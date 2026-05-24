@@ -1,0 +1,87 @@
+/* ChipGroup — 多選択チップ群 (Slice 7) */
+
+.group {
+  margin-top: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.jpLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12.5px;
+  color: var(--mlpr-sumi);
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+.enLabel {
+  font-family: var(--mlpr-font-mono);
+  font-size: 8.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1.5px;
+}
+
+.count {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-sumi);
+  margin-left: auto;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  border: 1px solid var(--mlpr-hairline);
+  background: transparent;
+  color: var(--mlpr-sumi-soft);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.chip:hover:not([aria-disabled='true']) {
+  background: rgba(31, 26, 18, 0.04);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
+
+.chip--selected {
+  color: #fff;
+  background: var(--mlpr-shu);
+  border-color: var(--mlpr-shu);
+  font-weight: 600;
+}
+
+.chip--matcha.chip--selected {
+  background: var(--mlpr-matcha);
+  border-color: var(--mlpr-matcha);
+}
+
+.chip--yamabuki.chip--selected {
+  background: var(--mlpr-yamabuki);
+  border-color: var(--mlpr-yamabuki);
+}
+
+.chip[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
