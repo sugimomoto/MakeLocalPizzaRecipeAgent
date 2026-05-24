@@ -32,8 +32,12 @@ images:
 
 steps:
   # 1. Docker build (Web: ./Dockerfile)
+  # Dockerfile が `--mount=type=cache` を使うため BuildKit が必須。
+  # `gcr.io/cloud-builders/docker` は BuildKit を持つが、env で明示的に有効化する。
   - id: build
     name: gcr.io/cloud-builders/docker
+    env:
+      - DOCKER_BUILDKIT=1
     args:
       - build
       - --tag=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/web:${_TAG}

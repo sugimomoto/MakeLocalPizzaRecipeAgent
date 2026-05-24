@@ -35,8 +35,11 @@ images:
 
 steps:
   # 1. Docker build (Agent: ./agent/Dockerfile)
+  # uv sync の cache mount のため BuildKit が必須。
   - id: build
     name: gcr.io/cloud-builders/docker
+    env:
+      - DOCKER_BUILDKIT=1
     args:
       - build
       - --tag=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:${_TAG}

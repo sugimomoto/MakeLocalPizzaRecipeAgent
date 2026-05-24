@@ -34,8 +34,11 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
 # プロジェクト本体 + ランタイム必要ファイルをコピー
+# README.md は hatchling のメタデータ検証 (pyproject.toml の readme フィールド)
+# に必要なため、image には含めないが build 段階では存在しないと wheel 作成が失敗する。
 COPY src ./src
 COPY data ./data
+COPY README.md ./
 
 # プロジェクト自身をインストール
 RUN --mount=type=cache,target=/root/.cache/uv \

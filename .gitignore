@@ -74,6 +74,7 @@ venv/
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
+*.tfplan
 
 # =============================================================================
 # E2E / Playwright
