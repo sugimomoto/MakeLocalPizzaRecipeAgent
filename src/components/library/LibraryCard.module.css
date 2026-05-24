@@ -132,3 +132,24 @@
   outline: 2px solid var(--mlpr-shu);
   outline-offset: 2px;
 }
+
+/* Slice 7: 「作った」サブバッジ (cooked = hasFeedback) */
+.cookedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--mlpr-matcha);
+  letter-spacing: 0.5px;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.cookedDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--mlpr-matcha);
+}

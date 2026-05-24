@@ -7,33 +7,7 @@
 }
 
 .topRow {
-  padding: 10px 14px 0;
-  display: grid;
-  grid-template-columns: 36px 1fr 36px;
-  align-items: center;
-}
-
-.backBtn {
-  width: 36px;
-  height: 36px;
-  border-radius: 18px;
-  background: var(--mlpr-kinari);
-  border: 1px solid var(--mlpr-hairline);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--mlpr-sumi);
-  cursor: pointer;
-  padding: 0;
-}
-
-.titleLabel {
-  font-family: var(--mlpr-font-mincho);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--mlpr-sumi);
-  text-align: center;
+  padding: 12px 0 0;
 }
 
 .statusText {
@@ -43,18 +17,67 @@
   font-family: var(--mlpr-font-gothic);
 }
 
+/* Slice 7 hero */
+.hero {
+  padding: 14px 24px 0;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-shu);
+  letter-spacing: 5px;
+}
+
+.headline {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 8px 0 0;
+  line-height: 1.35;
+}
+
 .savedCount {
-  padding: 0 24px;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   font-family: var(--mlpr-font-gothic);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--mlpr-sumi-soft);
 }
+
 .savedCount strong {
   font-family: var(--mlpr-font-mono);
   color: var(--mlpr-sumi);
   font-weight: 700;
   padding: 0 2px;
+}
+
+.cookedNum {
+  font-family: var(--mlpr-font-mono);
+  color: var(--mlpr-matcha);
+  font-weight: 700;
+  padding: 0 2px;
+}
+
+.crossRow {
+  padding: 12px 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background: var(--mlpr-hairline);
+}
+
+.sortLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 2px;
+  white-space: nowrap;
 }
 
 .profileWrap {

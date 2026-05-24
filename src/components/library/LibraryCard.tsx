@@ -22,6 +22,8 @@ export type LibraryCardProps = {
   recipe: SavedRecipe;
   onSelect: () => void;
   onUnsave?: () => void;
+  /** Slice 7: フィードバック記録あり (= 「作った」) なら matcha のサブバッジを出す */
+  cooked?: boolean;
 };
 
 function formatDate(d: Date): string {
@@ -42,7 +44,12 @@ function strategyClass(strategy: Strategy): string {
   }
 }
 
-export function LibraryCard({ recipe, onSelect, onUnsave }: LibraryCardProps): React.JSX.Element {
+export function LibraryCard({
+  recipe,
+  onSelect,
+  onUnsave,
+  cooked = false,
+}: LibraryCardProps): React.JSX.Element {
   const strategyLabel = STRATEGY_LABELS[recipe.strategy].japaneseLabel;
   return (
     <button
@@ -69,6 +76,12 @@ export function LibraryCard({ recipe, onSelect, onUnsave }: LibraryCardProps): R
             {strategyLabel}
           </span>
           <span className={styles.prefecture}>{recipe.prefecture}</span>
+          {cooked && (
+            <span className={styles.cookedBadge} aria-label="作った記録あり">
+              <span className={styles.cookedDot} aria-hidden />
+              作った
+            </span>
+          )}
         </div>
         <div className={styles.date}>{formatDate(recipe.savedAt)}</div>
       </div>

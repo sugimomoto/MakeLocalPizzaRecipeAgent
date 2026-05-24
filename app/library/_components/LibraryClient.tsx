@@ -1,74 +1,40 @@
 'use client';
 
 /**
- * /library 画面の Client Component。
+ * /library 画面の Client Component (Slice 7 改修)。
  *
  * - 未サインイン: SignInModal を強制 open、Modal を閉じたら / に redirect
  * - 認証中: skeleton 風の loading 表示
  * - サインイン済:
  *     items === null: 短い loading
  *     items.length === 0: 空状態 (ハート枠 + 「まだ保存したピザは…」+ 「ピザを探す」CTA)
- *     items.length >  0: ScreenHero + ProfileStrip + LibraryCard リスト
+ *     items.length >  0: HeaderRow + hero (eyebrow + headline + メタ) + CrossLink → /journal
+ *                        + LibraryCard リスト (cooked badge は LibraryCard 側で対応予定)
  *
- * - ProfileStrip のサインアウト → useAuth.signOut() → info Toast → router.push('/')
+ * Slice 7:
+ * - 既存 topRow + ProfileStrip を HeaderRow (Dropdown 内包の AvatarButton) に集約
+ * - hero copy 「これから作る、あなたの一枚たち。」
+ * - CrossLink (matcha) で /journal へ
+ * - 「保存中 N 件 · うち作った M 件」のメタ表示 (M = hasFeedback の数)
  * - LibraryCard クリック → /recipes/[candidateId] へ遷移 (snapshot を sessionStorage に書く)
  */
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { AvatarButton } from '@/components/auth/AvatarButton';
 import { LibraryCard } from '@/components/library/LibraryCard';
-import { ProfileStrip } from '@/components/library/ProfileStrip';
 import { Button } from '@/components/primitives/Button';
-import { ScreenHero } from '@/components/primitives/ScreenHero';
+import { CrossLink } from '@/components/shared/CrossLink';
+import { HeaderRow } from '@/components/shell/HeaderRow';
+import { hasFeedback, type SavedRecipe } from '@/domain/saved-recipe';
 import { useAuth } from '@/hooks/use-auth';
 import { useSavedRecipe } from '@/hooks/use-saved-recipe';
 import { useSavedRecipes } from '@/hooks/use-saved-recipes';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
-import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
+import { writePendingRecipeFromSaved } from '@/lib/saved-recipe-nav';
 
 import styles from './LibraryClient.module.css';
-
-import type { SavedRecipe } from '@/domain/saved-recipe';
-
-/** /recipes/[id] が PENDING_RECIPE_KEY から候補スナップショットを読み込む形式に合わせる */
-function writePendingRecipeFromSaved(recipe: SavedRecipe): void {
-  if (typeof window === 'undefined') return;
-  const payload = {
-    candidateId: recipe.candidateId,
-    localeId: recipe.localeId,
-    ingredients: recipe.ingredients ?? [],
-    candidate: {
-      candidateId: recipe.candidateId,
-      strategy: recipe.strategy,
-      title: recipe.title,
-      // Slice 6 で SavedRecipe に candidate snapshot を追加。
-      // 旧 doc (snapshot 無し) は空文字 / 空配列で fall back し、
-      // /recipes 側で再生成判定 (hasFullSnapshot) が false になり
-      // 強制再生成ではなく degraded 表示にすることもできるが、現状は
-      // detail 再生成パスは廃止 (DetailClient 側で saved を直接 hydrate)。
-      concept: recipe.concept ?? '',
-      keyIngredients: recipe.keyIngredients ?? [],
-      sceneTags: recipe.sceneTags ?? [],
-      why: recipe.why ?? '',
-    },
-    // Slice 6: detail snapshot を sessionStorage 経由で DetailClient に渡す
-    // (Firestore から直接拾うのではなく、/library → /recipes の遷移時に
-    //  pending として一緒に運ぶ。これで DetailClient は単一のソースから読める)
-    savedSnapshot:
-      recipe.meta && recipe.materials && recipe.steps && recipe.story
-        ? {
-            meta: recipe.meta,
-            materials: recipe.materials,
-            steps: recipe.steps,
-            story: recipe.story,
-            imageUrl: recipe.imageUrl,
-          }
-        : undefined,
-  };
-  window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(payload));
-}
 
 function LibraryRow({
   recipe,
@@ -77,12 +43,12 @@ function LibraryRow({
   recipe: SavedRecipe;
   onOpen: (recipe: SavedRecipe) => void;
 }): React.JSX.Element {
-  // useSavedRecipe を使って unsave 関数を取り出す (state は購読しない用途)
   const saved = useSavedRecipe(recipe.candidateId);
   const toast = useToast();
   return (
     <LibraryCard
       recipe={recipe}
+      cooked={hasFeedback(recipe)}
       onSelect={() => onOpen(recipe)}
       onUnsave={async () => {
         try {
@@ -99,7 +65,7 @@ function LibraryRow({
 
 export function LibraryClient(): React.JSX.Element {
   const router = useRouter();
-  const { status, user, signOut } = useAuth();
+  const { status } = useAuth();
   const { items, state, error } = useSavedRecipes();
   const { isOpen, openModal } = useSignInModal();
   const toast = useToast();
@@ -111,34 +77,25 @@ export function LibraryClient(): React.JSX.Element {
     }
   }, [status, openModal]);
 
-  // Modal を閉じたタイミングで認証されていなければ / に飛ばす
   useEffect(() => {
     if (status === 'unauthenticated' && !isOpen) {
       router.replace('/');
     }
   }, [status, isOpen, router]);
 
-  // 購読エラーは warning Toast で
   useEffect(() => {
     if (error) {
       toast.push({
         kind: 'warning',
-        message: `ピザ帳の読込に失敗しました (${error.message})`,
+        message: `保存帳の読込に失敗しました (${error.message})`,
       });
     }
-    // toast.push は安定参照前提 (useToast 内で useCallback)
   }, [error, toast]);
 
-  const handleSignOut = async (): Promise<void> => {
-    try {
-      await signOut();
-      toast.push({ kind: 'info', message: 'サインアウトしました。' });
-      router.replace('/');
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'サインアウトに失敗しました';
-      toast.push({ kind: 'warning', message });
-    }
-  };
+  const cookedCount = useMemo(
+    () => (items ? items.filter((r) => hasFeedback(r)).length : 0),
+    [items],
+  );
 
   const handleOpen = (recipe: SavedRecipe): void => {
     writePendingRecipeFromSaved(recipe);
@@ -150,16 +107,7 @@ export function LibraryClient(): React.JSX.Element {
     return (
       <div className={styles.shell}>
         <div className={styles.topRow}>
-          <button
-            type="button"
-            className={styles.backBtn}
-            aria-label="戻る"
-            onClick={() => router.back()}
-          >
-            <span aria-hidden>‹</span>
-          </button>
-          <span className={styles.titleLabel}>ピザ帳</span>
-          <AvatarButton />
+          <HeaderRow title="保存帳" brand="ふるさとピザ帳" rightSlot={<AvatarButton />} />
         </div>
         <p role="status" className={styles.statusText}>
           読み込み中…
@@ -169,20 +117,10 @@ export function LibraryClient(): React.JSX.Element {
   }
 
   if (status === 'unauthenticated') {
-    // SignInModal が open される。背景はシンプルに維持。
     return (
       <div className={styles.shell}>
         <div className={styles.topRow}>
-          <button
-            type="button"
-            className={styles.backBtn}
-            aria-label="戻る"
-            onClick={() => router.back()}
-          >
-            <span aria-hidden>‹</span>
-          </button>
-          <span className={styles.titleLabel}>ピザ帳</span>
-          <AvatarButton />
+          <HeaderRow title="保存帳" brand="ふるさとピザ帳" rightSlot={<AvatarButton />} />
         </div>
       </div>
     );
@@ -195,42 +133,36 @@ export function LibraryClient(): React.JSX.Element {
   return (
     <div className={styles.shell}>
       <div className={styles.topRow}>
-        <button
-          type="button"
-          className={styles.backBtn}
-          aria-label="戻る"
-          onClick={() => router.back()}
-        >
-          <span aria-hidden>‹</span>
-        </button>
-        <span className={styles.titleLabel}>ピザ帳</span>
-        <AvatarButton />
+        <HeaderRow title="保存帳" brand="ふるさとピザ帳" rightSlot={<AvatarButton />} />
       </div>
 
-      <ScreenHero
-        eyebrow="MY LIBRARY"
-        title={
-          <>
-            あなたの一枚を、
-            <br />
-            集める。
-          </>
-        }
-      />
-      {!empty && (
-        <p className={styles.savedCount}>
-          保存中 <strong>{list.length}</strong> 件
-        </p>
-      )}
+      <div className={styles.hero}>
+        <div className={styles.eyebrow}>SAVED · 保存したアイデア</div>
+        <h1 className={styles.headline}>
+          これから作る、
+          <br />
+          あなたの一枚たち。
+        </h1>
+        {!empty && (
+          <p className={styles.savedCount}>
+            保存中 <strong>{list.length}</strong> 件{' · '}うち作った{' '}
+            <span className={styles.cookedNum}>{cookedCount}</span> 件
+          </p>
+        )}
+      </div>
 
-      {user && (
-        <div className={styles.profileWrap}>
-          <ProfileStrip
-            displayName={user.displayName}
-            email={user.email}
-            photoURL={user.photoURL}
-            onSignOut={() => void handleSignOut()}
+      {!empty && (
+        <div className={styles.crossRow}>
+          <CrossLink
+            to="/journal"
+            label="振り返り帳へ"
+            jp="振"
+            en="JOURNAL"
+            count={`${cookedCount} 件`}
+            accent="matcha"
           />
+          <span aria-hidden className={styles.divider} />
+          <span className={styles.sortLabel}>新しい順</span>
         </div>
       )}
 
