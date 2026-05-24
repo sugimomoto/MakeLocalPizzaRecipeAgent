@@ -1,15 +1,27 @@
 rules_version = '2';
 
-// Make Local Pizza Recipe Agent — Slice 4 Storage Security Rules
+// Make Local Pizza Recipe Agent — Slice 4 + 7 Storage Security Rules
 //
-// バケット構造: recipes/{candidateId}.png
-// - read: 全公開 (Emulator は無認証、本番では Slice 6 で署名付き URL に切替)
-// - write: client からは禁止。Python Agent (Admin SDK / service account) のみ
+// バケット構造:
+//   recipes/{candidateId}.png           — Imagen 生成画像 (write: Agent SA のみ)
+//   users/{uid}/feedback/{candidateId}/{file}  — ユーザ撮影の作ってみた写真 (Slice 7)
+//
+// - recipes/: read 全公開 (Slice 6 で署名付き URL 検討)、write は Agent SA のみ
+// - users/.../feedback: 本人 (uid) のみ read/write、書き込みは 5 MB / image のみ
 service firebase.storage {
   match /b/{bucket}/o {
     match /recipes/{candidateId} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // Slice 7: フィードバック写真 (本人のみアクセス、5MB 上限、image/* のみ)
+    match /users/{uid}/feedback/{candidateId}/{file} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
     }
 
     // それ以外は明示的に deny

@@ -67,6 +67,7 @@ function draftToForm(draft: FeedbackDraft): FeedbackFormValue {
     guestVibe: draft.guestVibe ?? base.guestVibe,
     guestCount: draft.guestCount ?? base.guestCount,
     ...(draft.note !== undefined ? { note: draft.note } : {}),
+    ...(draft.photoUrl !== undefined ? { photoUrl: draft.photoUrl } : {}),
   };
 }
 
@@ -79,6 +80,7 @@ function feedbackToForm(f: Feedback): FeedbackFormValue {
     guestVibe: [...f.guestVibe],
     guestCount: f.guestCount,
     ...(f.note !== undefined ? { note: f.note } : {}),
+    ...(f.photoUrl !== undefined ? { photoUrl: f.photoUrl } : {}),
   };
 }
 

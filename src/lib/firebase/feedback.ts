@@ -47,7 +47,7 @@ function draftDocRef(db: Firestore, uid: string, candidateId: string) {
 
 /** Firestore 書き込み用に余計なフィールドを落とす */
 function sanitizeFeedbackPayload(
-  payload: Omit<Feedback, 'cookedAt' | 'updatedAt'> & Partial<Pick<Feedback, 'note'>>,
+  payload: Omit<Feedback, 'cookedAt' | 'updatedAt'> & Partial<Pick<Feedback, 'note' | 'photoUrl'>>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {
     overallRating: clampScore(payload.overallRating),
@@ -60,6 +60,7 @@ function sanitizeFeedbackPayload(
     guestCount: clampGuestCount(payload.guestCount),
   };
   if (payload.note !== undefined) out.note = payload.note;
+  if (payload.photoUrl !== undefined) out.photoUrl = payload.photoUrl;
   return out;
 }
 
@@ -113,6 +114,7 @@ export async function saveDraft(
     payload.guestCount = clampGuestCount(partial.guestCount);
   }
   if (partial.note !== undefined) payload.note = partial.note;
+  if (partial.photoUrl !== undefined) payload.photoUrl = partial.photoUrl;
   await setDoc(draftDocRef(db, uid, candidateId), payload, { merge: true });
 }
 
@@ -154,6 +156,7 @@ function normalizeDraft(data: DocumentData): FeedbackDraft {
     draft.guestCount = clampGuestCount(data['guestCount']);
   }
   if (typeof data['note'] === 'string') draft.note = data['note'];
+  if (typeof data['photoUrl'] === 'string') draft.photoUrl = data['photoUrl'];
   return draft;
 }
 

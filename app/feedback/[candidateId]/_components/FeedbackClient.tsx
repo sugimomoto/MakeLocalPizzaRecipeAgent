@@ -33,6 +33,8 @@ import { useFeedback, type FeedbackFormValue } from '@/hooks/use-feedback';
 import { useFeedbackDraft } from '@/hooks/use-feedback-draft';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
+import { getFirebaseStorage } from '@/lib/firebase/client';
+import { uploadFeedbackPhoto } from '@/lib/firebase/feedback-photo';
 
 import styles from './FeedbackClient.module.css';
 
@@ -50,7 +52,7 @@ function formatLastSavedAgo(lastSavedAt: Date | null, now: number): string | nul
 
 export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Element {
   const router = useRouter();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const { openModal } = useSignInModal();
   const toast = useToast();
   const { state, saved, recipe, initial, save } = useFeedback(candidateId);
@@ -59,6 +61,8 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   const [form, setForm] = useState<FeedbackFormValue>(initial);
   const initializedRef = useRef(false);
   const [submitting, setSubmitting] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
   // 「自動保存 N 秒前」表示を駆動する単なる tick。0 始まり → useEffect で 10s 毎に更新。
   const [nowTick, setNowTick] = useState(0);
 
@@ -115,6 +119,39 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
 
   const handleChipChange = (group: keyof typeof FEEDBACK_CHIP_OPTIONS) => (next: string[]) =>
     setForm((f) => ({ ...f, [group]: next }));
+
+  const handlePhotoPick = (): void => photoInputRef.current?.click();
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = e.target.files?.[0];
+    // 1 回使ったら input を空にして同じファイル再選択でも change が発火するようにする
+    e.target.value = '';
+    if (!file) return;
+    if (!user) {
+      toast.push({ kind: 'warning', message: 'サインインが必要です' });
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      toast.push({ kind: 'warning', message: '画像は 12MB 以内でお願いします' });
+      return;
+    }
+    setPhotoUploading(true);
+    try {
+      const { url } = await uploadFeedbackPhoto(getFirebaseStorage(), user.uid, candidateId, file);
+      setForm((f) => ({ ...f, photoUrl: url }));
+      toast.push({ kind: 'success', message: '写真をアップロードしました' });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'unknown';
+      toast.push({ kind: 'warning', message: `写真のアップロードに失敗しました (${msg})` });
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
+
+  const handlePhotoRemove = (): void => {
+    // Storage 上のファイル本体は残るが (容量は小さいので許容)、Firestore 上の URL を外す
+    setForm((f) => ({ ...f, photoUrl: '' }));
+  };
 
   const handleSubmit = async (): Promise<void> => {
     if (form.overallRating === 0 || submitting) return;
@@ -195,7 +232,52 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
               ) : null}
             </div>
           </div>
-          <CameraPlaceholder />
+          {/* 作ってみた写真 (Slice 7 後追加)。未設定なら CameraPlaceholder のままで撮影アイコン
+              + ファイル選択ボタンを出す。設定済なら写真サムネ + 差し替え/削除ボタン。 */}
+          {form.photoUrl ? (
+            <div className={styles.userPhotoWrap}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={form.photoUrl} alt="作ってみた写真" className={styles.userPhoto} />
+              <div className={styles.userPhotoActions}>
+                <button
+                  type="button"
+                  className={styles.userPhotoBtn}
+                  onClick={handlePhotoPick}
+                  disabled={photoUploading}
+                >
+                  差し替え
+                </button>
+                <button
+                  type="button"
+                  className={styles.userPhotoBtnGhost}
+                  onClick={handlePhotoRemove}
+                  disabled={photoUploading}
+                >
+                  外す
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={styles.cameraButton}
+              onClick={handlePhotoPick}
+              disabled={photoUploading || !user}
+              aria-label="作ってみた写真をアップロード"
+            >
+              <CameraPlaceholder />
+              <span className={styles.cameraLabel}>
+                {photoUploading ? 'アップロード中…' : '写真を追加'}
+              </span>
+            </button>
+          )}
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            className={styles.hiddenFile}
+            onChange={(e) => void handlePhotoChange(e)}
+          />
         </div>
       </div>
 
@@ -254,6 +336,23 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
           tone="shu"
           onCapHit={() => toast.push({ kind: 'info', message: '6 個までです' })}
         />
+      </div>
+
+      {/* 自由入力メモ (note) — Slice 7 後追加。500 字でソフトリミット */}
+      <div className={styles.noteCard}>
+        <div className={styles.noteHeader}>
+          <span className={styles.noteTitle}>思い出メモ</span>
+          <span className={styles.noteEn}>NOTE · 任意</span>
+        </div>
+        <textarea
+          className={styles.noteTextarea}
+          value={form.note ?? ''}
+          maxLength={500}
+          placeholder="その夜の空気、ゲストの反応、次に試したい一手など、自由に。"
+          onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+          aria-label="思い出メモ (自由入力)"
+        />
+        <div className={styles.noteCounter}>{(form.note ?? '').length} / 500</div>
       </div>
 
       <div className={styles.ctaWrap}>

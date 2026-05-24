@@ -65,6 +65,7 @@ function normalizeFeedback(raw: unknown): Feedback | undefined {
     updatedAt,
   };
   if (typeof data['note'] === 'string') feedback.note = data['note'];
+  if (typeof data['photoUrl'] === 'string') feedback.photoUrl = data['photoUrl'];
   return feedback;
 }
 

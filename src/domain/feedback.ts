@@ -23,8 +23,10 @@ export type Feedback = {
   guestVibe: string[];
   /** 1..20 の整数 / null = 未入力 */
   guestCount: number | null;
-  /** 将来 UI 用の予約スロット (Slice 7 では入力 UI 持たない) */
+  /** 自由入力メモ (Slice 7 後追加で UI 化) */
   note?: string;
+  /** ユーザが撮影した「作ってみた写真」の Storage URL (Slice 7 後追加) */
+  photoUrl?: string;
   /** 初回保存時の Firestore serverTimestamp を Date に正規化したもの */
   cookedAt: Date;
   updatedAt: Date;

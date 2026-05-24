@@ -123,6 +123,80 @@
   margin-left: 6px;
 }
 
+/* Slice 7 後追加: 作ってみた写真アップロード UI */
+.hiddenFile {
+  display: none;
+}
+
+.cameraButton {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--mlpr-sumi-muted);
+}
+
+.cameraButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cameraLabel {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--mlpr-sumi-muted);
+}
+
+.userPhotoWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 70px;
+}
+
+.userPhoto {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--mlpr-washi-deep);
+}
+
+.userPhotoActions {
+  display: flex;
+  gap: 4px;
+}
+
+.userPhotoBtn,
+.userPhotoBtnGhost {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  padding: 3px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--mlpr-hairline);
+  background: var(--mlpr-kinari);
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+}
+
+.userPhotoBtnGhost {
+  background: transparent;
+  color: var(--mlpr-sumi-muted);
+}
+
+.userPhotoBtn:disabled,
+.userPhotoBtnGhost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .axesCard {
   margin: 14px 20px 0;
   padding: 14px 14px 12px;
@@ -183,6 +257,65 @@
 
 .chipsArea {
   padding: 0 20px;
+}
+
+/* Slice 7 後追加: 自由入力メモ (note フィールド) */
+.noteCard {
+  margin: 14px 20px 0;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+}
+
+.noteHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.noteTitle {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12.5px;
+  color: var(--mlpr-sumi);
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+.noteEn {
+  font-family: var(--mlpr-font-mono);
+  font-size: 8.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1.5px;
+}
+
+.noteTextarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--mlpr-washi, #f5efe1);
+  border: 1px solid var(--mlpr-hairline);
+  font-family: var(--mlpr-font-mincho);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mlpr-sumi);
+  resize: vertical;
+}
+
+.noteTextarea:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 1px;
+}
+
+.noteCounter {
+  margin-top: 4px;
+  text-align: right;
+  font-family: var(--mlpr-font-mono);
+  font-size: 9.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 0.5px;
 }
 
 .ctaWrap {
