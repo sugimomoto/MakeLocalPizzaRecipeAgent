@@ -52,9 +52,15 @@ ui-debug.log
 firestore-debug.log
 
 # Env
+# .env.production は Cloud Run build に使う NEXT_PUBLIC_FIREBASE_* を
+# build 時 bundle に焼き込むため、image build context に含める
+# (Firebase Web config は公開を前提とする設計のため commit 対象に含めて OK)。
 .env
-.env.*
+.env.local
+.env.development
+.env.test
 !.env.example
+!.env.production
 
 # Python (Web Dockerfile では含めない)
 __pycache__

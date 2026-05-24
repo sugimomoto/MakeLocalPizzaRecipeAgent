@@ -1,0 +1,21 @@
+# =============================================================================
+# .gitleaks.toml — gitleaks 設定 (pre-commit hook で参照)
+# =============================================================================
+# - default ruleset を継承
+# - Firebase Web config の公開 API キーを allowlist
+#   (Firebase の Web SDK 用 API キーは公開を前提とした識別子であり、
+#   実際のアクセス制御は Security Rules + Auth Token で担保される)
+#   https://firebase.google.com/docs/projects/api-keys
+# =============================================================================
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Firebase Web SDK config の API キー (公開を前提とした識別子)"
+# .env.production / .env.example に書く Firebase Web 用キー (AIza... 39 文字) を
+# pre-commit から除外する。ファイルパスを限定して他箇所での漏洩は検出する。
+paths = [
+  '''\.env\.production''',
+  '''\.env\.example''',
+]

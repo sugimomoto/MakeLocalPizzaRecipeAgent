@@ -44,6 +44,9 @@ yarn-error.log*
 .env.*
 !.env.example
 !.env.*.example
+# .env.production は Cloud Run build に使う公開 Firebase Web config を
+# bundle 時に焼き込むため commit する。Firebase Web config は公開前提の設計。
+!.env.production
 
 # =============================================================================
 # 生成データ
