@@ -24,10 +24,49 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore';
 
+import {
+  clampGuestCount,
+  clampScore,
+  FEEDBACK_AXIS_ORDER,
+  normalizeChipList,
+  type Feedback,
+  type FeedbackAxisKey,
+} from '@/domain/feedback';
+
 import type { SavedRecipe, SavedRecipeSnapshot } from '@/domain/saved-recipe';
 
 export const USERS_COLLECTION = 'users';
 export const SAVED_RECIPES_SUBCOLLECTION = 'savedRecipes';
+
+function timestampToDate(value: unknown, fallback: Date): Date {
+  if (value instanceof Timestamp) return value.toDate();
+  if (value instanceof Date) return value;
+  return fallback;
+}
+
+function normalizeFeedback(raw: unknown): Feedback | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const data = raw as Record<string, unknown>;
+  const axesRaw = (data['axes'] as Record<string, unknown> | undefined) ?? {};
+  const axes = Object.fromEntries(
+    FEEDBACK_AXIS_ORDER.map((k) => [k, clampScore(axesRaw[k])]),
+  ) as Feedback['axes'];
+  const now = new Date();
+  const updatedAt = timestampToDate(data['updatedAt'], now);
+  const cookedAt = timestampToDate(data['cookedAt'], updatedAt);
+  const feedback: Feedback = {
+    overallRating: clampScore(data['overallRating']) as Feedback['overallRating'],
+    axes: axes as Record<FeedbackAxisKey, Feedback['axes'][FeedbackAxisKey]>,
+    whatWorked: normalizeChipList('whatWorked', data['whatWorked']),
+    whatToTune: normalizeChipList('whatToTune', data['whatToTune']),
+    guestVibe: normalizeChipList('guestVibe', data['guestVibe']),
+    guestCount: clampGuestCount(data['guestCount']),
+    cookedAt,
+    updatedAt,
+  };
+  if (typeof data['note'] === 'string') feedback.note = data['note'];
+  return feedback;
+}
 
 function savedRecipeDocRef(db: Firestore, uid: string, candidateId: string) {
   return doc(db, USERS_COLLECTION, uid, SAVED_RECIPES_SUBCOLLECTION, candidateId);
@@ -82,6 +121,9 @@ function normalizeSavedRecipe(data: DocumentData): SavedRecipe {
   if (data['story'] && typeof data['story'] === 'object') {
     base.story = data['story'] as NonNullable<SavedRecipe['story']>;
   }
+  // Slice 7: feedback
+  const fb = normalizeFeedback(data['feedback']);
+  if (fb) base.feedback = fb;
   return base;
 }
 
