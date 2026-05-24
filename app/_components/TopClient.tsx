@@ -1,28 +1,25 @@
 'use client';
 
 /**
- * TOP ページ (`/`) の Client Component (Slice 4 で HomeRedirector を refactor)。
+ * TOP ページ (`/`) の Client Component
  *
- * 振る舞い:
- * - hydration 待ち中は何も描画しない (SSR と CSR の不整合回避)
- * - hydration 後:
- *   - 既に localeId が選択済み (リピーター) → /local に即 replace
- *     (Slice 3 までの「アプリを開いたら直近の地元で再開」体験を維持)
- *   - localeId 未選択 (初回訪問者) → TOP の中身を表示
+ * Slice 4: HomeRedirector を refactor、リピーターは /local に自動遷移していた
+ * Slice 7: FurusatoMark + ブランドキャプションを追加。
+ *          自動リダイレクト (リピーター → /local / 認証済 → /library) を廃止し、
+ *          TOP のブランドマーク + キャッチコピー + 「始める →」を常に見せる。
  *
  * TOP の中身:
- *   - 上部に 3 戦略印 (王道/一歩外す/大冒険) のオーナメント (薄い alpha)
- *   - eyebrow + 大型明朝の見出し + サブコピー
+ *   - FurusatoMark (variant B、size 104) を中央配置
+ *   - ブランドキャプション「ふるさとピザ帳 / FURUSATO PIZZA-CHŌ」
+ *   - eyebrow + 大型明朝のキャッチコピー「未来の一枚は、〜」
  *   - 朱の primary CTA「始める →」→ /local
- *   - 「サインインしてピザ帳を開く」リンク → openModal() (成功時に /library)
- *   - footer の作品名
+ *   - 「サインインしてピザ帳を開く」リンク → openModal()
+ *   - footer
  */
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import { FurusatoMark } from '@/components/brand/FurusatoMark';
 import { Button } from '@/components/primitives/Button';
-import { useAuth } from '@/hooks/use-auth';
 import { useLocale } from '@/hooks/use-locale';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 
@@ -30,29 +27,13 @@ import styles from './TopClient.module.css';
 
 export function TopClient(): React.JSX.Element | null {
   const router = useRouter();
-  const { localeId, isHydrated } = useLocale();
-  const { status } = useAuth();
+  const { isHydrated } = useLocale();
   const { openModal } = useSignInModal();
 
-  // リピーター (localeId 保持済み) は /local に直行
-  useEffect(() => {
-    if (!isHydrated) return;
-    if (localeId) router.replace('/local');
-  }, [isHydrated, localeId, router]);
-
-  // サインイン済になったら自動で /library に飛ばす
-  // (TOP の「サインインしてピザ帳を開く」リンク → Modal → サインイン → ここ)
-  useEffect(() => {
-    if (!isHydrated) return;
-    if (status === 'authenticated' && !localeId) {
-      router.replace('/library');
-    }
-  }, [isHydrated, status, localeId, router]);
-
-  // hydration 待ちは描画なし
+  // Slice 7: 自動リダイレクトを廃止。ブランドマーク + コピーを常に見せ、
+  // /local への遷移は「始める →」 / /library は Dropdown「ピザ帳 (保存)」経由。
+  // hydration 待ちは描画なし (SSR mismatch 回避)
   if (!isHydrated) return null;
-  // リピーターは redirect 中なので空
-  if (localeId) return null;
 
   return (
     <div className={styles.shell}>

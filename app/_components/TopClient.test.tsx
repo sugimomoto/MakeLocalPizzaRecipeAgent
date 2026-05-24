@@ -1,11 +1,11 @@
 /**
- * TopClient のテスト:
+ * TopClient のテスト (Slice 7 で自動 redirect を廃止):
  * 1. hydration 前は何も描画しない
- * 2. リピーター (localeId 有) は /local に redirect
- * 3. 初回訪問者は TOP の本文を描画
+ * 2. リピーター (localeId 有) でも TOP の本文を描画 (Slice 7 から)
+ * 3. 初回訪問者も TOP の本文を描画
  * 4. 「始める →」で /local に push
  * 5. 「サインインしてピザ帳を開く」で openModal()
- * 6. localeId 無 + authenticated になったら /library に redirect
+ * 6. 認証済になっても /library に自動 redirect されない (Slice 7 から)
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -65,10 +65,11 @@ describe('TopClient', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('redirects to /local when localeId is already saved (returning visitor)', () => {
+  it('Slice 7: リピーター (localeId 有) でも TOP 本文を描画する (auto-redirect 廃止)', () => {
     localeState = { localeId: 'miyagi', isHydrated: true };
     render(<TopClient />);
-    expect(replaceMock).toHaveBeenCalledWith('/local');
+    expect(replaceMock).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 
   it('renders the TOP content for a first-time visitor (no localeId)', () => {
@@ -97,10 +98,12 @@ describe('TopClient', () => {
     expect(openModalMock).toHaveBeenCalledTimes(1);
   });
 
-  it('redirects to /library once authenticated (no localeId)', () => {
+  it('Slice 7: authenticated 状態でも /library に自動 redirect されない', () => {
     localeState = { localeId: null, isHydrated: true };
     authState = { status: 'authenticated' };
     render(<TopClient />);
-    expect(replaceMock).toHaveBeenCalledWith('/library');
+    expect(replaceMock).not.toHaveBeenCalled();
+    // TOP の本文は描画される
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 });
