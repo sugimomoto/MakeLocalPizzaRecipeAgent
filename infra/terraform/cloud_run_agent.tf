@@ -1,8 +1,13 @@
 # =============================================================================
-# Cloud Run service — mlpr-agent (Python FastAPI / internal-only)
+# Cloud Run service — mlpr-agent (Python FastAPI)
 # =============================================================================
 # 設計判断:
-# - `ingress = INGRESS_TRAFFIC_INTERNAL_ONLY` で外部から直接叩けないようにする
+# - `ingress = INGRESS_TRAFFIC_ALL` を採用するが、**認証で守る**:
+#   `--no-allow-unauthenticated` + mlpr-web SA のみが invoker。
+#   (`INTERNAL_ONLY` だと Cloud Run service-to-service が VPC connector 無しで
+#   到達できず、外部 Internet 経由扱いになって 404 拒否される。
+#   VPC connector を入れる選択肢もあるが、Slice 6 ではコストとセットアップ
+#   工数を避け、IAM 認証で同等のセキュリティを担保する。)
 # - mlpr-web SA だけを invoker にする (allUsers 不可)
 # - Secret Manager の値を env として注入 (`value_source.secret_key_ref`)
 # - placeholder image で初回 apply、T-612 で本物 image に切替
@@ -14,7 +19,7 @@ resource "google_cloud_run_v2_service" "agent" {
   project  = var.project_id
   location = var.region
 
-  ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
+  ingress             = "INGRESS_TRAFFIC_ALL"
   deletion_protection = false
 
   template {

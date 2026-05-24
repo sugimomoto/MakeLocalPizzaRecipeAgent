@@ -55,7 +55,10 @@ steps:
       - --all-tags
       - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent
 
-  # 3. Cloud Run deploy (internal ingress、no-allow-unauthenticated は Terraform 側で既設)
+  # 3. Cloud Run deploy
+  # ingress=all + no-allow-unauthenticated: IAM (mlpr-web SA に run.invoker)
+  # でセキュリティを担保。INTERNAL_ONLY は service-to-service が VPC connector
+  # 無しで到達できないため避ける。
   - id: deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: gcloud
@@ -66,6 +69,6 @@ steps:
       - --image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/agent:${_TAG}
       - --region=${_REGION}
       - --platform=managed
-      - --ingress=internal
+      - --ingress=all
       - --no-allow-unauthenticated
       - --quiet
