@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AvatarButton } from '@/components/auth/AvatarButton';
+import { HeaderRow } from '@/components/shell/HeaderRow';
 import { CategoryTab } from '@/components/ingredient/CategoryTab';
 import { IngredientCard } from '@/components/ingredient/IngredientCard';
 import { SeasonTab } from '@/components/ingredient/SeasonTab';
@@ -174,11 +175,13 @@ export function IngredientSelectClient() {
 
   return (
     <div className={styles.shell}>
+      <div className={styles.topRowOuter}>
+        <HeaderRow title="食材を選ぶ" rightSlot={<AvatarButton />} />
+      </div>
       <div className={styles.topRow}>
         <LocaleHeader localeId={localeId} locales={locales} />
         <div className={styles.topRowRight}>
           <span className={styles.tapBadge}>Tap 2 / 2</span>
-          <AvatarButton />
         </div>
       </div>
 

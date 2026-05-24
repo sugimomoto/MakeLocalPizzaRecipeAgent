@@ -19,6 +19,7 @@ import { PrefectureTile } from '@/components/local/PrefectureTile';
 import { RegionRail } from '@/components/local/RegionRail';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
+import { HeaderRow } from '@/components/shell/HeaderRow';
 import {
   groupByRegion,
   PREFECTURE_REGION_LABEL,
@@ -70,7 +71,7 @@ export function LocalSelectClient() {
   return (
     <div className={styles.shell}>
       <div className={styles.topRow}>
-        <AvatarButton />
+        <HeaderRow title="地元を選ぶ" rightSlot={<AvatarButton />} />
       </div>
       <ScreenHero
         eyebrow="地 元 × ピ ザ"

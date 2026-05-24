@@ -19,6 +19,7 @@ import { CandidateCard } from '@/components/candidate/CandidateCard';
 import { BakingAnimation } from '@/components/loading/BakingAnimation';
 import { Button } from '@/components/primitives/Button';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
+import { HeaderRow } from '@/components/shell/HeaderRow';
 import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
 import { PENDING_RECIPE_KEY, PENDING_SESSION_KEY } from '@/lib/storage-keys';
 
@@ -79,15 +80,15 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
 
   return (
     <div className={styles.shell}>
-      {/* top row */}
+      <div className={styles.topRowOuter}>
+        <HeaderRow
+          title="候補 3 案"
+          onBack={() => router.push('/ingredients')}
+          rightSlot={<AvatarButton />}
+        />
+      </div>
+      {/* Slice 7 改修前の sub row (tap badge + 「ふり直す」) を維持 */}
       <div className={styles.topRow}>
-        <button
-          type="button"
-          className={styles.backLink}
-          onClick={() => router.push('/ingredients')}
-        >
-          <span aria-hidden="true">‹</span> 食材
-        </button>
         <span className={styles.tapBadge}>新 提 案 · 3 案</span>
         <div className={styles.topRowRight}>
           <button
@@ -98,7 +99,6 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
           >
             <span aria-hidden="true">↻</span> ふり直す
           </button>
-          <AvatarButton />
         </div>
       </div>
 

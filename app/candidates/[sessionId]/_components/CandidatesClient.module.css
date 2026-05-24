@@ -4,8 +4,13 @@
   padding-bottom: 130px;
 }
 
+/* Slice 7: 統一 HeaderRow を最上段に、その下に sub row (tap badge + ふり直す) */
+.topRowOuter {
+  padding: 12px 0 0;
+}
+
 .topRow {
-  padding: 6px 20px 0;
+  padding: 8px 20px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
