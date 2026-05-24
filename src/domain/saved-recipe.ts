@@ -18,6 +18,7 @@
  */
 
 import type { Strategy } from './candidate';
+import type { Feedback } from './feedback';
 import type { IngredientId } from './ingredient';
 import type { LocaleId } from './locale';
 import type { RecipeMaterial, RecipeMeta, RecipeStory } from './recipe';
@@ -57,6 +58,10 @@ export type SavedRecipe = {
   steps?: string[];
   /** 詳細レシピのストーリーカード */
   story?: RecipeStory;
+
+  // ── フィードバック (Slice 7 追加、optional で後方互換) ────────────────
+  /** 「作ってみた」の評価記録。未記録の SavedRecipe では undefined */
+  feedback?: Feedback;
 };
 
 /**
@@ -84,4 +89,14 @@ export function hasFullSnapshot(
     recipe.keyIngredients &&
     recipe.keyIngredients.length > 0,
   );
+}
+
+/**
+ * Slice 7: フィードバックが記録されているか (= 「作った」状態) の判定。
+ * 振り返り帳 /journal のフィルタ + 保存帳 /library の「作った」サブバッジで使う。
+ *
+ * overallRating が 1 以上なら「作った」扱い。0 (未評価) や undefined は false。
+ */
+export function hasFeedback(recipe: Pick<SavedRecipe, 'feedback'>): boolean {
+  return Boolean(recipe.feedback && recipe.feedback.overallRating >= 1);
 }
