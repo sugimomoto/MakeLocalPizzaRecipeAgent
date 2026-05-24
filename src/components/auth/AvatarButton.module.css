@@ -38,9 +38,14 @@
   flex-shrink: 0;
   overflow: hidden;
   cursor: pointer;
+  /* Why: 旧 box-shadow は inset の下方向影 (-2px) + outer 下方向影 (1px) で
+     視覚重心が下寄りになり、HeaderRow 内でアバターの「上下余白が揃って
+     いない」見え方の主因だった。inset を上下対称 (上=highlight, 下=shadow)
+     + outer を上下均等な弱い ambient shadow に置き換えて重心を中央に。 */
   box-shadow:
-    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
-    0 1px 3px rgba(0, 0, 0, 0.1);
+    inset 0 1px 2px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
   transition: transform 0.08s ease;
 }
 .avatar:active {
