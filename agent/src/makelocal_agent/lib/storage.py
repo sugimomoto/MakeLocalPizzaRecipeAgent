@@ -77,6 +77,9 @@ class FirebaseStorageClient:
                 f"http://{self.emulator_host}/v0/b/{self.bucket_name}"
                 f"/o/recipes%2F{key}.png?alt=media"
             )
-        blob.make_public()
-        url: str = blob.public_url
-        return url
+        # Slice 6: bucket は uniform_bucket_level_access=true で運用する。
+        # Terraform 側で allUsers に storage.objectViewer を付与済なので
+        # オブジェクト個別の make_public() (= 旧 ACL API) は不要 + uniform 設定
+        # 下では呼ぶと 400 Cannot get legacy ACL エラーになる。
+        # public URL は単純な GCS の決定論的 URL を直接返す。
+        return f"https://storage.googleapis.com/{self.bucket_name}/recipes/{key}.png"
