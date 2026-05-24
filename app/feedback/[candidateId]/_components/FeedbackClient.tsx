@@ -55,7 +55,8 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   const { status, user } = useAuth();
   const { openModal } = useSignInModal();
   const toast = useToast();
-  const { state, saved, recipe, recipeReady, initial, save, remove } = useFeedback(candidateId);
+  const { state, saved, recipe, recipeReady, draftReady, initial, save, remove } =
+    useFeedback(candidateId);
 
   // controlled form state (initial で hydrate)
   const [form, setForm] = useState<FeedbackFormValue>(initial);
@@ -66,14 +67,20 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   // 「自動保存 N 秒前」表示を駆動する単なる tick。0 始まり → useEffect で 10s 毎に更新。
   const [nowTick, setNowTick] = useState(0);
 
-  // initial が saved/draft で更新されたら 1 回だけ form に反映
+  // initial が saved/draft で更新されたら 1 回だけ form に反映。
+  // Slice 7 後修正: subscribe の初回 snapshot が返るまで初期化を保留する。
+  // 旧版は state==='idle' になった瞬間 (= subscribe 起動完了直後) に setForm(initial)
+  // していたが、その時点では recipe/draft とも subscribe 初回値が未受信で
+  // initial=empty になり、★ や Chip が真っ白に見えていた。
   useEffect(() => {
     if (initializedRef.current) return;
     if (state === 'loading') return;
+    // idle に入っても subscribe 初回 snapshot を 2 つとも待ってから hydrate する
+    if (state === 'idle' && (!recipeReady || !draftReady)) return;
     initializedRef.current = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm(initial);
-  }, [state, initial]);
+  }, [state, recipeReady, draftReady, initial]);
 
   // 「自動保存 N 秒前」表示を 10s 毎に更新。Date.now の参照値は client mount 時に取得する。
   useEffect(() => {

@@ -46,6 +46,9 @@ export type UseFeedbackResult = {
    *  「未受信 (subscribe 初期化中)」と「受信したが doc 不在 (= 未保存)」を区別する用。
    *  /feedback 側のリダイレクト判定で重要 (Slice 7 後追加)。 */
   recipeReady: boolean;
+  /** draft subscribe の初回 snapshot が届いたか。編集画面の initial 反映で
+   *  「subscribe 起動済だが値はまだ」のフライング初期化を防ぐ用。 */
+  draftReady: boolean;
   /** 画面の初期値: saved > draft > empty */
   initial: FeedbackFormValue;
   /** submit (saveFeedback + draft 削除)。saved がなければ isFirst=true */
@@ -96,6 +99,7 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
   const [recipe, setRecipe] = useState<SavedRecipe | null>(null);
   const [recipeReady, setRecipeReady] = useState(false);
   const [draft, setDraft] = useState<FeedbackDraft | null>(null);
+  const [draftReady, setDraftReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -103,6 +107,7 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
     setError(null);
     // candidateId / user 切替時は subscribe 初回 snapshot まで「未受信」扱い
     setRecipeReady(false);
+    setDraftReady(false);
 
     if (status === 'loading') {
       setState('loading');
@@ -133,7 +138,10 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
       db,
       user.uid,
       candidateId,
-      (next) => setDraft(next),
+      (next) => {
+        setDraft(next);
+        setDraftReady(true);
+      },
       (err) => setError(err),
     );
     return () => {
@@ -195,6 +203,7 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
     draft,
     recipe,
     recipeReady,
+    draftReady,
     initial,
     save,
     remove,
