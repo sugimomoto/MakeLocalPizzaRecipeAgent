@@ -1,0 +1,109 @@
+/* JournalClient — /journal 振り返り帳 (Slice 7) */
+
+.shell {
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.topRow {
+  padding: 12px 0 0;
+}
+
+.hero {
+  padding: 14px 24px 0;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-matcha);
+  letter-spacing: 5px;
+}
+
+.headline {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 8px 0 0;
+  line-height: 1.35;
+}
+
+.statRow {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 0;
+}
+
+.crossRow {
+  padding: 12px 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background: var(--mlpr-hairline);
+}
+
+.sortLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.list {
+  padding: 12px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loading {
+  padding: 80px 24px;
+  text-align: center;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 13px;
+  color: var(--mlpr-sumi-muted);
+}
+
+.unauthCard {
+  margin: 40px 24px 0;
+  padding: 24px 20px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.unauthHeadline {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 0;
+}
+
+.unauthBody {
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  margin-top: 8px;
+  line-height: 1.7;
+}
+
+.unauthCta {
+  margin-top: 16px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--mlpr-shu);
+  color: #fff;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}

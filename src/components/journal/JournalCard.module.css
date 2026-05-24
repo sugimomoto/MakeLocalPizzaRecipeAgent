@@ -1,0 +1,186 @@
+/* JournalCard — /journal の ★ 付き作った 1 枚カード (Slice 7) */
+
+.card {
+  background: var(--mlpr-kinari);
+  border-radius: 16px;
+  padding: 14px;
+  border: 1px solid var(--mlpr-hairline);
+  box-shadow: 0 1px 2px rgba(31, 26, 18, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.card:hover {
+  background: var(--mlpr-washi-soft);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--mlpr-shu);
+  outline-offset: 2px;
+}
+
+.head {
+  display: flex;
+  gap: 12px;
+}
+
+.hero {
+  width: 78px;
+  height: 78px;
+  border-radius: 12px;
+  background: var(--mlpr-washi-deep);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seal {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.seal--exploit {
+  color: var(--mlpr-exploit-ink);
+  background: var(--mlpr-exploit-bg);
+}
+
+.seal--tune {
+  color: var(--mlpr-tune-ink);
+  background: var(--mlpr-tune-bg);
+}
+
+.seal--explore {
+  color: var(--mlpr-explore-ink);
+  background: var(--mlpr-explore-bg);
+}
+
+.locale {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 10px;
+  color: var(--mlpr-sumi-soft);
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin-top: 5px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.starsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cookedAt {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 0.8px;
+}
+
+.axesGrid {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(31, 26, 18, 0.03);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 5px;
+}
+
+.axisRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.axisLabel {
+  width: 56px;
+  font-size: 9.5px;
+  color: var(--mlpr-sumi-soft);
+  font-family: var(--mlpr-font-gothic);
+}
+
+.axisBar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(31, 26, 18, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.axisBarFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--mlpr-yamabuki);
+}
+
+.axisValue {
+  width: 8px;
+  font-size: 9px;
+  color: var(--mlpr-sumi);
+  font-family: var(--mlpr-font-mono);
+  text-align: right;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.tagsLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 9.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1px;
+  margin-right: 2px;
+}
+
+.tag {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(96, 119, 68, 0.12);
+  color: var(--mlpr-matcha);
+  font-size: 10px;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 500;
+  border: 1px solid rgba(96, 119, 68, 0.22);
+}
