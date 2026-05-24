@@ -1,6 +1,7 @@
 # リポジトリ構造定義書(Repository Structure)
 
-> 本書は **MakeLocalPizzaRecipeAgent** のフォルダ・ファイル構成と配置ルールを定義する。
+> 本書は **ふるさとピザ帳** (技術名: MakeLocalPizzaRecipeAgent) のフォルダ・ファイル構成と配置ルールを定義する。
+> リポジトリ実名は `MakeLocalPizzaRecipeAgent` のまま (rename しない)。
 > 技術スタックは [architecture.md](architecture.md)、機能設計は [functional-design.md](functional-design.md) を参照。
 
 ---
@@ -494,3 +495,4 @@ firestore-debug.log
 | 日付 | 版 | 変更内容 |
 | --- | --- | --- |
 | 2026-05-13 | 1.0 | 初版作成。Web/BFF と Agent を物理的にディレクトリ分離(Next.js モノレポ + `agent/` 配下の Python パッケージ)。Quick Tap 動線・候補3案・ふるさと納税3層分離を反映したルーティング・モジュール構成。 |
+| 2026-05-24 | 1.1 | サービス名を「ふるさとピザ帳」に確定 (Slice 7、FR-7-8)。リポジトリ名・ディレクトリ構成は変更なし。 |

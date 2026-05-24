@@ -1,6 +1,6 @@
 # 技術仕様書(Architecture)
 
-> 本書は **MakeLocalPizzaRecipeAgent** の技術スタック、開発ツール、技術制約、パフォーマンス要件を定義する。
+> 本書は **ふるさとピザ帳** (技術名: MakeLocalPizzaRecipeAgent) の技術スタック、開発ツール、技術制約、パフォーマンス要件を定義する。
 > プロダクト要求は [product-requirements.md](product-requirements.md)、機能設計は [functional-design.md](functional-design.md)、ハッカソン制約は [hackathon-reference.md](hackathon-reference.md) を参照。
 
 ---
@@ -477,3 +477,4 @@ flowchart LR
 | 日付 | 版 | 変更内容 |
 | --- | --- | --- |
 | 2026-05-13 | 1.0 | 初版作成(MakeLocalPizzaRecipeAgent のリフレッシュ仕様に基づく)。Web/BFF (Next.js) と Agent (Python ADK) を Cloud Run 2 サービスとして明示的に分離。戦略軸別の評価ループ、楽天 API 3層分離、無認証 Quick Tap、Imagen の詳細遷移時のみ生成を要件化。 |
+| 2026-05-24 | 1.1 | サービス名を「ふるさとピザ帳」に確定 (Slice 7、FR-7-8)。表向きの表記はヘッダ更新のみ。技術スタック・リソース命名は変更なし (mlpr-\* prefix 維持)。 |

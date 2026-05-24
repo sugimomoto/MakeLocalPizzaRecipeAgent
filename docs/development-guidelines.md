@@ -1,6 +1,6 @@
 # 開発ガイドライン(Development Guidelines)
 
-> 本書は **MakeLocalPizzaRecipeAgent** 開発時のコーディング規約・命名規則・スタイリング規約・テスト規約・Git 規約を定義する。
+> 本書は **ふるさとピザ帳** (技術名: MakeLocalPizzaRecipeAgent) 開発時のコーディング規約・命名規則・スタイリング規約・テスト規約・Git 規約を定義する。
 > リポジトリ構造は [repository-structure.md](repository-structure.md)、技術スタックは [architecture.md](architecture.md) を参照。
 
 ---
@@ -616,3 +616,4 @@ PR・push 時に実行(Node と Python は並列ジョブ):
 | 日付 | 版 | 変更内容 |
 | --- | --- | --- |
 | 2026-05-13 | 1.0 | 初版作成。Web (TS) と Agent (Python) のポリグロット構成を明示。複数 UI テーマ・ウィザード・多段対話を排除。Quick Tap 単一動線、Exploit/Tune/Explore 戦略実装、ふるさと納税の楽天 API アクセス制限を規約化。 |
+| 2026-05-24 | 1.1 | サービス名を「ふるさとピザ帳」に確定 (Slice 7、FR-7-8)。コーディング規約には影響なし。 |

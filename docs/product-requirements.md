@@ -1,6 +1,8 @@
 # プロダクト要求定義書（Product Requirements Document）
 
-> 本書は **MakeLocalPizzaRecipeAgent** の永続的なプロダクト要求を定義する。
+> 本書は **ふるさとピザ帳** (技術名: MakeLocalPizzaRecipeAgent) の永続的なプロダクト要求を定義する。
+> サービス名は 2026-05-24 (Slice 7) に「ふるさとピザ帳」に確定。リポジトリ・GCP リソース等の
+> 内部識別子は引き続き MakeLocalPizzaRecipeAgent / makelocalpizzarecipeagent / mlpr-\* を用いる。
 > 本プロジェクトは [DevOps × AI Agent Hackathon 2026](hackathon-reference.md) への応募作品として開発される。
 > ハッカソン要件・評価軸との整合性は本書全体で考慮されている。
 > UI ビジュアル仕様・画面プロトタイプは [`design/MakeLocalPizzaRecipe.html`](../design/MakeLocalPizzaRecipe.html)(静的キャンバス・7画面) および [`design/MakeLocalPizzaRecipe Prototype.html`](../design/MakeLocalPizzaRecipe%20Prototype.html)(動くプロトタイプ) を参照。
@@ -42,7 +44,7 @@
 - 地場で**手作りモッツァレラチーズ**を製造している生産者との出会い
 - 季節ごとの地元食材を能動的に探し、試すようになった
 
-「地元食材 × ピザ × 共有体験」が**ホストとゲスト双方にとっての発見と交流を生む**という確かな手応えが、本プロダクトの出発点である。**MakeLocalPizzaRecipeAgent は、この個人的な発見体験を、誰でも・どの地域でも・すぐに再現できる形にして届けることを目指す。**
+「地元食材 × ピザ × 共有体験」が**ホストとゲスト双方にとっての発見と交流を生む**という確かな手応えが、本プロダクトの出発点である。**「ふるさとピザ帳」は、この個人的な発見体験を、誰でも・どの地域でも・すぐに再現できる形にして届けることを目指す。**
 
 ### 1.4 目的
 ビジネスパートナーや友人を招くホームパーティ・カジュアルな集まりで、料理のプロでなくとも、
@@ -537,3 +539,4 @@ flowchart TD
 | --- | --- | --- |
 | 2026-04-29 | 1.0 | 初版作成(プロダクト名: MakePizzaRecipeAgent、対話型 3UX 切替) |
 | 2026-05-12 | 2.0 | **全面リフレッシュ**。プロダクト名を **MakeLocalPizzaRecipeAgent** に変更。対話型/ウィザード UX を廃止し **Local-first Quick Tap (初回2タップ・リピート1タップ)** に一本化。**Exploit / Tune / Explore の三軸並行候補生成**を中心機能に据え、フィードバック活用を「学習」だけでなく「発想拡張」にも明示的に振る設計を導入。原体験(§1.3 仙台ピザパーティ) を追加、なぜピザかの設計判断(§1.2) を明文化。楽天ふるさと納税API を地元食材カタログの主データソースに昇格。地元選択の localStorage 永続化、画像生成の詳細画面遷移時集中によるコスト制御、ストリーム出力による体感レイテンシ最適化を要件化。AC-1〜AC-8 と US-1〜US-8 を再構成。 |
+| 2026-05-24 | 2.1 | **サービス名を「ふるさとピザ帳」に確定** (Slice 7、FR-7-8)。表向きのブランド名としてユーザ露出箇所 (env / metadata / TOP / README) に展開。技術識別子 (リポジトリ名 MakeLocalPizzaRecipeAgent / GCP プロジェクト makelocalpizzarecipeagent / mlpr-\* リソース prefix) は引き続き既存値を保持。 |
