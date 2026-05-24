@@ -1,7 +1,7 @@
 import { DetailClient } from './_components/DetailClient';
 
 export const metadata = {
-  title: '詳細レシピ - Make Local Pizza Recipe Agent',
+  title: '詳細レシピ',
 };
 
 type PageProps = {

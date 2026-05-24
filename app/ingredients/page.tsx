@@ -1,7 +1,7 @@
 import { IngredientSelectClient } from './_components/IngredientSelectClient';
 
 export const metadata = {
-  title: '食材を選ぶ - Make Local Pizza Recipe Agent',
+  title: '食材を選ぶ',
 };
 
 export default function IngredientsSelectPage() {

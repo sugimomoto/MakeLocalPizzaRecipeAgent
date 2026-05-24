@@ -1,7 +1,7 @@
 import { LibraryClient } from './_components/LibraryClient';
 
 export const metadata = {
-  title: 'ピザ帳 - Make Local Pizza Recipe Agent',
+  title: '保存帳',
 };
 
 export default function LibraryPage() {

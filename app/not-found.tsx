@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: '404 - Make Local Pizza Recipe Agent',
+  title: '404',
 };
 
 export default function NotFound() {

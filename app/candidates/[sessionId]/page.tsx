@@ -1,7 +1,7 @@
 import { CandidatesClient } from './_components/CandidatesClient';
 
 export const metadata = {
-  title: '候補 3 案 - Make Local Pizza Recipe Agent',
+  title: '候補 3 案',
 };
 
 type PageProps = {

@@ -37,8 +37,14 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: 'Make Local Pizza Recipe Agent',
-  description: 'ローカル/旬の食材を活かしたピザレシピを提案する AI エージェント',
+  // Slice 7 でサービス名を「ふるさとピザ帳」に確定 (内部技術名 MakeLocalPizzaRecipeAgent は維持)。
+  title: {
+    default: 'ふるさとピザ帳',
+    template: '%s · ふるさとピザ帳',
+  },
+  description: '地元の食材と季節から、AI があなただけのピザを 3 案提案。',
+  applicationName: 'ふるさとピザ帳',
+  authors: [{ name: 'Make Local Pizza Recipe Agent' }],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

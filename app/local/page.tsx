@@ -1,7 +1,7 @@
 import { LocalSelectClient } from './_components/LocalSelectClient';
 
 export const metadata = {
-  title: '地元を選ぶ - Make Local Pizza Recipe Agent',
+  title: '地元を選ぶ',
 };
 
 export default function LocalSelectPage() {
