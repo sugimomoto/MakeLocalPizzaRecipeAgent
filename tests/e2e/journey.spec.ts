@@ -52,9 +52,12 @@ test('locale → ingredients → candidates → recipe detail を 1 本通せる
   await expect(page.getByText('手 順')).toBeVisible();
 
   // Slice 4 で旧「ピザ帳に保存」alert ボタンは削除済 (ハート + Firestore に統合)。
-  // 残った底部 CTA は「作ってみる」のみ。RecipeHero のハート aria-label は
-  // 未サインインなら「ピザ帳に保存」のままなので、ここでは底部ボタンのみを確認する。
+  // Slice 7 で DetailMakeCTA カード (案 A) が追加され「作ってみる」+ ハートが
+  // 1 セットで出る。RecipeHero ハート (aria-label「ピザ帳に保存」exact) と
+  // DetailMakeCTA ハート (aria-label「ピザ帳に保存する」) が両方描画される。
   await expect(page.getByRole('button', { name: /作ってみる/ })).toBeVisible();
-  // ハートも描画されている (aria-label「ピザ帳に保存」 = guest 状態)
-  await expect(page.getByRole('button', { name: 'ピザ帳に保存' })).toBeVisible();
+  // RecipeHero のハート (画像オーバーレイ) は aria-label exact "ピザ帳に保存"
+  await expect(page.getByRole('button', { name: 'ピザ帳に保存', exact: true })).toBeVisible();
+  // DetailMakeCTA のハート (案 A カード右端) は aria-label "ピザ帳に保存する"
+  await expect(page.getByRole('button', { name: 'ピザ帳に保存する', exact: true })).toBeVisible();
 });
