@@ -227,3 +227,3171 @@ locales:
         category: vegetable
         seasons: [summer]
         story: 全国シェア圧倒的 1 位、瑞々しい辛味とほのかな甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 北海道
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: hokkaido
+    prefecture: 北海道
+    prefectureCode: JP-01
+    region: hokkaido
+    cities:
+      - { id: sapporo, name: 札幌市 }
+      - { id: hakodate, name: 函館市 }
+    ingredients:
+      - id: hokkaido-kegani
+        name: 毛蟹
+        searchQuery: 毛蟹 北海道
+        category: seafood
+        seasons: [winter, spring]
+        story: 噴火湾やオホーツクの毛蟹、濃厚な蟹味噌と繊細な甘み
+      - id: hokkaido-hotate
+        name: ホタテ
+        searchQuery: ホタテ 北海道
+        category: seafood
+        seasons: [winter]
+        story: オホーツク海の活ホタテ、貝柱の甘味と肉厚な存在感
+      - id: hokkaido-salmon
+        name: 秋鮭
+        searchQuery: 秋鮭 北海道
+        category: seafood
+        seasons: [autumn]
+        story: 道内河川に遡上する秋鮭、脂と旨味の均衡が絶妙
+      - id: hokkaido-uni
+        name: 雲丹
+        searchQuery: 雲丹 北海道
+        category: seafood
+        seasons: [summer]
+        story: 利尻昆布を食べて育つ礼文・積丹の雲丹、磯の甘味
+      - id: hokkaido-potato
+        name: じゃがいも
+        searchQuery: じゃがいも 北海道
+        category: vegetable
+        seasons: [autumn]
+        story: 男爵やメークインの代表産地、ホクホク感とコク
+      - id: hokkaido-onion
+        name: 玉ねぎ
+        searchQuery: 玉ねぎ 北海道
+        category: vegetable
+        seasons: [summer, autumn]
+        story: 国内シェア 6 割超、甘味の強い大玉が窯焼きに向く
+      - id: hokkaido-corn
+        name: とうもろこし
+        searchQuery: とうもろこし 北海道
+        category: vegetable
+        seasons: [summer]
+        story: 朝採れのスイートコーン、生でも食べられる糖度
+      - id: hokkaido-melon
+        name: 夕張メロン
+        searchQuery: 夕張メロン
+        category: fruit
+        seasons: [summer]
+        story: 夕張市の赤肉メロン、滴る果汁とジューシーな香り
+      - id: hokkaido-asparagus
+        name: アスパラガス
+        searchQuery: アスパラガス 北海道
+        category: vegetable
+        seasons: [spring]
+        story: 富良野・名寄の太アスパラ、雪解け水で育つ強い甘味
+      - id: hokkaido-cheese
+        name: ナチュラルチーズ
+        searchQuery: チーズ 北海道
+        category: cheese
+        seasons: [all-year]
+        story: 十勝・興部の手づくりチーズ、牧草の香りがそのまま乗る
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 青森県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: aomori
+    prefecture: 青森県
+    prefectureCode: JP-02
+    region: tohoku
+    cities:
+      - { id: aomori-city, name: 青森市 }
+      - { id: hirosaki, name: 弘前市 }
+    ingredients:
+      - id: aomori-apple
+        name: りんご(ふじ)
+        searchQuery: りんご 青森
+        category: fruit
+        seasons: [autumn, winter]
+        story: 全国生産量過半、蜜入りふじの甘味と酸味の調和
+      - id: aomori-oma-maguro
+        name: 大間まぐろ
+        searchQuery: 大間 まぐろ
+        category: seafood
+        seasons: [winter]
+        story: 津軽海峡の本鮪、寒風に鍛えられた極上のトロ
+      - id: aomori-garlic
+        name: 田子にんにく
+        searchQuery: 田子 にんにく
+        category: vegetable
+        seasons: [summer]
+        story: 田子町の福地ホワイト六片、ふっくらと甘い香り
+      - id: aomori-nagaimo
+        name: 長芋
+        searchQuery: 長芋 青森
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 十和田の長芋、シャキッとした食感と粘りのバランス
+      - id: aomori-hotate
+        name: 陸奥湾ホタテ
+        searchQuery: ホタテ 青森
+        category: seafood
+        seasons: [winter, spring]
+        story: 陸奥湾の養殖ホタテ、貝柱が太く繊維の通った甘味
+      - id: aomori-ringo-cider
+        name: りんごジュース
+        searchQuery: りんごジュース 青森
+        category: fruit
+        seasons: [all-year]
+        story: 青森の果汁 100% ジュース、ピザ生地の発酵にも活躍
+      - id: aomori-ankou
+        name: アンコウ
+        searchQuery: アンコウ 青森
+        category: seafood
+        seasons: [winter]
+        story: 風間浦のアンコウ、肝の濃厚な旨味は別格
+      - id: aomori-shamorock
+        name: 青森シャモロック
+        searchQuery: 青森シャモロック
+        category: meat
+        seasons: [all-year]
+        story: 県のブランド地鶏、引き締まった肉質と濃い旨味
+      - id: aomori-namako
+        name: 陸奥湾なまこ
+        searchQuery: なまこ 青森
+        category: seafood
+        seasons: [winter]
+        story: 寒の海で育つ青なまこ、コリッとした歯ごたえ
+      - id: aomori-gobou
+        name: ごぼう
+        searchQuery: ごぼう 青森
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 全国 1 位の生産量、深い土の香りと甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 岩手県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: iwate
+    prefecture: 岩手県
+    prefectureCode: JP-03
+    region: tohoku
+    cities:
+      - { id: morioka, name: 盛岡市 }
+      - { id: maesawa, name: 奥州市 }
+    ingredients:
+      - id: iwate-maesawa-beef
+        name: 前沢牛
+        searchQuery: 前沢牛
+        category: meat
+        seasons: [all-year]
+        story: 奥州市前沢の黒毛和牛、霜降りと赤身のしっかりした旨味
+      - id: iwate-sanriku-uni
+        name: 三陸ウニ
+        searchQuery: 三陸 ウニ
+        category: seafood
+        seasons: [summer]
+        story: 三陸沿岸のキタムラサキウニ、甘さに磯の香りが乗る
+      - id: iwate-wakame
+        name: 三陸わかめ
+        searchQuery: 三陸 わかめ
+        category: seafood
+        seasons: [spring]
+        story: 三陸の肉厚わかめ、シャキッとした歯ごたえと磯味
+      - id: iwate-abalone
+        name: 三陸アワビ
+        searchQuery: アワビ 岩手
+        category: seafood
+        seasons: [winter]
+        story: 三陸の天然エゾアワビ、コリコリと甘み深い磯の宝
+      - id: iwate-nanbu-tofu
+        name: 南部豆腐
+        searchQuery: 南部 豆腐 岩手
+        category: grain
+        seasons: [all-year]
+        story: 南部地方の手豆腐、大豆の風味が立つ豆乳感
+      - id: iwate-jajamen
+        name: じゃじゃ麺
+        searchQuery: じゃじゃ麺 岩手
+        category: grain
+        seasons: [all-year]
+        story: 盛岡名物の平打ち麺、肉味噌とよく絡む小麦の香り
+      - id: iwate-hitomebore
+        name: ひとめぼれ
+        searchQuery: ひとめぼれ 岩手
+        category: grain
+        seasons: [autumn]
+        story: 岩手のひとめぼれ、つややかで甘みのある粒立ち
+      - id: iwate-akadori
+        name: 岩手赤鶏
+        searchQuery: 岩手 赤鶏
+        category: meat
+        seasons: [all-year]
+        story: 県北の銘柄鶏、噛むほどに広がる地鶏らしい旨味
+      - id: iwate-blueberry
+        name: ブルーベリー
+        searchQuery: ブルーベリー 岩手
+        category: fruit
+        seasons: [summer]
+        story: 八幡平の冷涼な高原で育つ大粒、強い甘酸
+      - id: iwate-natural-cheese
+        name: なかほら牧場チーズ
+        searchQuery: なかほら牧場 チーズ
+        category: cheese
+        seasons: [all-year]
+        story: 山地酪農の生乳から作る、塩味控えめの素朴なチーズ
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 秋田県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: akita
+    prefecture: 秋田県
+    prefectureCode: JP-05
+    region: tohoku
+    cities:
+      - { id: akita-city, name: 秋田市 }
+      - { id: yokote, name: 横手市 }
+    ingredients:
+      - id: akita-hinai-jidori
+        name: 比内地鶏
+        searchQuery: 比内地鶏
+        category: meat
+        seasons: [all-year]
+        story: 日本三大地鶏、繊維の太い肉質と凝縮した旨味
+      - id: akita-jumonji
+        name: あきたこまち
+        searchQuery: あきたこまち
+        category: grain
+        seasons: [autumn]
+        story: 秋田を代表する米、もっちりと冷めても旨い粒
+      - id: akita-iburigakko
+        name: いぶりがっこ
+        searchQuery: いぶりがっこ
+        category: vegetable
+        seasons: [winter]
+        story: 大根を燻して漬けた郷土漬物、深い燻香とポリポリ食感
+      - id: akita-junsai
+        name: じゅんさい
+        searchQuery: じゅんさい 秋田
+        category: vegetable
+        seasons: [summer]
+        story: 三種町産、ゼリー状のぬめりと淡く爽やかな喉ごし
+      - id: akita-hatahata
+        name: ハタハタ
+        searchQuery: ハタハタ 秋田
+        category: seafood
+        seasons: [winter]
+        story: 秋田の冬の魚、ぷりっと甘い身としょっつるの香り
+      - id: akita-edamame
+        name: 枝豆
+        searchQuery: 枝豆 秋田
+        category: vegetable
+        seasons: [summer]
+        story: あきた香り豆など県産銘柄、コクのある豆香
+      - id: akita-pork
+        name: 桃豚
+        searchQuery: 桃豚 秋田
+        category: meat
+        seasons: [all-year]
+        story: 三元豚の銘柄、甘い脂と柔らかな赤身のバランス
+      - id: akita-tonburi
+        name: とんぶり
+        searchQuery: とんぶり
+        category: vegetable
+        seasons: [autumn]
+        story: 畑のキャビア、プチプチした食感で見た目のアクセントに
+      - id: akita-shogun-pumpkin
+        name: 西明寺栗
+        searchQuery: 西明寺栗
+        category: fruit
+        seasons: [autumn]
+        story: 仙北市の超大粒栗、ホクホクとした甘味
+      - id: akita-mizu
+        name: ミズ(ウワバミソウ)
+        searchQuery: ミズ 山菜 秋田
+        category: vegetable
+        seasons: [spring, summer]
+        story: 渓流沿いの山菜、ぬめりとシャキッとした歯ざわり
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 山形県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: yamagata
+    prefecture: 山形県
+    prefectureCode: JP-06
+    region: tohoku
+    cities:
+      - { id: yamagata-city, name: 山形市 }
+      - { id: shonai, name: 庄内地方 }
+    ingredients:
+      - id: yamagata-cherry
+        name: さくらんぼ(佐藤錦)
+        searchQuery: さくらんぼ 佐藤錦
+        category: fruit
+        seasons: [summer]
+        story: 全国シェア圧倒的、宝石のような赤と上品な甘み
+      - id: yamagata-yonezawa-beef
+        name: 米沢牛
+        searchQuery: 米沢牛
+        category: meat
+        seasons: [all-year]
+        story: 日本三大和牛、きめ細かな霜降りと長く続く旨味
+      - id: yamagata-la-france
+        name: ラ・フランス
+        searchQuery: ラ・フランス 山形
+        category: fruit
+        seasons: [autumn]
+        story: 西洋梨の女王、芳醇な香りと滴る果汁
+      - id: yamagata-imoni
+        name: 里芋(芋煮用)
+        searchQuery: 里芋 山形
+        category: vegetable
+        seasons: [autumn]
+        story: 庄内・最上の里芋、芋煮文化を支える粘りと甘味
+      - id: yamagata-dadachamame
+        name: だだちゃ豆
+        searchQuery: だだちゃ豆
+        category: vegetable
+        seasons: [summer]
+        story: 鶴岡の在来枝豆、芳醇な香りと濃厚な甘味
+      - id: yamagata-soba
+        name: 板そば
+        searchQuery: 板そば 山形
+        category: grain
+        seasons: [autumn]
+        story: 山形の太打ち田舎そば、噛むほどに広がる蕎麦香
+      - id: yamagata-grape
+        name: ぶどう(デラウェア)
+        searchQuery: デラウェア 山形
+        category: fruit
+        seasons: [summer]
+        story: 全国 1 位のデラ産地、種なしで小粒の濃い甘み
+      - id: yamagata-konbu
+        name: 庄内浜の岩ガキ
+        searchQuery: 岩牡蠣 庄内
+        category: seafood
+        seasons: [summer]
+        story: 庄内浜の天然岩牡蠣、夏の旨味が詰まる大ぶり
+      - id: yamagata-tama-konnyaku
+        name: 玉こんにゃく
+        searchQuery: 玉こんにゃく
+        category: vegetable
+        seasons: [all-year]
+        story: 醤油でじっくり煮込んだ郷土食、もちっと弾力
+      - id: yamagata-akakabu
+        name: 赤かぶ
+        searchQuery: 赤かぶ 山形
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 庄内の赤かぶ、漬けると鮮やかな赤と程よい辛味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 福島県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: fukushima
+    prefecture: 福島県
+    prefectureCode: JP-07
+    region: tohoku
+    cities:
+      - { id: fukushima-city, name: 福島市 }
+      - { id: aizu, name: 会津若松市 }
+    ingredients:
+      - id: fukushima-momo
+        name: 桃(あかつき)
+        searchQuery: 桃 福島
+        category: fruit
+        seasons: [summer]
+        story: 福島市あかつき、果汁したたる甘さの夏の主役
+      - id: fukushima-kitakata-ramen-egg
+        name: 喜多方の生卵
+        searchQuery: 喜多方 卵
+        category: meat
+        seasons: [all-year]
+        story: 会津の自然卵、濃いオレンジの黄身と豊かな旨味
+      - id: fukushima-aizu-asparagus
+        name: 会津アスパラガス
+        searchQuery: 会津 アスパラガス
+        category: vegetable
+        seasons: [spring]
+        story: 雪解け水で育つ太アスパラ、シャキッとして甘い
+      - id: fukushima-pear
+        name: 梨(豊水)
+        searchQuery: 梨 福島
+        category: fruit
+        seasons: [autumn]
+        story: 県北の豊水・幸水、瑞々しい果肉とほどよい酸味
+      - id: fukushima-soba
+        name: 会津そば
+        searchQuery: 会津そば
+        category: grain
+        seasons: [autumn]
+        story: 会津山間部の地そば、噛みごたえと深い香り
+      - id: fukushima-anpogaki
+        name: あんぽ柿
+        searchQuery: あんぽ柿
+        category: fruit
+        seasons: [winter]
+        story: 伊達のあんぽ柿、半生の果肉ととろける甘味
+      - id: fukushima-iwana
+        name: イワナ
+        searchQuery: イワナ 福島
+        category: seafood
+        seasons: [spring, summer]
+        story: 奥会津の渓流魚、淡白な身と山菜のような香り
+      - id: fukushima-natto
+        name: 会津伝統納豆
+        searchQuery: 納豆 会津
+        category: grain
+        seasons: [all-year]
+        story: 雪深い土地で育つ伝統製法、糸引きと豆の存在感
+      - id: fukushima-egoma
+        name: えごま
+        searchQuery: えごま 福島
+        category: grain
+        seasons: [autumn]
+        story: 会津のえごま、香ばしいオイルとぷちぷち食感
+      - id: fukushima-kawamata-shamo
+        name: 川俣シャモ
+        searchQuery: 川俣シャモ
+        category: meat
+        seasons: [all-year]
+        story: 川俣町の銘柄シャモ、引き締まった肉と濃い旨味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 茨城県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: ibaraki
+    prefecture: 茨城県
+    prefectureCode: JP-08
+    region: kanto
+    cities:
+      - { id: mito, name: 水戸市 }
+      - { id: hitachi, name: 日立市 }
+    ingredients:
+      - id: ibaraki-natto
+        name: 水戸納豆
+        searchQuery: 水戸 納豆
+        category: grain
+        seasons: [all-year]
+        story: 水戸の名物、小粒大豆の力強い糸引きと風味
+      - id: ibaraki-melon
+        name: メロン(イバラキング)
+        searchQuery: メロン 茨城
+        category: fruit
+        seasons: [summer]
+        story: 全国 1 位のメロン産地、果汁たっぷりのネット系
+      - id: ibaraki-renkon
+        name: れんこん
+        searchQuery: れんこん 茨城
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 霞ヶ浦の蓮根、シャキッと白い肉質と程よい粘り
+      - id: ibaraki-anglerfish
+        name: あんこう
+        searchQuery: あんこう 茨城
+        category: seafood
+        seasons: [winter]
+        story: 大洗のあんこう、肝の濃厚さとプルプルした皮
+      - id: ibaraki-hoshiimo
+        name: 干し芋
+        searchQuery: 干し芋 茨城
+        category: vegetable
+        seasons: [winter]
+        story: ひたちなかの紅はるか干し芋、ねっとり濃い甘味
+      - id: ibaraki-chinese-cabbage
+        name: 白菜
+        searchQuery: 白菜 茨城
+        category: vegetable
+        seasons: [winter]
+        story: 全国 1 位の生産量、芯まで甘く葉が肉厚
+      - id: ibaraki-strawberry
+        name: いちご(いばらキッス)
+        searchQuery: いちご 茨城
+        category: fruit
+        seasons: [winter, spring]
+        story: 県オリジナル品種、大粒で甘酸のバランス良し
+      - id: ibaraki-koshihikari
+        name: コシヒカリ
+        searchQuery: コシヒカリ 茨城
+        category: grain
+        seasons: [autumn]
+        story: 県北山間のコシヒカリ、つや・粘り・甘さの揃った米
+      - id: ibaraki-pork
+        name: ローズポーク
+        searchQuery: ローズポーク
+        category: meat
+        seasons: [all-year]
+        story: 茨城の銘柄豚、薔薇のような薄紅の赤身と甘い脂
+      - id: ibaraki-kuri
+        name: 笠間栗
+        searchQuery: 笠間 栗
+        category: fruit
+        seasons: [autumn]
+        story: 笠間の大粒栗、ホクホクとした甘味と上品な香り
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 栃木県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: tochigi
+    prefecture: 栃木県
+    prefectureCode: JP-09
+    region: kanto
+    cities:
+      - { id: utsunomiya, name: 宇都宮市 }
+      - { id: nikko, name: 日光市 }
+    ingredients:
+      - id: tochigi-tochiotome
+        name: いちご(とちおとめ)
+        searchQuery: とちおとめ
+        category: fruit
+        seasons: [winter, spring]
+        story: 全国一の生産量、深紅の艶と濃密な甘さ
+      - id: tochigi-skyberry
+        name: いちご(スカイベリー)
+        searchQuery: スカイベリー
+        category: fruit
+        seasons: [winter, spring]
+        story: 栃木のプレミアム苺、大粒で芳醇な香り
+      - id: tochigi-nikko-yuba
+        name: 日光ゆば
+        searchQuery: 日光ゆば
+        category: grain
+        seasons: [all-year]
+        story: 日光の精進湯葉、大豆の甘い香りと薄絹のような層
+      - id: tochigi-kanpyo
+        name: かんぴょう
+        searchQuery: かんぴょう 栃木
+        category: vegetable
+        seasons: [summer]
+        story: 全国 1 位、夕顔の実を乾燥させた素朴で優しい味
+      - id: tochigi-leek
+        name: にら
+        searchQuery: にら 栃木
+        category: vegetable
+        seasons: [spring]
+        story: 県東部の柔らかいニラ、香り高く焼き付け向き
+      - id: tochigi-iwate-no-tama
+        name: 真岡もてぎ卵
+        searchQuery: 卵 栃木
+        category: meat
+        seasons: [all-year]
+        story: 県内ブランド鶏卵、濃いオレンジの黄身が立つ
+      - id: tochigi-yashio-mas
+        name: 八汐鱒
+        searchQuery: 八汐鱒
+        category: seafood
+        seasons: [summer]
+        story: 県開発のニジマス交雑、ピンクの身が柔らかい
+      - id: tochigi-tochigi-beef
+        name: とちぎ和牛
+        searchQuery: とちぎ和牛
+        category: meat
+        seasons: [all-year]
+        story: 県のブランド黒毛和牛、霜降りと深い和牛香
+      - id: tochigi-asparagus
+        name: アスパラガス
+        searchQuery: アスパラガス 栃木
+        category: vegetable
+        seasons: [spring]
+        story: 那須野の太アスパラ、シャキッとした甘い穂先
+      - id: tochigi-shimotsuke-soba
+        name: 下野そば
+        searchQuery: そば 栃木
+        category: grain
+        seasons: [autumn]
+        story: 鹿沼・日光の地そば、コシがあり風味豊か
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 群馬県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: gunma
+    prefecture: 群馬県
+    prefectureCode: JP-10
+    region: kanto
+    cities:
+      - { id: maebashi, name: 前橋市 }
+      - { id: tsumagoi, name: 嬬恋村 }
+    ingredients:
+      - id: gunma-shimonita-negi
+        name: 下仁田ねぎ
+        searchQuery: 下仁田ねぎ
+        category: vegetable
+        seasons: [winter]
+        story: 太く白く加熱でとろける、群馬の冬の王様
+      - id: gunma-konjac
+        name: こんにゃく
+        searchQuery: こんにゃく 群馬
+        category: vegetable
+        seasons: [all-year]
+        story: 全国 9 割の生産、しっとり弾力のある県の顔
+      - id: gunma-cabbage
+        name: 嬬恋キャベツ
+        searchQuery: 嬬恋 キャベツ
+        category: vegetable
+        seasons: [summer]
+        story: 高原の朝採りキャベツ、瑞々しい甘味と歯切れ
+      - id: gunma-jodai-mochi
+        name: 上州もち豚
+        searchQuery: 上州もち豚
+        category: meat
+        seasons: [all-year]
+        story: 群馬の銘柄豚、もちっとした赤身と上質な脂
+      - id: gunma-okukinu-river-trout
+        name: ヤマメ
+        searchQuery: ヤマメ 群馬
+        category: seafood
+        seasons: [summer]
+        story: 奥利根の渓流ヤマメ、淡白で繊細な身質
+      - id: gunma-mizusawa-udon
+        name: 水沢うどん
+        searchQuery: 水沢うどん
+        category: grain
+        seasons: [all-year]
+        story: 日本三大うどん、透き通る麺と強いコシ
+      - id: gunma-konnyaku-noodle
+        name: 蒟蒻ライス・麺
+        searchQuery: 蒟蒻 麺 群馬
+        category: vegetable
+        seasons: [all-year]
+        story: 県産こんにゃく加工品、軽やかで器に新しさを
+      - id: gunma-iwa-shimizu
+        name: 岩魚(イワナ)
+        searchQuery: 岩魚 群馬
+        category: seafood
+        seasons: [summer]
+        story: 北毛の岩魚、塩焼きで脂と山の香りが立つ
+      - id: gunma-yuzu
+        name: 柚子
+        searchQuery: 柚子 群馬
+        category: fruit
+        seasons: [autumn, winter]
+        story: 群馬北部の柚子、皮の香りで料理を引き締める
+      - id: gunma-haruna-blueberry
+        name: ブルーベリー(榛名)
+        searchQuery: ブルーベリー 榛名
+        category: fruit
+        seasons: [summer]
+        story: 榛名の大粒ブルーベリー、酸味の効いた甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 埼玉県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: saitama
+    prefecture: 埼玉県
+    prefectureCode: JP-11
+    region: kanto
+    cities:
+      - { id: kawagoe, name: 川越市 }
+      - { id: chichibu, name: 秩父市 }
+    ingredients:
+      - id: saitama-fukaya-negi
+        name: 深谷ねぎ
+        searchQuery: 深谷ねぎ
+        category: vegetable
+        seasons: [winter]
+        story: 深谷の白ねぎ、肉厚でとろりと甘い加熱向き
+      - id: saitama-chichibu-miso
+        name: 秩父味噌
+        searchQuery: 秩父 味噌
+        category: grain
+        seasons: [all-year]
+        story: 秩父の手作り味噌、麹の甘味と深い旨味
+      - id: saitama-kuwai
+        name: くわい
+        searchQuery: くわい 埼玉
+        category: vegetable
+        seasons: [winter]
+        story: 越谷のくわい、ホクッとした食感とほのかな苦味
+      - id: saitama-iruma-tea
+        name: 狭山茶
+        searchQuery: 狭山茶
+        category: grain
+        seasons: [spring]
+        story: 入間・狭山の深蒸し茶、味の濃さは関東一
+      - id: saitama-honjo-yuzu
+        name: 本庄柚子
+        searchQuery: 柚子 埼玉
+        category: fruit
+        seasons: [autumn, winter]
+        story: 本庄の柚子、爽やかな香りで料理を引き立てる
+      - id: saitama-pear
+        name: 梨(彩玉)
+        searchQuery: 梨 彩玉
+        category: fruit
+        seasons: [summer, autumn]
+        story: 県オリジナルの大玉梨、ジューシーで甘い
+      - id: saitama-kuwagata-strawberry
+        name: いちご(あまりん)
+        searchQuery: あまりん 埼玉
+        category: fruit
+        seasons: [winter, spring]
+        story: 県オリジナル苺、糖度高く香りも良い
+      - id: saitama-iruma-broccoli
+        name: ブロッコリー
+        searchQuery: ブロッコリー 埼玉
+        category: vegetable
+        seasons: [winter]
+        story: 入間の春ブロッコリー、つぼみがぎゅっと密
+      - id: saitama-saitamaa5-beef
+        name: 武州和牛
+        searchQuery: 武州和牛
+        category: meat
+        seasons: [all-year]
+        story: 県内の黒毛和牛、肉質しっかり脂の甘さも
+      - id: saitama-koedo-imo
+        name: さつまいも(川越)
+        searchQuery: さつまいも 川越
+        category: vegetable
+        seasons: [autumn]
+        story: 川越の紅赤、しっとりねっとり甘い焼き芋向き
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 千葉県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: chiba
+    prefecture: 千葉県
+    prefectureCode: JP-12
+    region: kanto
+    cities:
+      - { id: chiba-city, name: 千葉市 }
+      - { id: choshi, name: 銚子市 }
+    ingredients:
+      - id: chiba-peanuts
+        name: 落花生
+        searchQuery: 落花生 千葉
+        category: grain
+        seasons: [autumn]
+        story: 八街の落花生、香ばしさと甘味で全国シェア圧倒的
+      - id: chiba-iwashi
+        name: 銚子いわし
+        searchQuery: いわし 銚子
+        category: seafood
+        seasons: [summer, autumn]
+        story: 銚子港の真鰯、脂のりが良く生でも焼いても主役
+      - id: chiba-saba
+        name: 銚子サバ
+        searchQuery: サバ 銚子
+        category: seafood
+        seasons: [autumn]
+        story: 寒流のサバ、脂と身締まりの均衡が秋に絶好調
+      - id: chiba-spring-cabbage
+        name: 春キャベツ
+        searchQuery: キャベツ 千葉
+        category: vegetable
+        seasons: [spring]
+        story: 銚子・旭の春キャベツ、葉が柔らかく甘い
+      - id: chiba-loquat
+        name: 房州びわ
+        searchQuery: 房州びわ
+        category: fruit
+        seasons: [summer]
+        story: 南房総の大粒びわ、上品な甘味と透ける果肉
+      - id: chiba-saw-tooth
+        name: 鋸南の伊勢海老
+        searchQuery: 伊勢海老 千葉
+        category: seafood
+        seasons: [autumn, winter]
+        story: 外房の伊勢海老、引き締まった身と濃い甘み
+      - id: chiba-pear
+        name: 梨(幸水)
+        searchQuery: 梨 千葉
+        category: fruit
+        seasons: [summer, autumn]
+        story: 市川・船橋の梨、シャリッと水分と糖のバランス
+      - id: chiba-tomato
+        name: 完熟トマト
+        searchQuery: トマト 千葉
+        category: vegetable
+        seasons: [summer]
+        story: 旭・八街の完熟トマト、酸味と甘みの濃さが特徴
+      - id: chiba-pork
+        name: ダイヤモンドポーク
+        searchQuery: ダイヤモンドポーク
+        category: meat
+        seasons: [all-year]
+        story: 県産銘柄豚、ほどよい脂と柔らかい繊維
+      - id: chiba-sansai-soy
+        name: 銚子醤油
+        searchQuery: 醤油 銚子
+        category: grain
+        seasons: [all-year]
+        story: 銚子の老舗醤油、円やかな旨味でピザソースにも
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 東京都
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: tokyo
+    prefecture: 東京都
+    prefectureCode: JP-13
+    region: kanto
+    cities:
+      - { id: chiyoda, name: 千代田区 }
+      - { id: mitaka, name: 三鷹市 }
+    ingredients:
+      - id: tokyo-edomae-anago
+        name: 江戸前穴子
+        searchQuery: 穴子 江戸前
+        category: seafood
+        seasons: [summer]
+        story: 羽田・東京湾の穴子、ふっくら身と上品な脂
+      - id: tokyo-edamame
+        name: 江戸川えだまめ
+        searchQuery: 枝豆 東京
+        category: vegetable
+        seasons: [summer]
+        story: 江戸川区の在来枝豆、香りと甘味のしっかり感
+      - id: tokyo-asakusa-nori
+        name: 浅草海苔
+        searchQuery: 浅草海苔
+        category: seafood
+        seasons: [winter]
+        story: 江戸名物として続く海苔、香りと旨味の濃さ
+      - id: tokyo-koganei-leek
+        name: 江戸東京野菜(滝野川ごぼう)
+        searchQuery: 滝野川ごぼう
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 伝統野菜の長ごぼう、しっかりした香りと風味
+      - id: tokyo-okutama-wasabi
+        name: 奥多摩わさび
+        searchQuery: 奥多摩 わさび
+        category: vegetable
+        seasons: [all-year]
+        story: 渓流で育つ本わさび、清涼な辛味と甘味
+      - id: tokyo-island-stone-fish
+        name: 伊豆諸島の岩魚
+        searchQuery: 伊豆諸島 魚
+        category: seafood
+        seasons: [summer]
+        story: 大島・八丈島の地魚、身の締まりと潮の香り
+      - id: tokyo-koganei-bamboo
+        name: 江戸東京野菜(亀戸大根)
+        searchQuery: 亀戸大根
+        category: vegetable
+        seasons: [spring]
+        story: 葉と根を一緒に食べる小型大根、シャキ感が魅力
+      - id: tokyo-tama-honey
+        name: 多摩はちみつ
+        searchQuery: はちみつ 東京
+        category: fruit
+        seasons: [all-year]
+        story: 奥多摩・檜原の地はちみつ、花の香りが残る
+      - id: tokyo-tokyo-x
+        name: TOKYO X(ブランド豚)
+        searchQuery: TOKYO X
+        category: meat
+        seasons: [all-year]
+        story: 東京開発の銘柄豚、甘い脂と柔らかな赤身
+      - id: tokyo-shimoda-aji
+        name: 八丈島アジ
+        searchQuery: アジ 八丈島
+        category: seafood
+        seasons: [summer]
+        story: 八丈の活アジ、身締まりと脂のバランスが見事
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 神奈川県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kanagawa
+    prefecture: 神奈川県
+    prefectureCode: JP-14
+    region: kanto
+    cities:
+      - { id: yokohama, name: 横浜市 }
+      - { id: miura, name: 三浦市 }
+    ingredients:
+      - id: kanagawa-miura-radish
+        name: 三浦大根
+        searchQuery: 三浦大根
+        category: vegetable
+        seasons: [winter]
+        story: 三浦半島の大根、煮崩れせず甘味が深い
+      - id: kanagawa-shirasu
+        name: 鎌倉しらす
+        searchQuery: しらす 鎌倉
+        category: seafood
+        seasons: [spring, autumn]
+        story: 江ノ島・鎌倉の生しらす、磯の香りと淡い甘味
+      - id: kanagawa-miura-melon
+        name: 三浦メロン
+        searchQuery: メロン 三浦
+        category: fruit
+        seasons: [summer]
+        story: 三浦のネット系メロン、果汁多く香り高い
+      - id: kanagawa-zushi-anchovy
+        name: 相模湾アンチョビ
+        searchQuery: アンチョビ 神奈川
+        category: seafood
+        seasons: [summer]
+        story: 相模湾の片口鰯、塩漬け熟成で旨味爆発
+      - id: kanagawa-hayama-beef
+        name: 葉山牛
+        searchQuery: 葉山牛
+        category: meat
+        seasons: [all-year]
+        story: 葉山の黒毛和牛、希少で霜降りと和牛香が秀逸
+      - id: kanagawa-ashigara-pork
+        name: 足柄ロースポーク
+        searchQuery: 足柄 豚
+        category: meat
+        seasons: [all-year]
+        story: 県西の銘柄豚、繊細な赤身と甘い脂
+      - id: kanagawa-zara-saba
+        name: 走水サバ
+        searchQuery: 走水 サバ
+        category: seafood
+        seasons: [autumn]
+        story: 三浦走水のサバ、身締まりと脂のバランス
+      - id: kanagawa-fujisawa-strawberry
+        name: いちご(藤沢)
+        searchQuery: いちご 藤沢
+        category: fruit
+        seasons: [winter, spring]
+        story: 湘南産の苺、甘味と香りの強さで地元人気
+      - id: kanagawa-kogiku-cabbage
+        name: 神奈川キャベツ
+        searchQuery: キャベツ 神奈川
+        category: vegetable
+        seasons: [winter]
+        story: 三浦半島の冬キャベツ、芯まで甘い肉厚葉
+      - id: kanagawa-yamayuri-soba
+        name: 丹沢そば
+        searchQuery: 丹沢 そば
+        category: grain
+        seasons: [autumn]
+        story: 丹沢山地の地そば、清水で打つ香り高い一杯
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 新潟県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: niigata
+    prefecture: 新潟県
+    prefectureCode: JP-15
+    region: chubu
+    cities:
+      - { id: niigata-city, name: 新潟市 }
+      - { id: uonuma, name: 魚沼地方 }
+    ingredients:
+      - id: niigata-uonuma-koshihikari
+        name: 魚沼産コシヒカリ
+        searchQuery: 魚沼 コシヒカリ
+        category: grain
+        seasons: [autumn]
+        story: 米の最高峰、つや・甘み・粘りの絶妙な均衡
+      - id: niigata-nodoguro
+        name: 喉黒(ノドグロ)
+        searchQuery: のどぐろ 新潟
+        category: seafood
+        seasons: [autumn, winter]
+        story: 日本海の高級魚、口の中でとろける脂と甘み
+      - id: niigata-le-lectier
+        name: ル レクチエ
+        searchQuery: ル レクチエ
+        category: fruit
+        seasons: [winter]
+        story: 新潟の高級洋梨、芳香と滴る果汁
+      - id: niigata-edamame
+        name: 黒崎茶豆
+        searchQuery: 茶豆 新潟
+        category: vegetable
+        seasons: [summer]
+        story: 黒崎の在来茶豆、香ばしく濃厚な豆風味
+      - id: niigata-sasadango
+        name: 笹だんご餅
+        searchQuery: 笹だんご
+        category: grain
+        seasons: [all-year]
+        story: 笹の香りに包まれた郷土菓子、もち米のコシ
+      - id: niigata-iwagaki
+        name: 岩牡蠣
+        searchQuery: 岩牡蠣 新潟
+        category: seafood
+        seasons: [summer]
+        story: 佐渡の天然岩牡蠣、大ぶりで磯の甘味が濃い
+      - id: niigata-sake-rice
+        name: 五百万石
+        searchQuery: 五百万石 新潟
+        category: grain
+        seasons: [autumn]
+        story: 酒造好適米、口に含むとふくよかな米の甘味
+      - id: niigata-yukimuro-vegetable
+        name: 雪室野菜
+        searchQuery: 雪室 野菜 新潟
+        category: vegetable
+        seasons: [winter]
+        story: 雪に貯蔵し甘味が増した野菜、優しい風味
+      - id: niigata-watermelon
+        name: 八色西瓜
+        searchQuery: 八色西瓜
+        category: fruit
+        seasons: [summer]
+        story: 南魚沼の西瓜、シャリ感と濃い甘さの夏王者
+      - id: niigata-momiji-pork
+        name: 越後もちぶた
+        searchQuery: 越後 もちぶた
+        category: meat
+        seasons: [all-year]
+        story: 県の銘柄豚、もちっとした肉質と甘い脂
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 富山県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: toyama
+    prefecture: 富山県
+    prefectureCode: JP-16
+    region: chubu
+    cities:
+      - { id: toyama-city, name: 富山市 }
+      - { id: himi, name: 氷見市 }
+    ingredients:
+      - id: toyama-firefly-squid
+        name: ホタルイカ
+        searchQuery: ホタルイカ 富山
+        category: seafood
+        seasons: [spring]
+        story: 富山湾の春の風物詩、丸ごと旨味と肝の濃さ
+      - id: toyama-shiroebi
+        name: 白えび
+        searchQuery: 白えび 富山
+        category: seafood
+        seasons: [spring, summer]
+        story: 富山湾の宝石、透き通る身と上品な甘さ
+      - id: toyama-buri
+        name: 氷見寒ブリ
+        searchQuery: 氷見 寒ブリ
+        category: seafood
+        seasons: [winter]
+        story: 氷見港の天然寒鰤、脂と身質の極まり
+      - id: toyama-masuzushi
+        name: 鱒寿司
+        searchQuery: 鱒寿司 富山
+        category: seafood
+        seasons: [all-year]
+        story: 富山名物、桜色の鱒と酢飯の上品な調和
+      - id: toyama-genmai
+        name: 富山米(てんたかく)
+        searchQuery: 富山米
+        category: grain
+        seasons: [autumn]
+        story: あっさり・しっかりした粒、和洋どちらにも
+      - id: toyama-kabosu
+        name: 富山かぼちゃ
+        searchQuery: かぼちゃ 富山
+        category: vegetable
+        seasons: [summer, autumn]
+        story: 砺波の坊ちゃんかぼちゃ、ほっくり濃い甘味
+      - id: toyama-meibutsu-cheese
+        name: 立山チーズ
+        searchQuery: 立山 チーズ
+        category: cheese
+        seasons: [all-year]
+        story: 立山山麓の生乳チーズ、塩味控えめで素材を引き立てる
+      - id: toyama-shougayaki-pork
+        name: とやまポーク
+        searchQuery: とやまポーク
+        category: meat
+        seasons: [all-year]
+        story: 県内ブランド豚、しっとり食感と甘い脂
+      - id: toyama-natamame
+        name: なた豆
+        searchQuery: なた豆 富山
+        category: grain
+        seasons: [autumn]
+        story: 富山伝統の豆、ホクッと素朴な味わい
+      - id: toyama-yukinoshita-mochi
+        name: 雪の下野菜
+        searchQuery: 雪の下 野菜 富山
+        category: vegetable
+        seasons: [winter]
+        story: 雪に守られて甘さの増した冬野菜、優しい味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 石川県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: ishikawa
+    prefecture: 石川県
+    prefectureCode: JP-17
+    region: chubu
+    cities:
+      - { id: kanazawa, name: 金沢市 }
+      - { id: wajima, name: 輪島市 }
+    ingredients:
+      - id: ishikawa-noto-oyster
+        name: 能登牡蠣
+        searchQuery: 能登 牡蠣
+        category: seafood
+        seasons: [winter]
+        story: 七尾湾の岩牡蠣、磯のミネラル感と濃い甘味
+      - id: ishikawa-kanazawa-snow-crab
+        name: 加能ガニ
+        searchQuery: 加能ガニ
+        category: seafood
+        seasons: [winter]
+        story: 石川産ズワイガニ、青いタグ付の上質ブランド
+      - id: ishikawa-noto-beef
+        name: 能登牛
+        searchQuery: 能登牛
+        category: meat
+        seasons: [all-year]
+        story: 県内の黒毛和牛、繊細な霜降りと甘い和牛香
+      - id: ishikawa-kaga-vegetable
+        name: 加賀野菜(加賀れんこん)
+        searchQuery: 加賀れんこん
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 金沢小坂の伝統野菜、もっちり粘りある蓮根
+      - id: ishikawa-kaga-tomato
+        name: 加賀トマト
+        searchQuery: 加賀 トマト
+        category: vegetable
+        seasons: [summer]
+        story: 加賀地区の完熟トマト、深い赤と濃い旨味
+      - id: ishikawa-kaga-cucumber
+        name: 加賀太きゅうり
+        searchQuery: 加賀太きゅうり
+        category: vegetable
+        seasons: [summer]
+        story: ずんぐり太い加賀野菜、瑞々しく煮物向き
+      - id: ishikawa-ishikawa-pork
+        name: 能登豚
+        searchQuery: 能登豚
+        category: meat
+        seasons: [all-year]
+        story: 能登半島のブランド豚、しっとり甘い脂
+      - id: ishikawa-koibukuro
+        name: 鯉(治部煮素材)
+        searchQuery: 鯉 石川
+        category: seafood
+        seasons: [autumn, winter]
+        story: 加賀料理の代表素材、深い旨味でとろみと相性
+      - id: ishikawa-katsuobushi
+        name: 能登の鰹節
+        searchQuery: 鰹節 能登
+        category: seafood
+        seasons: [all-year]
+        story: 能登の伝統製法、香ばしさが料理の土台に
+      - id: ishikawa-iwanori
+        name: 岩のり
+        searchQuery: 岩のり 石川
+        category: seafood
+        seasons: [winter]
+        story: 能登外浦の天然岩のり、磯の香りが強い
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 福井県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: fukui
+    prefecture: 福井県
+    prefectureCode: JP-18
+    region: chubu
+    cities:
+      - { id: fukui-city, name: 福井市 }
+      - { id: tsuruga, name: 敦賀市 }
+    ingredients:
+      - id: fukui-echizen-gani
+        name: 越前ガニ
+        searchQuery: 越前ガニ
+        category: seafood
+        seasons: [winter]
+        story: 越前のズワイガニ雄、最高峰の身と蟹味噌
+      - id: fukui-amaebi
+        name: 甘エビ
+        searchQuery: 甘エビ 福井
+        category: seafood
+        seasons: [winter]
+        story: 越前の甘エビ、とろける甘味と上品な香り
+      - id: fukui-wakasa-flatfish
+        name: 若狭ぐじ
+        searchQuery: 若狭ぐじ
+        category: seafood
+        seasons: [autumn, winter]
+        story: 若狭湾の甘鯛、上品な脂と繊細な身質
+      - id: fukui-koshihikari-fukui
+        name: いちほまれ
+        searchQuery: いちほまれ
+        category: grain
+        seasons: [autumn]
+        story: 福井オリジナル米、絹のような白さと上品な甘味
+      - id: fukui-rakkyo
+        name: 三里浜らっきょう
+        searchQuery: 三里浜 らっきょう
+        category: vegetable
+        seasons: [summer]
+        story: 砂地で育つ細身らっきょう、シャキッと爽快
+      - id: fukui-mizu-yokan
+        name: 若狭の塩(海塩)
+        searchQuery: 若狭塩
+        category: seafood
+        seasons: [all-year]
+        story: 若狭湾の海水塩、まろやかな塩味で素材を引き立てる
+      - id: fukui-eichizen-soba
+        name: 越前そば
+        searchQuery: 越前そば
+        category: grain
+        seasons: [autumn]
+        story: 太打ち田舎そば、おろしを乗せて爽快な辛味
+      - id: fukui-tofu-aburaage
+        name: 油揚げ(竹田)
+        searchQuery: 竹田 油揚げ
+        category: grain
+        seasons: [all-year]
+        story: 大判の厚揚げ、外香ばしく中はジューシー
+      - id: fukui-wakasa-pear
+        name: 若狭梨
+        searchQuery: 若狭 梨
+        category: fruit
+        seasons: [autumn]
+        story: 若狭の梨、果肉の透明感とジューシーな食感
+      - id: fukui-fukui-pork
+        name: 福井ポーク
+        searchQuery: 福井ポーク
+        category: meat
+        seasons: [all-year]
+        story: 県内の銘柄豚、赤身の旨味と脂の甘さの均衡
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 山梨県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: yamanashi
+    prefecture: 山梨県
+    prefectureCode: JP-19
+    region: chubu
+    cities:
+      - { id: kofu, name: 甲府市 }
+      - { id: fujikawaguchi, name: 富士河口湖町 }
+    ingredients:
+      - id: yamanashi-momo
+        name: 桃(白鳳)
+        searchQuery: 桃 山梨
+        category: fruit
+        seasons: [summer]
+        story: 笛吹・甲府の桃、芳醇な香りと果汁あふれる果肉
+      - id: yamanashi-grape-kyoho
+        name: ぶどう(巨峰)
+        searchQuery: 巨峰 山梨
+        category: fruit
+        seasons: [summer, autumn]
+        story: 一宮の巨峰、大粒で濃い甘味と深い色
+      - id: yamanashi-grape-shine-muscat
+        name: シャインマスカット
+        searchQuery: シャインマスカット 山梨
+        category: fruit
+        seasons: [summer, autumn]
+        story: 種なし皮ごと食べる、爽快な甘香
+      - id: yamanashi-koshu-wine
+        name: 甲州ワイン素材ぶどう
+        searchQuery: 甲州 ぶどう
+        category: fruit
+        seasons: [autumn]
+        story: 日本固有の白ぶどう、繊細な香りと酸味
+      - id: yamanashi-fuji-trout
+        name: 富士の介(鮭鱒交雑)
+        searchQuery: 富士の介
+        category: seafood
+        seasons: [all-year]
+        story: 県開発の高級ニジマス、脂と甘味の濃い身
+      - id: yamanashi-houto
+        name: ほうとう(郷土麺)
+        searchQuery: ほうとう
+        category: grain
+        seasons: [winter]
+        story: 山梨の郷土麺、太く幅広で煮込みに強い
+      - id: yamanashi-koshu-beef
+        name: 甲州牛
+        searchQuery: 甲州牛
+        category: meat
+        seasons: [all-year]
+        story: 県のブランド黒毛和牛、霜降りと和牛香
+      - id: yamanashi-kuromochi
+        name: 黒もち米
+        searchQuery: 黒米 山梨
+        category: grain
+        seasons: [autumn]
+        story: 県内の古代米、紫色とほのかな香ばしさ
+      - id: yamanashi-shiitake
+        name: 富士山麓 椎茸
+        searchQuery: 椎茸 山梨
+        category: vegetable
+        seasons: [autumn]
+        story: 富士の冷涼な気候で育つ肉厚椎茸、濃い旨味
+      - id: yamanashi-asparagus
+        name: アスパラガス
+        searchQuery: アスパラガス 山梨
+        category: vegetable
+        seasons: [spring]
+        story: 北杜の朝採りアスパラ、強い甘味と歯切れ
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 岐阜県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: gifu
+    prefecture: 岐阜県
+    prefectureCode: JP-21
+    region: chubu
+    cities:
+      - { id: gifu-city, name: 岐阜市 }
+      - { id: takayama, name: 高山市 }
+    ingredients:
+      - id: gifu-hida-beef
+        name: 飛騨牛
+        searchQuery: 飛騨牛
+        category: meat
+        seasons: [all-year]
+        story: 飛騨地方の黒毛和牛、きめ細やかな霜降りと深い旨味
+      - id: gifu-ayu
+        name: 長良川あゆ
+        searchQuery: 長良川 鮎
+        category: seafood
+        seasons: [summer]
+        story: 清流長良の天然鮎、香魚の名にふさわしい爽やか
+      - id: gifu-kabocha
+        name: 飛騨かぼちゃ
+        searchQuery: 飛騨 かぼちゃ
+        category: vegetable
+        seasons: [autumn]
+        story: 飛騨高山の宿儺(すくな)かぼちゃ、しっとり甘い
+      - id: gifu-shiitake
+        name: 飛騨椎茸
+        searchQuery: 飛騨 椎茸
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 高地で育つ原木椎茸、肉厚で香りと旨味の濃さ
+      - id: gifu-tomato
+        name: ハツコイトマト
+        searchQuery: ハツコイトマト
+        category: vegetable
+        seasons: [summer]
+        story: 県内ブランドトマト、酸味と甘味の見事な調和
+      - id: gifu-kuri-kinton
+        name: 中津川の栗
+        searchQuery: 栗 中津川
+        category: fruit
+        seasons: [autumn]
+        story: 中津川の大粒栗、和菓子文化を支える深い甘味
+      - id: gifu-grape-hime
+        name: 巨峰(岐阜)
+        searchQuery: 巨峰 岐阜
+        category: fruit
+        seasons: [summer, autumn]
+        story: 岐阜の巨峰、大粒で果汁多く食べ応え抜群
+      - id: gifu-tofu
+        name: 飛騨の豆腐
+        searchQuery: 飛騨 豆腐
+        category: grain
+        seasons: [all-year]
+        story: 山の清水と国産大豆の手豆腐、滋味深い
+      - id: gifu-soba
+        name: 飛騨そば
+        searchQuery: 飛騨そば
+        category: grain
+        seasons: [autumn]
+        story: 飛騨高地の地そば、香り立つ細打ち
+      - id: gifu-keichan
+        name: 鶏ちゃん用鶏もも
+        searchQuery: 鶏ちゃん 岐阜
+        category: meat
+        seasons: [all-year]
+        story: 飛騨郷土料理の鶏もも、味噌や醤油タレでパンチ
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 静岡県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: shizuoka
+    prefecture: 静岡県
+    prefectureCode: JP-22
+    region: chubu
+    cities:
+      - { id: shizuoka-city, name: 静岡市 }
+      - { id: hamamatsu, name: 浜松市 }
+    ingredients:
+      - id: shizuoka-wasabi
+        name: 伊豆わさび
+        searchQuery: 伊豆 わさび
+        category: vegetable
+        seasons: [all-year]
+        story: 天城山の天然湧水で育つ本わさび、爽快な辛味
+      - id: shizuoka-shirasu
+        name: 駿河湾しらす
+        searchQuery: しらす 静岡
+        category: seafood
+        seasons: [spring, autumn]
+        story: 駿河湾の生しらす、磯の香りと透明感のある甘味
+      - id: shizuoka-sakura-ebi
+        name: 桜えび
+        searchQuery: 桜えび 静岡
+        category: seafood
+        seasons: [spring, autumn]
+        story: 駿河湾の桜色の小エビ、香ばしさと深い旨味
+      - id: shizuoka-greentea
+        name: 静岡茶
+        searchQuery: 静岡茶
+        category: grain
+        seasons: [spring]
+        story: 牧之原の深蒸し煎茶、コクと旨味の濃さ
+      - id: shizuoka-melon
+        name: マスクメロン
+        searchQuery: マスクメロン 静岡
+        category: fruit
+        seasons: [all-year]
+        story: 静岡温室メロン、王様の称号に相応しい甘香
+      - id: shizuoka-mikan
+        name: 三ヶ日みかん
+        searchQuery: 三ヶ日みかん
+        category: fruit
+        seasons: [winter]
+        story: 浜松三ヶ日の温州みかん、コクのある甘味
+      - id: shizuoka-strawberry
+        name: 紅ほっぺ
+        searchQuery: 紅ほっぺ
+        category: fruit
+        seasons: [winter, spring]
+        story: 静岡の代表苺、芳醇な甘香と濃い赤
+      - id: shizuoka-katsuo
+        name: 焼津カツオ
+        searchQuery: カツオ 焼津
+        category: seafood
+        seasons: [spring, autumn]
+        story: 焼津港の鰹、もちっとした身質と濃い旨味
+      - id: shizuoka-fukuroi-musk-melon
+        name: クラウンメロン
+        searchQuery: クラウンメロン
+        category: fruit
+        seasons: [all-year]
+        story: 袋井の高級マスクメロン、極上の甘香
+      - id: shizuoka-shizuoka-beef
+        name: しずおか和牛
+        searchQuery: しずおか和牛
+        category: meat
+        seasons: [all-year]
+        story: 県内銘柄黒毛和牛、きめ細やかで上品な脂
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 愛知県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: aichi
+    prefecture: 愛知県
+    prefectureCode: JP-23
+    region: chubu
+    cities:
+      - { id: nagoya, name: 名古屋市 }
+      - { id: tahara, name: 田原市 }
+    ingredients:
+      - id: aichi-cabbage
+        name: 田原キャベツ
+        searchQuery: 田原 キャベツ
+        category: vegetable
+        seasons: [winter, spring]
+        story: 渥美半島の冬キャベツ、葉がやわらかく甘い
+      - id: aichi-uzura
+        name: うずら卵
+        searchQuery: うずら卵 愛知
+        category: meat
+        seasons: [all-year]
+        story: 豊橋のうずら卵、濃い黄身とまろやかな旨味
+      - id: aichi-anago
+        name: 三河湾穴子
+        searchQuery: 穴子 三河湾
+        category: seafood
+        seasons: [summer]
+        story: 三河湾の穴子、上品な脂と柔らかな身
+      - id: aichi-pork
+        name: みかわポーク
+        searchQuery: みかわポーク
+        category: meat
+        seasons: [all-year]
+        story: 三河地方のブランド豚、甘い脂と柔らかい繊維
+      - id: aichi-hatcho-miso
+        name: 八丁味噌
+        searchQuery: 八丁味噌
+        category: grain
+        seasons: [all-year]
+        story: 岡崎の豆味噌、深いコクとシャープな旨味
+      - id: aichi-fuki
+        name: 蕗(愛知早生)
+        searchQuery: 蕗 愛知
+        category: vegetable
+        seasons: [spring]
+        story: 愛知早生フキ、香りとシャキッとした食感
+      - id: aichi-aichi-soba
+        name: 愛知そば
+        searchQuery: そば 愛知
+        category: grain
+        seasons: [autumn]
+        story: 県内の地そば、ほどよい風味で日常使い向け
+      - id: aichi-fig
+        name: いちじく
+        searchQuery: いちじく 愛知
+        category: fruit
+        seasons: [autumn]
+        story: 安城・碧南のいちじく、つぶつぶととろける甘味
+      - id: aichi-noritake-tomato
+        name: 完熟トマト
+        searchQuery: トマト 愛知
+        category: vegetable
+        seasons: [summer]
+        story: 渥美半島の完熟トマト、酸味と甘味の調和
+      - id: aichi-aichi-beef
+        name: 知多牛
+        searchQuery: 知多牛
+        category: meat
+        seasons: [all-year]
+        story: 知多半島の黒毛和牛、きめ細やかな霜降り
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 三重県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: mie
+    prefecture: 三重県
+    prefectureCode: JP-24
+    region: kinki
+    cities:
+      - { id: tsu, name: 津市 }
+      - { id: ise, name: 伊勢市 }
+    ingredients:
+      - id: mie-matsusaka-beef
+        name: 松阪牛
+        searchQuery: 松阪牛
+        category: meat
+        seasons: [all-year]
+        story: 日本三大和牛、極上の霜降りと甘い和牛香
+      - id: mie-iseebi
+        name: 伊勢海老
+        searchQuery: 伊勢海老
+        category: seafood
+        seasons: [autumn, winter]
+        story: 伊勢志摩の天然伊勢海老、引き締まった身の甘味
+      - id: mie-awabi
+        name: 鳥羽のあわび
+        searchQuery: あわび 鳥羽
+        category: seafood
+        seasons: [summer]
+        story: 鳥羽・志摩の天然アワビ、磯の香と肉厚な身
+      - id: mie-ama-pearl-oyster
+        name: 真珠養殖の母貝(アコヤ)
+        searchQuery: アコヤ貝 三重
+        category: seafood
+        seasons: [winter]
+        story: 英虞湾の貝柱、繊細でクリーミーな味わい
+      - id: mie-tea
+        name: 伊勢茶
+        searchQuery: 伊勢茶
+        category: grain
+        seasons: [spring]
+        story: 三重の深蒸し茶、コクと甘味のしっかり感
+      - id: mie-natural-oyster
+        name: 的矢牡蠣
+        searchQuery: 的矢牡蠣
+        category: seafood
+        seasons: [winter]
+        story: 的矢湾の生食用牡蠣、清浄海域育ちの安心感
+      - id: mie-akafuku-mochi
+        name: 伊勢の餅米
+        searchQuery: 餅米 伊勢
+        category: grain
+        seasons: [autumn]
+        story: 伊勢神宮文化を支えるもち米、艶やかな粘り
+      - id: mie-konaki-pork
+        name: みえ豚
+        searchQuery: みえ豚
+        category: meat
+        seasons: [all-year]
+        story: 三重ブランド豚、甘い脂と程よい赤身
+      - id: mie-iga-rice
+        name: 伊賀米
+        searchQuery: 伊賀米
+        category: grain
+        seasons: [autumn]
+        story: 伊賀盆地のコシヒカリ、粒立ちと甘味
+      - id: mie-strong-flour-wakatake
+        name: わかたけ(海藻)
+        searchQuery: わかたけ 三重
+        category: seafood
+        seasons: [spring]
+        story: 志摩の若芽、シャキッとした歯触りと潮の香り
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 滋賀県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: shiga
+    prefecture: 滋賀県
+    prefectureCode: JP-25
+    region: kinki
+    cities:
+      - { id: otsu, name: 大津市 }
+      - { id: hikone, name: 彦根市 }
+    ingredients:
+      - id: shiga-omi-beef
+        name: 近江牛
+        searchQuery: 近江牛
+        category: meat
+        seasons: [all-year]
+        story: 日本三大和牛、肌目の細かい霜降りと深い旨味
+      - id: shiga-funazushi
+        name: 鮒寿司
+        searchQuery: 鮒寿司
+        category: seafood
+        seasons: [all-year]
+        story: 琵琶湖のニゴロブナを発酵、独特な酸味とコク
+      - id: shiga-shijimi
+        name: 瀬田しじみ
+        searchQuery: 瀬田しじみ
+        category: seafood
+        seasons: [spring, autumn]
+        story: 瀬田川の天然しじみ、濃いダシと身の旨味
+      - id: shiga-koh-iso
+        name: 琵琶湖アユ
+        searchQuery: アユ 琵琶湖
+        category: seafood
+        seasons: [summer]
+        story: 琵琶湖の固有種コアユ、香り立つ脂と身
+      - id: shiga-akakabu
+        name: 赤こんにゃく
+        searchQuery: 赤こんにゃく
+        category: vegetable
+        seasons: [all-year]
+        story: 近江八幡の郷土食、鮮やかな赤と弾力ある食感
+      - id: shiga-asparagus
+        name: 近江のアスパラ
+        searchQuery: アスパラ 滋賀
+        category: vegetable
+        seasons: [spring]
+        story: 県内のアスパラ、シャキッとして甘い穂先
+      - id: shiga-tea
+        name: 朝宮茶
+        searchQuery: 朝宮茶
+        category: grain
+        seasons: [spring]
+        story: 信楽の高地茶、香り高く渋味とコクのバランス
+      - id: shiga-iga-tomato
+        name: 滋賀トマト
+        searchQuery: トマト 滋賀
+        category: vegetable
+        seasons: [summer]
+        story: 県内の完熟トマト、酸味と甘味の濃さ
+      - id: shiga-bench-pork
+        name: 近江豚
+        searchQuery: 近江豚
+        category: meat
+        seasons: [all-year]
+        story: 県内銘柄豚、しっとり甘い脂と柔らかな赤身
+      - id: shiga-koshihikari
+        name: みずかがみ
+        searchQuery: みずかがみ
+        category: grain
+        seasons: [autumn]
+        story: 滋賀オリジナル米、つや・甘味と冷めても旨い
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 京都府
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kyoto
+    prefecture: 京都府
+    prefectureCode: JP-26
+    region: kinki
+    cities:
+      - { id: kyoto-city, name: 京都市 }
+      - { id: ayabe, name: 綾部市 }
+    ingredients:
+      - id: kyoto-kyo-vegetable-kamonasu
+        name: 賀茂なす
+        searchQuery: 賀茂なす
+        category: vegetable
+        seasons: [summer]
+        story: 京の伝統野菜、丸く肉厚で田楽の主役
+      - id: kyoto-mibuna
+        name: 壬生菜
+        searchQuery: 壬生菜
+        category: vegetable
+        seasons: [winter, spring]
+        story: 京野菜の細葉、シャキッと爽やかな香り
+      - id: kyoto-kintoki-carrot
+        name: 金時人参
+        searchQuery: 金時人参
+        category: vegetable
+        seasons: [winter]
+        story: 鮮やかな赤色の長人参、甘くお正月料理の華
+      - id: kyoto-shogoin-radish
+        name: 聖護院だいこん
+        searchQuery: 聖護院だいこん
+        category: vegetable
+        seasons: [winter]
+        story: 丸い京野菜、煮崩れせず甘味の濃い肉質
+      - id: kyoto-uji-matcha
+        name: 宇治抹茶
+        searchQuery: 宇治抹茶
+        category: grain
+        seasons: [spring]
+        story: 宇治の高級抹茶、深い緑と豊かな旨味
+      - id: kyoto-yuba
+        name: 京ゆば
+        searchQuery: 京ゆば
+        category: grain
+        seasons: [all-year]
+        story: 京都の伝統湯葉、大豆の甘い香りと繊細な層
+      - id: kyoto-shojin-tofu
+        name: 京豆腐
+        searchQuery: 京豆腐
+        category: grain
+        seasons: [all-year]
+        story: 京水と国産大豆の手豆腐、なめらかで甘い
+      - id: kyoto-tango-mackerel
+        name: 丹後の鯖
+        searchQuery: 丹後 鯖
+        category: seafood
+        seasons: [autumn]
+        story: 丹後の寒サバ、脂のりと身締まりの両立
+      - id: kyoto-iwashi
+        name: 京都伊根のいわし
+        searchQuery: 伊根 いわし
+        category: seafood
+        seasons: [summer, autumn]
+        story: 丹後の真鰯、脂が乗り煮ても焼いても主役
+      - id: kyoto-kyo-beef
+        name: 京の肉(京都肉)
+        searchQuery: 京都肉
+        category: meat
+        seasons: [all-year]
+        story: 京都産黒毛和牛、繊細な霜降りと深い旨味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 大阪府
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: osaka
+    prefecture: 大阪府
+    prefectureCode: JP-27
+    region: kinki
+    cities:
+      - { id: osaka-city, name: 大阪市 }
+      - { id: izumi, name: 泉佐野市 }
+    ingredients:
+      - id: osaka-mizunasu
+        name: 泉州水なす
+        searchQuery: 水なす 泉州
+        category: vegetable
+        seasons: [summer]
+        story: 大阪泉州の水分豊富な茄子、生でも食べられる
+      - id: osaka-takarazuka-tomato
+        name: なにわ伝統野菜トマト
+        searchQuery: なにわ トマト
+        category: vegetable
+        seasons: [summer]
+        story: 大阪の在来トマト、深い酸味と濃い旨味
+      - id: osaka-sennan-onion
+        name: 泉州たまねぎ
+        searchQuery: 泉州 たまねぎ
+        category: vegetable
+        seasons: [spring]
+        story: 泉州の早生玉ねぎ、瑞々しく辛味少なく甘い
+      - id: osaka-ko-shrimp
+        name: 大阪湾のシャコ
+        searchQuery: シャコ 大阪
+        category: seafood
+        seasons: [spring, summer]
+        story: 大阪湾の活シャコ、コリッと甘い身質
+      - id: osaka-fugu
+        name: なにわ河豚
+        searchQuery: 河豚 大阪
+        category: seafood
+        seasons: [winter]
+        story: 大阪の食文化を支える河豚、淡白で上品な身
+      - id: osaka-konbu
+        name: 大阪昆布だし
+        searchQuery: 昆布 大阪
+        category: seafood
+        seasons: [all-year]
+        story: 大阪料理の基盤、上品な旨味のだし文化
+      - id: osaka-naniwa-traditional-eggplant
+        name: 河内一寸そらまめ
+        searchQuery: 河内一寸そらまめ
+        category: vegetable
+        seasons: [spring]
+        story: 大阪伝統野菜のそら豆、大粒でホクッと甘い
+      - id: osaka-sansho
+        name: 高槻山椒
+        searchQuery: 山椒 高槻
+        category: vegetable
+        seasons: [summer]
+        story: 北摂高地の山椒、痺れと爽やかな香り
+      - id: osaka-naniwa-pork
+        name: なにわ豚
+        searchQuery: なにわ豚
+        category: meat
+        seasons: [all-year]
+        story: 大阪ブランド豚、しっとり旨味の濃い赤身
+      - id: osaka-takarazuka-shiitake
+        name: 大阪椎茸
+        searchQuery: 椎茸 大阪
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 県内の原木椎茸、肉厚で濃い旨味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 兵庫県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: hyogo
+    prefecture: 兵庫県
+    prefectureCode: JP-28
+    region: kinki
+    cities:
+      - { id: kobe, name: 神戸市 }
+      - { id: himeji, name: 姫路市 }
+    ingredients:
+      - id: hyogo-kobe-beef
+        name: 神戸牛
+        searchQuery: 神戸牛
+        category: meat
+        seasons: [all-year]
+        story: 世界に名を馳せる黒毛和牛、芸術的な霜降り
+      - id: hyogo-tajima-beef
+        name: 但馬牛
+        searchQuery: 但馬牛
+        category: meat
+        seasons: [all-year]
+        story: 神戸牛の素牛、繊細で深い和牛香
+      - id: hyogo-akashi-octopus
+        name: 明石ダコ
+        searchQuery: 明石ダコ
+        category: seafood
+        seasons: [summer]
+        story: 明石海峡の真蛸、引き締まった足と濃い旨味
+      - id: hyogo-akashi-sea-bream
+        name: 明石鯛
+        searchQuery: 明石鯛
+        category: seafood
+        seasons: [spring]
+        story: 海峡の急流で身が締まる桜鯛、上品な甘味
+      - id: hyogo-tamba-kuro
+        name: 丹波黒大豆
+        searchQuery: 丹波黒
+        category: grain
+        seasons: [autumn]
+        story: 丹波の大粒黒豆、艶やかでホクッと甘い
+      - id: hyogo-awajishima-onion
+        name: 淡路たまねぎ
+        searchQuery: 淡路たまねぎ
+        category: vegetable
+        seasons: [spring, summer]
+        story: 淡路島の早生玉ねぎ、強い甘味で生でも食べられる
+      - id: hyogo-himeji-chazuke-flour
+        name: 姫路の素麺
+        searchQuery: 素麺 姫路
+        category: grain
+        seasons: [summer]
+        story: 揖保乃糸など県内素麺、強いコシと滑らかさ
+      - id: hyogo-iwagaki
+        name: 室津 岩牡蠣
+        searchQuery: 岩牡蠣 兵庫
+        category: seafood
+        seasons: [summer]
+        story: たつの市の天然岩牡蠣、大ぶりで磯味
+      - id: hyogo-cabbage
+        name: 淡路春キャベツ
+        searchQuery: 淡路 キャベツ
+        category: vegetable
+        seasons: [spring]
+        story: 淡路島の春キャベツ、葉が柔らかく甘い
+      - id: hyogo-tamba-yama
+        name: 丹波しめじ
+        searchQuery: 丹波しめじ
+        category: vegetable
+        seasons: [autumn]
+        story: 丹波山地のしめじ、香り立つ旨味と歯ごたえ
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 奈良県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: nara
+    prefecture: 奈良県
+    prefectureCode: JP-29
+    region: kinki
+    cities:
+      - { id: nara-city, name: 奈良市 }
+      - { id: yoshino, name: 吉野郡 }
+    ingredients:
+      - id: nara-yamato-tea
+        name: 大和茶
+        searchQuery: 大和茶
+        category: grain
+        seasons: [spring]
+        story: 奈良の高地で育つ煎茶、深い旨味と渋味
+      - id: nara-yamato-yasai
+        name: 大和野菜(大和まな)
+        searchQuery: 大和野菜 まな
+        category: vegetable
+        seasons: [winter]
+        story: 奈良の伝統野菜、葉が柔らかく漬物に最適
+      - id: nara-katsuragi-tomato
+        name: 葛城トマト
+        searchQuery: トマト 奈良
+        category: vegetable
+        seasons: [summer]
+        story: 葛城産の完熟トマト、濃い甘酸
+      - id: nara-yoshino-kuzu
+        name: 吉野葛
+        searchQuery: 吉野葛
+        category: grain
+        seasons: [all-year]
+        story: 吉野の天然葛、純白でとろりとした口当たり
+      - id: nara-mizuna
+        name: 大和水菜
+        searchQuery: 水菜 奈良
+        category: vegetable
+        seasons: [winter]
+        story: 奈良の在来水菜、シャキッと爽快な葉
+      - id: nara-shiitake
+        name: 吉野椎茸
+        searchQuery: 椎茸 吉野
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 吉野の原木椎茸、肉厚で香り高い
+      - id: nara-mochizuki-chicken
+        name: 大和肉鶏
+        searchQuery: 大和肉鶏
+        category: meat
+        seasons: [all-year]
+        story: 奈良の銘柄地鶏、しっかりした肉質と濃い旨味
+      - id: nara-strawberry
+        name: いちご(あすかルビー)
+        searchQuery: あすかルビー
+        category: fruit
+        seasons: [winter, spring]
+        story: 奈良オリジナル苺、大粒で濃い甘味と香り
+      - id: nara-kakinoha-saba
+        name: 柿の葉寿司用さば
+        searchQuery: 柿の葉寿司
+        category: seafood
+        seasons: [all-year]
+        story: 山奥に運ばれた鯖文化、柿の葉の香りで保存
+      - id: nara-amanatsu
+        name: 奈良の柿(富有柿)
+        searchQuery: 富有柿 奈良
+        category: fruit
+        seasons: [autumn]
+        story: 奈良五條の富有柿、濃いオレンジと甘い果肉
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 和歌山県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: wakayama
+    prefecture: 和歌山県
+    prefectureCode: JP-30
+    region: kinki
+    cities:
+      - { id: wakayama-city, name: 和歌山市 }
+      - { id: tanabe, name: 田辺市 }
+    ingredients:
+      - id: wakayama-arida-mikan
+        name: 有田みかん
+        searchQuery: 有田みかん
+        category: fruit
+        seasons: [winter]
+        story: 有田川流域のみかん、濃いオレンジと深い甘味
+      - id: wakayama-nanko-ume
+        name: 南高梅
+        searchQuery: 南高梅
+        category: fruit
+        seasons: [summer]
+        story: 紀州の代表梅、果肉柔らかく梅干しの王
+      - id: wakayama-momo
+        name: 紀州桃
+        searchQuery: 桃 和歌山
+        category: fruit
+        seasons: [summer]
+        story: 紀州の桃、果汁したたる甘味と上品な香り
+      - id: wakayama-grape
+        name: 巨峰(和歌山)
+        searchQuery: 巨峰 和歌山
+        category: fruit
+        seasons: [summer]
+        story: 紀北のぶどう、大粒で甘酸の調和
+      - id: wakayama-katsuo
+        name: 紀州カツオ
+        searchQuery: カツオ 和歌山
+        category: seafood
+        seasons: [spring]
+        story: 黒潮の鰹、もちっとした身質と凝縮した旨味
+      - id: wakayama-kishu-saba
+        name: 紀州サバ
+        searchQuery: サバ 和歌山
+        category: seafood
+        seasons: [autumn]
+        story: 太平洋側の寒サバ、脂と身質の均衡
+      - id: wakayama-yamagani
+        name: ヤマトカワエビ
+        searchQuery: 川エビ 和歌山
+        category: seafood
+        seasons: [summer]
+        story: 熊野川流域の川エビ、香ばしい風味
+      - id: wakayama-pearberry
+        name: いちご(まりひめ)
+        searchQuery: まりひめ
+        category: fruit
+        seasons: [winter, spring]
+        story: 和歌山オリジナル苺、大粒で濃い甘味
+      - id: wakayama-kishu-bingo
+        name: 紀州備長炭塩
+        searchQuery: 紀州備長 塩
+        category: seafood
+        seasons: [all-year]
+        story: 紀州海水塩、まろやかな塩味で素材を引き立てる
+      - id: wakayama-kishu-pork
+        name: 紀州豚
+        searchQuery: 紀州豚
+        category: meat
+        seasons: [all-year]
+        story: 県内ブランド豚、しっとり旨味の濃い赤身
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 鳥取県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: tottori
+    prefecture: 鳥取県
+    prefectureCode: JP-31
+    region: chugoku
+    cities:
+      - { id: tottori-city, name: 鳥取市 }
+      - { id: sakaiminato, name: 境港市 }
+    ingredients:
+      - id: tottori-matsuba-gani
+        name: 松葉ガニ
+        searchQuery: 松葉ガニ
+        category: seafood
+        seasons: [winter]
+        story: 山陰のズワイガニ雄、引き締まった身と濃厚な蟹味噌
+      - id: tottori-iwagaki-haru
+        name: 岩牡蠣(夏輝)
+        searchQuery: 夏輝 牡蠣
+        category: seafood
+        seasons: [summer]
+        story: 鳥取の夏の天然岩牡蠣、大ぶりで磯味濃厚
+      - id: tottori-sakyu-rakkyo
+        name: 砂丘らっきょう
+        searchQuery: 砂丘らっきょう
+        category: vegetable
+        seasons: [summer]
+        story: 鳥取砂丘のらっきょう、シャキッとした辛味と爽やか
+      - id: tottori-nashi
+        name: 二十世紀梨
+        searchQuery: 二十世紀梨
+        category: fruit
+        seasons: [autumn]
+        story: 鳥取の青梨代表、透ける果肉と爽快な甘酸
+      - id: tottori-tottori-beef
+        name: 鳥取和牛(オレイン55)
+        searchQuery: 鳥取和牛
+        category: meat
+        seasons: [all-year]
+        story: 県内ブランド黒毛和牛、甘い脂と柔らかな肉質
+      - id: tottori-mottiri-mochi
+        name: 鳥取スイカ
+        searchQuery: スイカ 鳥取
+        category: fruit
+        seasons: [summer]
+        story: 倉吉の大栄西瓜、シャリ感と濃い甘味
+      - id: tottori-bench-pork
+        name: 大山豚
+        searchQuery: 大山豚
+        category: meat
+        seasons: [all-year]
+        story: 大山山麓のブランド豚、甘い脂と引き締まった赤身
+      - id: tottori-shijimi
+        name: 中海しじみ
+        searchQuery: しじみ 中海
+        category: seafood
+        seasons: [winter]
+        story: 中海の大粒しじみ、濃いだしとぷりっとした身
+      - id: tottori-yumemiya
+        name: ゆめみのり(米)
+        searchQuery: ゆめみのり 鳥取
+        category: grain
+        seasons: [autumn]
+        story: 県オリジナル米、つやのある粒と爽やかな甘味
+      - id: tottori-yamagani
+        name: モサエビ
+        searchQuery: モサエビ
+        category: seafood
+        seasons: [autumn, winter]
+        story: 山陰の地エビ、生で食べると甘味が極まる
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 島根県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: shimane
+    prefecture: 島根県
+    prefectureCode: JP-32
+    region: chugoku
+    cities:
+      - { id: matsue, name: 松江市 }
+      - { id: izumo, name: 出雲市 }
+    ingredients:
+      - id: shimane-shijimi
+        name: 宍道湖しじみ
+        searchQuery: 宍道湖しじみ
+        category: seafood
+        seasons: [summer, winter]
+        story: 宍道湖の大粒ヤマトしじみ、濃いダシと甘味
+      - id: shimane-iwami-beef
+        name: 石見牛
+        searchQuery: 石見牛
+        category: meat
+        seasons: [all-year]
+        story: 県西の黒毛和牛、深い和牛香と上品な脂
+      - id: shimane-izumo-soba
+        name: 出雲そば
+        searchQuery: 出雲そば
+        category: grain
+        seasons: [autumn]
+        story: 殻ごと挽く黒い蕎麦、香りと風味の濃さ
+      - id: shimane-buri
+        name: 浜田寒ブリ
+        searchQuery: 浜田 寒ブリ
+        category: seafood
+        seasons: [winter]
+        story: 浜田の天然寒鰤、脂と身質の極まり
+      - id: shimane-japanese-greentea
+        name: 出雲銘茶
+        searchQuery: 出雲銘茶
+        category: grain
+        seasons: [spring]
+        story: 県内の伝統銘茶、芳香と深い旨味
+      - id: shimane-fugu
+        name: 浜田のあなご
+        searchQuery: あなご 浜田
+        category: seafood
+        seasons: [summer]
+        story: 浜田の穴子、ふっくらと甘い脂
+      - id: shimane-iwagaki
+        name: 隠岐の岩牡蠣
+        searchQuery: 岩牡蠣 隠岐
+        category: seafood
+        seasons: [summer]
+        story: 隠岐諸島の天然岩牡蠣、大ぶりで濃厚な磯味
+      - id: shimane-koshihikari
+        name: コシヒカリ(島根)
+        searchQuery: コシヒカリ 島根
+        category: grain
+        seasons: [autumn]
+        story: 中山間で育つコシヒカリ、つや・甘味のしっかり感
+      - id: shimane-akebia-fruit
+        name: あけび
+        searchQuery: あけび 島根
+        category: fruit
+        seasons: [autumn]
+        story: 山陰の山の幸、ほのかな甘味と独特の香り
+      - id: shimane-iwami-imo
+        name: 石見銀山ねぎ
+        searchQuery: 石見銀山ねぎ
+        category: vegetable
+        seasons: [winter]
+        story: 大田の白ねぎ、太く甘く加熱でとろける
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 岡山県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: okayama
+    prefecture: 岡山県
+    prefectureCode: JP-33
+    region: chugoku
+    cities:
+      - { id: okayama-city, name: 岡山市 }
+      - { id: kurashiki, name: 倉敷市 }
+    ingredients:
+      - id: okayama-momo
+        name: 白桃(清水白桃)
+        searchQuery: 清水白桃
+        category: fruit
+        seasons: [summer]
+        story: 岡山の白桃、上品な甘味と滴る果汁
+      - id: okayama-pione
+        name: ピオーネ
+        searchQuery: ピオーネ 岡山
+        category: fruit
+        seasons: [summer, autumn]
+        story: 大粒の黒ぶどう、ジューシーで濃い甘味
+      - id: okayama-muscat
+        name: マスカット・オブ・アレキサンドリア
+        searchQuery: マスカット 岡山
+        category: fruit
+        seasons: [summer]
+        story: 岡山の白ぶどう、芳香と上品な甘さ
+      - id: okayama-bizen-shiokushi
+        name: 黄ニラ
+        searchQuery: 黄ニラ
+        category: vegetable
+        seasons: [winter, spring]
+        story: 岡山の特産、柔らかく甘いプレミアム韮
+      - id: okayama-sawara
+        name: 瀬戸内サワラ
+        searchQuery: サワラ 瀬戸内
+        category: seafood
+        seasons: [spring]
+        story: 瀬戸内の春サワラ、上品な脂と柔らかな身
+      - id: okayama-iwagaki
+        name: 日生牡蠣
+        searchQuery: 日生 牡蠣
+        category: seafood
+        seasons: [winter]
+        story: 日生湾の濃厚な牡蠣、お好み焼きにも
+      - id: okayama-bizen-rice
+        name: 朝日米
+        searchQuery: 朝日米
+        category: grain
+        seasons: [autumn]
+        story: 在来種の岡山米、コシヒカリの祖先と言われる甘味
+      - id: okayama-chiya-beef
+        name: 千屋牛
+        searchQuery: 千屋牛
+        category: meat
+        seasons: [all-year]
+        story: 新見市の黒毛和牛、繊細な霜降りと和牛香
+      - id: okayama-jindaiko
+        name: 岡山の柿(西条柿)
+        searchQuery: 柿 岡山
+        category: fruit
+        seasons: [autumn]
+        story: 岡山の干し柿向け、深い甘味と濃い果肉
+      - id: okayama-cabbage-spring
+        name: 春キャベツ(岡山)
+        searchQuery: キャベツ 岡山
+        category: vegetable
+        seasons: [spring]
+        story: 県内の春キャベツ、葉が柔らかく甘い
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 広島県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: hiroshima
+    prefecture: 広島県
+    prefectureCode: JP-34
+    region: chugoku
+    cities:
+      - { id: hiroshima-city, name: 広島市 }
+      - { id: onomichi, name: 尾道市 }
+    ingredients:
+      - id: hiroshima-oyster
+        name: 広島カキ
+        searchQuery: 広島 牡蠣
+        category: seafood
+        seasons: [winter]
+        story: 瀬戸内海の養殖カキ、全国 6 割の生産シェア
+      - id: hiroshima-lemon
+        name: 瀬戸田レモン
+        searchQuery: 瀬戸田レモン
+        category: fruit
+        seasons: [winter]
+        story: 瀬戸内のレモン、皮まで食べられる安心ブランド
+      - id: hiroshima-anago
+        name: 宮島あなご
+        searchQuery: 宮島 あなご
+        category: seafood
+        seasons: [summer]
+        story: 宮島の穴子飯文化、ふっくら甘い焼き穴子
+      - id: hiroshima-okonomi
+        name: お好み焼き素材小麦
+        searchQuery: お好み焼き 広島
+        category: grain
+        seasons: [all-year]
+        story: 広島の小麦粉文化、薄く焼く独自スタイル
+      - id: hiroshima-hassaku
+        name: 八朔
+        searchQuery: 八朔 広島
+        category: fruit
+        seasons: [winter, spring]
+        story: 因島原産の柑橘、ほろ苦さと爽やかな甘み
+      - id: hiroshima-hiroshima-beef
+        name: 広島牛
+        searchQuery: 広島牛
+        category: meat
+        seasons: [all-year]
+        story: 県内の黒毛和牛、繊細な霜降りと和牛香
+      - id: hiroshima-jako-shrimp
+        name: 瀬戸内のしらす
+        searchQuery: しらす 瀬戸内
+        category: seafood
+        seasons: [spring, autumn]
+        story: 瀬戸内のしらす、磯の香りと淡い甘味
+      - id: hiroshima-yuzu
+        name: 安芸の柚子
+        searchQuery: 柚子 広島
+        category: fruit
+        seasons: [autumn, winter]
+        story: 安芸の柚子、爽やかな香りで料理を引き立てる
+      - id: hiroshima-kuwai
+        name: 福山くわい
+        searchQuery: 福山 くわい
+        category: vegetable
+        seasons: [winter]
+        story: 福山のくわい、ホクッとした食感とほのかな苦味
+      - id: hiroshima-shiraneji
+        name: 広島ネギ
+        searchQuery: ネギ 広島
+        category: vegetable
+        seasons: [winter]
+        story: 県内の白ねぎ、加熱でとろける甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 山口県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: yamaguchi
+    prefecture: 山口県
+    prefectureCode: JP-35
+    region: chugoku
+    cities:
+      - { id: yamaguchi-city, name: 山口市 }
+      - { id: shimonoseki, name: 下関市 }
+    ingredients:
+      - id: yamaguchi-fugu
+        name: 下関ふぐ
+        searchQuery: 下関ふぐ
+        category: seafood
+        seasons: [winter]
+        story: 下関の天然トラフグ、透ける身と上品な旨味
+      - id: yamaguchi-anko
+        name: あんこう(下関)
+        searchQuery: あんこう 下関
+        category: seafood
+        seasons: [winter]
+        story: 山陰沖のあんこう、濃厚な肝と繊細な身
+      - id: yamaguchi-mikan
+        name: 周防大島みかん
+        searchQuery: 周防大島 みかん
+        category: fruit
+        seasons: [winter]
+        story: 瀬戸内の温州みかん、コクのある甘味
+      - id: yamaguchi-yamaguchi-beef
+        name: やまぐち和牛
+        searchQuery: やまぐち和牛
+        category: meat
+        seasons: [all-year]
+        story: 県内ブランド黒毛和牛、上質な霜降り
+      - id: yamaguchi-uni
+        name: 萩の雲丹
+        searchQuery: 雲丹 萩
+        category: seafood
+        seasons: [summer]
+        story: 萩沖の天然ウニ、濃厚な甘味と磯の香り
+      - id: yamaguchi-iwagaki
+        name: 周防灘 岩牡蠣
+        searchQuery: 岩牡蠣 山口
+        category: seafood
+        seasons: [summer]
+        story: 周防灘の岩牡蠣、夏の旨味が詰まる大粒
+      - id: yamaguchi-kabu
+        name: 萩の野菜
+        searchQuery: 野菜 萩
+        category: vegetable
+        seasons: [all-year]
+        story: 萩のブランド野菜、香り高く品質の高さ
+      - id: yamaguchi-tamatebako-cabbage
+        name: 山口キャベツ
+        searchQuery: キャベツ 山口
+        category: vegetable
+        seasons: [winter, spring]
+        story: 県内の冬キャベツ、肉厚で甘い葉
+      - id: yamaguchi-natsu-mikan
+        name: 萩夏みかん
+        searchQuery: 夏みかん 萩
+        category: fruit
+        seasons: [spring, summer]
+        story: 萩発祥の夏みかん、爽やかな酸味と香り
+      - id: yamaguchi-koshihikari
+        name: 山口コシヒカリ
+        searchQuery: コシヒカリ 山口
+        category: grain
+        seasons: [autumn]
+        story: 中山間で育つ米、つやのある粒と甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 徳島県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: tokushima
+    prefecture: 徳島県
+    prefectureCode: JP-36
+    region: shikoku
+    cities:
+      - { id: tokushima-city, name: 徳島市 }
+      - { id: naruto, name: 鳴門市 }
+    ingredients:
+      - id: tokushima-sudachi
+        name: すだち
+        searchQuery: すだち 徳島
+        category: fruit
+        seasons: [autumn]
+        story: 徳島の代表柑橘、爽快な酸味で和洋問わず万能
+      - id: tokushima-naruto-wakame
+        name: 鳴門わかめ
+        searchQuery: 鳴門わかめ
+        category: seafood
+        seasons: [spring]
+        story: 鳴門海峡の肉厚わかめ、シャキッとした歯ごたえ
+      - id: tokushima-naruto-tai
+        name: 鳴門鯛
+        searchQuery: 鳴門鯛
+        category: seafood
+        seasons: [spring]
+        story: 鳴門海峡の真鯛、急流で身が締まり上品な甘味
+      - id: tokushima-renkon
+        name: 徳島れんこん
+        searchQuery: れんこん 徳島
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 全国 2 位の蓮根、シャキッと白く肉厚
+      - id: tokushima-awajidori
+        name: 阿波尾鶏
+        searchQuery: 阿波尾鶏
+        category: meat
+        seasons: [all-year]
+        story: 徳島の銘柄地鶏、コクと旨味の強さ
+      - id: tokushima-tokushima-pork
+        name: 阿波豚
+        searchQuery: 阿波豚
+        category: meat
+        seasons: [all-year]
+        story: 徳島ブランド豚、しっとりした赤身と甘い脂
+      - id: tokushima-naruto-kintoki
+        name: 鳴門金時(さつまいも)
+        searchQuery: 鳴門金時
+        category: vegetable
+        seasons: [autumn]
+        story: 鳴門の砂地で育つ金時芋、ホクホクと甘い
+      - id: tokushima-yuzu
+        name: 木頭柚子
+        searchQuery: 木頭柚子
+        category: fruit
+        seasons: [autumn, winter]
+        story: 那賀町の柚子、爽やかな香りで料理を彩る
+      - id: tokushima-awa-bancha
+        name: 阿波番茶
+        searchQuery: 阿波番茶
+        category: grain
+        seasons: [summer]
+        story: 徳島の発酵茶、ほのかな酸味と素朴な香り
+      - id: tokushima-mochi-rice
+        name: 阿波もち麦
+        searchQuery: もち麦 徳島
+        category: grain
+        seasons: [autumn]
+        story: 阿波の在来もち麦、もっちりした食感
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 香川県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kagawa
+    prefecture: 香川県
+    prefectureCode: JP-37
+    region: shikoku
+    cities:
+      - { id: takamatsu, name: 高松市 }
+      - { id: shodoshima, name: 小豆島町 }
+    ingredients:
+      - id: kagawa-sanuki-udon
+        name: 讃岐うどん
+        searchQuery: 讃岐うどん
+        category: grain
+        seasons: [all-year]
+        story: 県を代表する麺、強いコシとつるりとした喉ごし
+      - id: kagawa-olive
+        name: 小豆島オリーブ
+        searchQuery: 小豆島 オリーブ
+        category: vegetable
+        seasons: [autumn]
+        story: 日本初のオリーブ産地、香り高いオリーブオイル
+      - id: kagawa-olive-pork
+        name: オリーブ豚
+        searchQuery: オリーブ豚
+        category: meat
+        seasons: [all-year]
+        story: 小豆島のブランド豚、甘い脂と豊かな旨味
+      - id: kagawa-olive-beef
+        name: オリーブ牛
+        searchQuery: オリーブ牛
+        category: meat
+        seasons: [all-year]
+        story: 小豆島のブランド和牛、深い和牛香と上品な脂
+      - id: kagawa-iriko-anchovy
+        name: 伊吹いりこ
+        searchQuery: 伊吹いりこ
+        category: seafood
+        seasons: [summer]
+        story: 観音寺の片口鰯煮干し、上品な旨味の出汁
+      - id: kagawa-hamachi
+        name: ハマチ(オリーブハマチ)
+        searchQuery: オリーブハマチ
+        category: seafood
+        seasons: [winter]
+        story: オリーブで育つ養殖ハマチ、引き締まり脂のり良し
+      - id: kagawa-strawberry
+        name: いちご(さぬきひめ)
+        searchQuery: さぬきひめ
+        category: fruit
+        seasons: [winter, spring]
+        story: 香川オリジナル苺、大粒で香り高く甘い
+      - id: kagawa-asparagus
+        name: 香川アスパラ
+        searchQuery: アスパラ 香川
+        category: vegetable
+        seasons: [spring]
+        story: 県内のアスパラ、シャキッと甘く朝採れ
+      - id: kagawa-sanuki-chicken
+        name: さぬき夢豚
+        searchQuery: さぬき夢豚
+        category: meat
+        seasons: [all-year]
+        story: 香川のブランド豚、もっちり甘い赤身
+      - id: kagawa-shodo-tomato
+        name: 小豆島完熟トマト
+        searchQuery: トマト 小豆島
+        category: vegetable
+        seasons: [summer]
+        story: 小豆島の太陽で育つ完熟トマト、濃い旨味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 愛媛県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: ehime
+    prefecture: 愛媛県
+    prefectureCode: JP-38
+    region: shikoku
+    cities:
+      - { id: matsuyama, name: 松山市 }
+      - { id: uwajima, name: 宇和島市 }
+    ingredients:
+      - id: ehime-mikan
+        name: 愛媛みかん
+        searchQuery: 愛媛みかん
+        category: fruit
+        seasons: [winter]
+        story: 全国屈指のみかん産地、コクと甘味のバランス
+      - id: ehime-iyokan
+        name: 伊予柑
+        searchQuery: 伊予柑
+        category: fruit
+        seasons: [winter, spring]
+        story: 愛媛発祥の柑橘、芳香と濃厚な甘味
+      - id: ehime-setoka
+        name: せとか
+        searchQuery: せとか 愛媛
+        category: fruit
+        seasons: [winter, spring]
+        story: 柑橘の大トロ、とろける果肉と濃い甘味
+      - id: ehime-madai
+        name: 宇和島真鯛
+        searchQuery: 真鯛 宇和島
+        category: seafood
+        seasons: [spring]
+        story: 宇和海の養殖真鯛、生産量日本一の上質
+      - id: ehime-yamenanko
+        name: 養殖ブリ(宇和島)
+        searchQuery: ブリ 宇和島
+        category: seafood
+        seasons: [winter]
+        story: 宇和海の養殖ブリ、脂と身質の均衡
+      - id: ehime-iyo-beef
+        name: 伊予牛(絹の味)
+        searchQuery: 伊予牛
+        category: meat
+        seasons: [all-year]
+        story: 愛媛の黒毛和牛、繊細な霜降りと和牛香
+      - id: ehime-iyo-pork
+        name: 伊予豚
+        searchQuery: 伊予豚
+        category: meat
+        seasons: [all-year]
+        story: 愛媛のブランド豚、しっとり甘い脂
+      - id: ehime-jako
+        name: ジャコ天用じゃこ
+        searchQuery: ジャコ天 愛媛
+        category: seafood
+        seasons: [all-year]
+        story: 宇和島ジャコ天の魚すり身、香ばしさが命
+      - id: ehime-strawberry
+        name: 紅い雫
+        searchQuery: 紅い雫 愛媛
+        category: fruit
+        seasons: [winter, spring]
+        story: 愛媛のプレミアム苺、濃い赤と芳醇な香り
+      - id: ehime-tomato
+        name: 愛媛トマト
+        searchQuery: トマト 愛媛
+        category: vegetable
+        seasons: [summer]
+        story: 県内の完熟トマト、酸味と甘味のしっかり感
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 福岡県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: fukuoka
+    prefecture: 福岡県
+    prefectureCode: JP-40
+    region: kyushu-okinawa
+    cities:
+      - { id: fukuoka-city, name: 福岡市 }
+      - { id: itoshima, name: 糸島市 }
+    ingredients:
+      - id: fukuoka-amaou
+        name: あまおう
+        searchQuery: あまおう
+        category: fruit
+        seasons: [winter, spring]
+        story: 福岡の代表苺、大粒・甘味・コクのバランスは別格
+      - id: fukuoka-mentaiko
+        name: 明太子
+        searchQuery: 明太子 福岡
+        category: seafood
+        seasons: [all-year]
+        story: 博多名物、辛味と旨味の凝縮した珠玉のたら子
+      - id: fukuoka-itoshima-oyster
+        name: 糸島カキ
+        searchQuery: 糸島 カキ
+        category: seafood
+        seasons: [winter]
+        story: 玄界灘の養殖カキ、塩気と甘味のバランス
+      - id: fukuoka-hakata-onion
+        name: 博多甘塾玉ねぎ
+        searchQuery: 博多 玉ねぎ
+        category: vegetable
+        seasons: [spring]
+        story: 福岡の春玉ねぎ、瑞々しく辛味少なく甘い
+      - id: fukuoka-yame-tea
+        name: 八女茶
+        searchQuery: 八女茶
+        category: grain
+        seasons: [spring]
+        story: 八女の高級玉露、深い旨味と濃い香り
+      - id: fukuoka-aburaae
+        name: 糸島のあぶらえ
+        searchQuery: 糸島 食材
+        category: seafood
+        seasons: [spring, summer]
+        story: 玄界灘の地魚、瑞々しい身と上品な脂
+      - id: fukuoka-hakata-pork
+        name: はかた豚(博多和牛)
+        searchQuery: 博多和牛
+        category: meat
+        seasons: [all-year]
+        story: 福岡ブランド黒毛和牛、繊細な霜降り
+      - id: fukuoka-natsumi
+        name: 夏みかん
+        searchQuery: 夏みかん 福岡
+        category: fruit
+        seasons: [spring, summer]
+        story: 県内の夏みかん、酸味と爽快な香り
+      - id: fukuoka-asparagus
+        name: 福岡アスパラ
+        searchQuery: アスパラ 福岡
+        category: vegetable
+        seasons: [spring]
+        story: 福岡県のアスパラ、太く甘味の強い穂先
+      - id: fukuoka-mizuna
+        name: 博多水菜
+        searchQuery: 水菜 福岡
+        category: vegetable
+        seasons: [winter, spring]
+        story: 福岡の在来水菜、シャキッと爽快な葉
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 佐賀県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: saga
+    prefecture: 佐賀県
+    prefectureCode: JP-41
+    region: kyushu-okinawa
+    cities:
+      - { id: saga-city, name: 佐賀市 }
+      - { id: karatsu, name: 唐津市 }
+    ingredients:
+      - id: saga-saga-beef
+        name: 佐賀牛
+        searchQuery: 佐賀牛
+        category: meat
+        seasons: [all-year]
+        story: 佐賀の黒毛和牛、極上の霜降りと深い和牛香
+      - id: saga-ariake-nori
+        name: 有明海苔
+        searchQuery: 有明海苔
+        category: seafood
+        seasons: [winter]
+        story: 有明海の養殖海苔、香りと旨味の濃さ
+      - id: saga-mochi-rice
+        name: 肥前の朝食(米)
+        searchQuery: 米 佐賀
+        category: grain
+        seasons: [autumn]
+        story: 佐賀の銘柄米さがびより、艶やかでもちもち
+      - id: saga-onion
+        name: 佐賀玉ねぎ
+        searchQuery: 玉ねぎ 佐賀
+        category: vegetable
+        seasons: [spring, summer]
+        story: 県内の早生玉ねぎ、瑞々しい甘味
+      - id: saga-asparagus
+        name: 佐賀アスパラ
+        searchQuery: アスパラ 佐賀
+        category: vegetable
+        seasons: [spring]
+        story: 県南の太アスパラ、シャキッと甘い穂先
+      - id: saga-mikan
+        name: 佐賀みかん
+        searchQuery: みかん 佐賀
+        category: fruit
+        seasons: [winter]
+        story: 県内の温州みかん、コクのある甘味
+      - id: saga-iwagaki
+        name: 唐津 岩牡蠣
+        searchQuery: 唐津 岩牡蠣
+        category: seafood
+        seasons: [summer]
+        story: 唐津の岩牡蠣、夏の旨味が詰まる大粒
+      - id: saga-natsumi
+        name: 唐津サバ
+        searchQuery: サバ 唐津
+        category: seafood
+        seasons: [autumn]
+        story: 玄界灘のサバ、脂のりと身締まりの均衡
+      - id: saga-hizen-cheese
+        name: 肥前なちゅらるチーズ
+        searchQuery: チーズ 佐賀
+        category: cheese
+        seasons: [all-year]
+        story: 県内の手作りチーズ、塩味控えめの素朴な味
+      - id: saga-imari-pear
+        name: 伊万里梨
+        searchQuery: 伊万里梨
+        category: fruit
+        seasons: [autumn]
+        story: 伊万里の梨、シャキッと水分豊かな甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 長崎県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: nagasaki
+    prefecture: 長崎県
+    prefectureCode: JP-42
+    region: kyushu-okinawa
+    cities:
+      - { id: nagasaki-city, name: 長崎市 }
+      - { id: goto, name: 五島市 }
+    ingredients:
+      - id: nagasaki-goto-udon
+        name: 五島うどん
+        searchQuery: 五島うどん
+        category: grain
+        seasons: [all-year]
+        story: 五島列島の細打ち手延べ、つるりとしたコシ
+      - id: nagasaki-buri
+        name: 長崎ブリ
+        searchQuery: ブリ 長崎
+        category: seafood
+        seasons: [winter]
+        story: 長崎沖の養殖ブリ、脂と身質のバランス
+      - id: nagasaki-iseebi
+        name: 五島伊勢海老
+        searchQuery: 伊勢海老 五島
+        category: seafood
+        seasons: [autumn, winter]
+        story: 五島の天然伊勢海老、引き締まった身の甘み
+      - id: nagasaki-ago
+        name: あご(飛魚)
+        searchQuery: あご 長崎
+        category: seafood
+        seasons: [summer]
+        story: 五島の飛魚、上品なだしと香ばしさ
+      - id: nagasaki-iidaba-beef
+        name: 長崎和牛
+        searchQuery: 長崎和牛
+        category: meat
+        seasons: [all-year]
+        story: 県の黒毛和牛、繊細な霜降りと和牛香
+      - id: nagasaki-biwa
+        name: 茂木びわ
+        searchQuery: 茂木びわ
+        category: fruit
+        seasons: [summer]
+        story: 長崎茂木の大粒びわ、上品な甘味
+      - id: nagasaki-castera-flour
+        name: カステラ用素材
+        searchQuery: カステラ 長崎
+        category: grain
+        seasons: [all-year]
+        story: 長崎銘菓の素材、卵と砂糖の織りなす甘味
+      - id: nagasaki-mikan
+        name: 長崎みかん
+        searchQuery: みかん 長崎
+        category: fruit
+        seasons: [winter]
+        story: 長崎西海の温州みかん、コクのある甘味
+      - id: nagasaki-shiitake
+        name: 雲仙椎茸
+        searchQuery: 椎茸 雲仙
+        category: vegetable
+        seasons: [autumn]
+        story: 雲仙の原木椎茸、肉厚で濃い旨味
+      - id: nagasaki-sasebo-flatfish
+        name: 平戸ヒラメ
+        searchQuery: 平戸 ヒラメ
+        category: seafood
+        seasons: [winter]
+        story: 平戸の天然ヒラメ、引き締まった白身
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 熊本県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kumamoto
+    prefecture: 熊本県
+    prefectureCode: JP-43
+    region: kyushu-okinawa
+    cities:
+      - { id: kumamoto-city, name: 熊本市 }
+      - { id: aso, name: 阿蘇市 }
+    ingredients:
+      - id: kumamoto-akaushi
+        name: あか牛(熊本和牛)
+        searchQuery: あか牛 熊本
+        category: meat
+        seasons: [all-year]
+        story: 熊本の褐毛和牛、赤身の旨味と程よい霜降り
+      - id: kumamoto-basashi
+        name: 馬刺し
+        searchQuery: 馬刺し 熊本
+        category: meat
+        seasons: [all-year]
+        story: 熊本の郷土食、ヘルシーで甘味のある赤身
+      - id: kumamoto-tomato
+        name: 熊本トマト
+        searchQuery: トマト 熊本
+        category: vegetable
+        seasons: [winter, spring]
+        story: 全国 1 位の生産量、深い赤と濃い旨味
+      - id: kumamoto-watermelon
+        name: 熊本スイカ
+        searchQuery: スイカ 熊本
+        category: fruit
+        seasons: [summer]
+        story: 全国 1 位の西瓜、シャリ感と濃い甘さ
+      - id: kumamoto-strawberry
+        name: いちご(ゆうべに)
+        searchQuery: ゆうべに 熊本
+        category: fruit
+        seasons: [winter, spring]
+        story: 熊本オリジナル苺、大粒で甘香の濃さ
+      - id: kumamoto-amakusa-iwagaki
+        name: 天草岩牡蠣
+        searchQuery: 天草 岩牡蠣
+        category: seafood
+        seasons: [summer]
+        story: 天草の天然岩牡蠣、大ぶりで磯味濃厚
+      - id: kumamoto-renkon
+        name: 熊本れんこん
+        searchQuery: れんこん 熊本
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 八代の蓮根、シャキッと白く肉厚
+      - id: kumamoto-takana
+        name: 阿蘇高菜
+        searchQuery: 高菜 阿蘇
+        category: vegetable
+        seasons: [spring]
+        story: 阿蘇の在来高菜、爽やかな辛味と漬物文化
+      - id: kumamoto-amakusa-saba
+        name: 天草サバ
+        searchQuery: サバ 天草
+        category: seafood
+        seasons: [autumn]
+        story: 天草の地サバ、脂のりと身締まりの均衡
+      - id: kumamoto-amakusa-melon
+        name: 阿蘇高原野菜
+        searchQuery: 阿蘇 野菜
+        category: vegetable
+        seasons: [summer]
+        story: 阿蘇高原の冷涼な気候で育つ野菜、瑞々しさ
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 大分県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: oita
+    prefecture: 大分県
+    prefectureCode: JP-44
+    region: kyushu-okinawa
+    cities:
+      - { id: oita-city, name: 大分市 }
+      - { id: usuki, name: 臼杵市 }
+    ingredients:
+      - id: oita-sekiaji
+        name: 関アジ
+        searchQuery: 関アジ
+        category: seafood
+        seasons: [summer]
+        story: 豊予海峡の天然アジ、引き締まり脂の乗りも別格
+      - id: oita-sekisaba
+        name: 関サバ
+        searchQuery: 関サバ
+        category: seafood
+        seasons: [autumn]
+        story: 豊予海峡の天然サバ、身質の良さで全国に響く
+      - id: oita-bungo-beef
+        name: 豊後牛
+        searchQuery: 豊後牛
+        category: meat
+        seasons: [all-year]
+        story: 大分のブランド黒毛和牛、繊細な霜降りと和牛香
+      - id: oita-kabosu
+        name: かぼす
+        searchQuery: かぼす 大分
+        category: fruit
+        seasons: [autumn]
+        story: 大分のかぼす、爽やかな酸味で何にでも合う
+      - id: oita-yaseuma
+        name: 大分シイタケ
+        searchQuery: 椎茸 大分
+        category: vegetable
+        seasons: [autumn, winter]
+        story: 全国 1 位の干し椎茸、肉厚で濃い旨味
+      - id: oita-fugu
+        name: 臼杵フグ
+        searchQuery: フグ 臼杵
+        category: seafood
+        seasons: [winter]
+        story: 臼杵の天然トラフグ、上品な身と濃いだし
+      - id: oita-tomato
+        name: 大分トマト
+        searchQuery: トマト 大分
+        category: vegetable
+        seasons: [summer]
+        story: 県内の完熟トマト、濃い赤と深い旨味
+      - id: oita-strawberry
+        name: いちご(ベリーツ)
+        searchQuery: ベリーツ 大分
+        category: fruit
+        seasons: [winter, spring]
+        story: 大分オリジナル苺、大粒で芳醇な甘味
+      - id: oita-toriten-chicken
+        name: 大分鶏
+        searchQuery: 鶏 大分
+        category: meat
+        seasons: [all-year]
+        story: とり天文化を支える県産鶏、ジューシーで旨味
+      - id: oita-yuzu
+        name: 大分柚子
+        searchQuery: 柚子 大分
+        category: fruit
+        seasons: [autumn, winter]
+        story: 県内の柚子、爽やかな香りで料理を引き締める
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 宮崎県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: miyazaki
+    prefecture: 宮崎県
+    prefectureCode: JP-45
+    region: kyushu-okinawa
+    cities:
+      - { id: miyazaki-city, name: 宮崎市 }
+      - { id: miyakonojo, name: 都城市 }
+    ingredients:
+      - id: miyazaki-miyazaki-beef
+        name: 宮崎牛
+        searchQuery: 宮崎牛
+        category: meat
+        seasons: [all-year]
+        story: 内閣総理大臣賞 4 連覇のブランド黒毛和牛
+      - id: miyazaki-mango
+        name: 宮崎マンゴー(太陽のタマゴ)
+        searchQuery: 太陽のタマゴ
+        category: fruit
+        seasons: [summer]
+        story: 完熟落下マンゴー、濃厚な甘味と芳醇な香り
+      - id: miyazaki-jidori
+        name: 宮崎地鶏(みやざき地頭鶏)
+        searchQuery: 地頭鶏 宮崎
+        category: meat
+        seasons: [all-year]
+        story: 県の在来地鶏、炭火焼で香ばしさと旨味
+      - id: miyazaki-hyuga-tomato
+        name: 日向トマト
+        searchQuery: トマト 宮崎
+        category: vegetable
+        seasons: [winter, spring]
+        story: 日向の完熟トマト、濃い赤と糖度高さ
+      - id: miyazaki-hyuganatsu
+        name: 日向夏
+        searchQuery: 日向夏
+        category: fruit
+        seasons: [winter, spring]
+        story: 宮崎発祥の柑橘、爽やかな酸味と香り
+      - id: miyazaki-strawberry
+        name: いちご(さがほのか系)
+        searchQuery: いちご 宮崎
+        category: fruit
+        seasons: [winter, spring]
+        story: 県内のいちご、甘味と香りの強さ
+      - id: miyazaki-pickle-radish
+        name: 漬物大根(切干)
+        searchQuery: 切干大根 宮崎
+        category: vegetable
+        seasons: [winter]
+        story: 宮崎の冬の風物詩、太陽で甘味を凝縮
+      - id: miyazaki-charcoal-pork
+        name: 都城ポーク
+        searchQuery: 都城ポーク
+        category: meat
+        seasons: [all-year]
+        story: 都城のブランド豚、甘い脂と引き締まった赤身
+      - id: miyazaki-shiitake
+        name: 高千穂椎茸
+        searchQuery: 椎茸 高千穂
+        category: vegetable
+        seasons: [autumn]
+        story: 高千穂の原木椎茸、肉厚で深い香り
+      - id: miyazaki-katsuo
+        name: 日南カツオ
+        searchQuery: カツオ 日南
+        category: seafood
+        seasons: [spring]
+        story: 日南の戻りガツオ、力強い旨味と脂
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 鹿児島県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: kagoshima
+    prefecture: 鹿児島県
+    prefectureCode: JP-46
+    region: kyushu-okinawa
+    cities:
+      - { id: kagoshima-city, name: 鹿児島市 }
+      - { id: kanoya, name: 鹿屋市 }
+    ingredients:
+      - id: kagoshima-kuroge-wagyu
+        name: 鹿児島黒牛
+        searchQuery: 鹿児島黒牛
+        category: meat
+        seasons: [all-year]
+        story: 全国和牛能力共進会で日本一、繊細な霜降り
+      - id: kagoshima-kurobuta
+        name: 鹿児島黒豚
+        searchQuery: 鹿児島黒豚
+        category: meat
+        seasons: [all-year]
+        story: バークシャー種、甘い脂とコクのある赤身
+      - id: kagoshima-katsuobushi
+        name: 枕崎鰹節
+        searchQuery: 枕崎 鰹節
+        category: seafood
+        seasons: [all-year]
+        story: 枕崎の本枯節、和食だしの絶対王者
+      - id: kagoshima-buri
+        name: 鹿児島ブリ
+        searchQuery: ブリ 鹿児島
+        category: seafood
+        seasons: [winter]
+        story: 養殖ブリ生産量日本一、脂と身質のバランス
+      - id: kagoshima-mango
+        name: 鹿児島マンゴー
+        searchQuery: マンゴー 鹿児島
+        category: fruit
+        seasons: [summer]
+        story: 県内の完熟マンゴー、濃厚な甘味と芳醇
+      - id: kagoshima-satsumaimo
+        name: 安納芋
+        searchQuery: 安納芋
+        category: vegetable
+        seasons: [autumn]
+        story: 種子島原産のさつまいも、しっとり蜜のような甘味
+      - id: kagoshima-passion
+        name: パッションフルーツ
+        searchQuery: パッションフルーツ 鹿児島
+        category: fruit
+        seasons: [summer]
+        story: 奄美の南国果実、爽やかな酸味と香り
+      - id: kagoshima-tsumami-kanpachi
+        name: 鹿児島カンパチ
+        searchQuery: カンパチ 鹿児島
+        category: seafood
+        seasons: [summer]
+        story: 県の養殖カンパチ、引き締まった身と上品な脂
+      - id: kagoshima-shochu-base
+        name: 鹿児島さつま地鶏
+        searchQuery: さつま地鶏
+        category: meat
+        seasons: [all-year]
+        story: 県の銘柄地鶏、噛むほど旨味が広がる
+      - id: kagoshima-amami-shima-banana
+        name: 島バナナ
+        searchQuery: 島バナナ 鹿児島
+        category: fruit
+        seasons: [summer]
+        story: 奄美の在来バナナ、小ぶりで濃い甘味
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 沖縄県
+  # ───────────────────────────────────────────────────────────────────────────
+  - id: okinawa
+    prefecture: 沖縄県
+    prefectureCode: JP-47
+    region: kyushu-okinawa
+    cities:
+      - { id: naha, name: 那覇市 }
+      - { id: ishigaki, name: 石垣市 }
+    ingredients:
+      - id: okinawa-goya
+        name: ゴーヤー
+        searchQuery: ゴーヤー 沖縄
+        category: vegetable
+        seasons: [summer]
+        story: 沖縄の代表野菜、爽やかな苦味と栄養価
+      - id: okinawa-shimadofu
+        name: 島豆腐
+        searchQuery: 島豆腐 沖縄
+        category: grain
+        seasons: [all-year]
+        story: 大豆濃度の高い沖縄豆腐、しっかりした食感
+      - id: okinawa-mozuku
+        name: もずく
+        searchQuery: もずく 沖縄
+        category: seafood
+        seasons: [summer]
+        story: 沖縄の養殖もずく、つるりとしたぬめりと磯味
+      - id: okinawa-ishigaki-beef
+        name: 石垣牛
+        searchQuery: 石垣牛
+        category: meat
+        seasons: [all-year]
+        story: 石垣島の黒毛和牛、繊細な霜降りと深い和牛香
+      - id: okinawa-agu-pork
+        name: あぐー豚
+        searchQuery: あぐー豚
+        category: meat
+        seasons: [all-year]
+        story: 沖縄在来黒豚、甘い脂と濃厚な旨味
+      - id: okinawa-shikuwasa
+        name: シークヮーサー
+        searchQuery: シークヮーサー
+        category: fruit
+        seasons: [autumn, winter]
+        story: 沖縄の柑橘、爽快な酸味で料理を彩る
+      - id: okinawa-pineapple
+        name: パインアップル
+        searchQuery: パイナップル 沖縄
+        category: fruit
+        seasons: [summer]
+        story: 石垣・東村の完熟パイン、芳醇な甘香
+      - id: okinawa-mango
+        name: 沖縄マンゴー
+        searchQuery: マンゴー 沖縄
+        category: fruit
+        seasons: [summer]
+        story: 県内の完熟マンゴー、とろける果肉と濃厚甘味
+      - id: okinawa-island-salt
+        name: 沖縄海塩
+        searchQuery: 塩 沖縄
+        category: seafood
+        seasons: [all-year]
+        story: 沖縄の天日塩、まろやかなミネラル感
+      - id: okinawa-island-tomato
+        name: アグリトマト(島野菜)
+        searchQuery: 島トマト 沖縄
+        category: vegetable
+        seasons: [winter, spring]
+        story: 沖縄の冬野菜、強い太陽が育てる濃い旨味

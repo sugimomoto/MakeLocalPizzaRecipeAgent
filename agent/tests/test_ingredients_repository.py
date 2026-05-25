@@ -19,10 +19,18 @@ def repo() -> IngredientsRepository:
 
 
 class TestFromYaml:
-    def test_loads_3_curated_locales(self, repo: IngredientsRepository) -> None:
-        assert len(repo.list_locales()) == 3
-        ids = [loc.id for loc in repo.list_locales()]
-        assert ids == ["miyagi", "nagano", "kochi"]
+    # Slice 7 後: 全 47 都道府県 × 10 食材 = 470 件にスケール
+    def test_loads_all_47_prefectures(self, repo: IngredientsRepository) -> None:
+        locales = repo.list_locales()
+        assert len(locales) == 47
+        ids = [loc.id for loc in locales]
+        # 旧 3 県 (miyagi/nagano/kochi) は引き続き含まれている
+        assert "miyagi" in ids
+        assert "nagano" in ids
+        assert "kochi" in ids
+        # 新規追加された代表例も含む
+        assert "hokkaido" in ids
+        assert "okinawa" in ids
 
     def test_each_locale_has_10_ingredients(self, repo: IngredientsRepository) -> None:
         for loc in repo.list_locales():
@@ -30,9 +38,9 @@ class TestFromYaml:
             assert items is not None
             assert len(items) == 10
 
-    def test_total_ingredient_count_is_30(self, repo: IngredientsRepository) -> None:
+    def test_total_ingredient_count_is_470(self, repo: IngredientsRepository) -> None:
         total = sum(len(repo.list_ingredients(loc.id) or []) for loc in repo.list_locales())
-        assert total == 30
+        assert total == 470
 
 
 class TestFinders:

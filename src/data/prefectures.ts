@@ -48,7 +48,57 @@ export const PREFECTURE_REGION_LABEL: Record<PrefectureRegion, string> = {
   okinawa: '沖縄',
 };
 
-const CURATED_IDS = new Set(['miyagi', 'nagano', 'kochi']);
+// Slice 7 後: 全 47 都道府県分の ingredients.yaml データが揃ったため、すべて curated に。
+// 旧来は 3 県 (miyagi/nagano/kochi) のみだった。
+const CURATED_IDS = new Set<string>([
+  'hokkaido',
+  'aomori',
+  'iwate',
+  'miyagi',
+  'akita',
+  'yamagata',
+  'fukushima',
+  'ibaraki',
+  'tochigi',
+  'gunma',
+  'saitama',
+  'chiba',
+  'tokyo',
+  'kanagawa',
+  'niigata',
+  'toyama',
+  'ishikawa',
+  'fukui',
+  'yamanashi',
+  'nagano',
+  'gifu',
+  'shizuoka',
+  'aichi',
+  'mie',
+  'shiga',
+  'kyoto',
+  'osaka',
+  'hyogo',
+  'nara',
+  'wakayama',
+  'tottori',
+  'shimane',
+  'okayama',
+  'hiroshima',
+  'yamaguchi',
+  'tokushima',
+  'kagawa',
+  'ehime',
+  'kochi',
+  'fukuoka',
+  'saga',
+  'nagasaki',
+  'kumamoto',
+  'oita',
+  'miyazaki',
+  'kagoshima',
+  'okinawa',
+]);
 
 const RAW: Array<Omit<Prefecture, 'curated'>> = [
   // 北海道

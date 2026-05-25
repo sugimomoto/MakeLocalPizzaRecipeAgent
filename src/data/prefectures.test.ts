@@ -18,9 +18,9 @@ describe('PREFECTURES', () => {
     }
   });
 
-  it('curated flag is true for miyagi/nagano/kochi only', () => {
-    const curated = PREFECTURES.filter((p) => p.curated).map((p) => p.id);
-    expect(curated.sort()).toEqual(['kochi', 'miyagi', 'nagano']);
+  it('every prefecture is now curated (Slice 7 後、47 都道府県分の ingredients が揃った)', () => {
+    expect(PREFECTURES.every((p) => p.curated)).toBe(true);
+    expect(PREFECTURES.length).toBe(47);
   });
 
   it('every prefecture has a non-empty note', () => {
