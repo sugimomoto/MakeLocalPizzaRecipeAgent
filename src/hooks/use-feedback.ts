@@ -132,7 +132,12 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
         setRecipe(next);
         setRecipeReady(true);
       },
-      (err) => setError(err),
+      (err) => {
+        // rules 未デプロイ等で permission denied になっても hydrate を止めないため
+        // ready=true を立てる (= 「subscribe 試行は完了」とみなす)
+        setRecipeReady(true);
+        setError(err);
+      },
     );
     const unsubDraft = subscribeDraft(
       db,
@@ -142,7 +147,11 @@ export function useFeedback(candidateId: string): UseFeedbackResult {
         setDraft(next);
         setDraftReady(true);
       },
-      (err) => setError(err),
+      (err) => {
+        // 同上 — draft subcollection の rules が未デプロイでも form hydrate を止めない
+        setDraftReady(true);
+        setError(err);
+      },
     );
     return () => {
       unsubRecipe();
