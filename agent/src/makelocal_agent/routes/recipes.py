@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 from ..agents.recipe_orchestrator import generate_recipe_detail
 from ..deps import get_imagen_client, get_llm_client, get_storage_client
 from ..domain.candidate import Candidate
+from ..domain.oven_profile import resolve_oven_profile
 from ..lib.ndjson import encode_ndjson_stream
 from .candidates import _get_repo
 
@@ -22,6 +23,9 @@ class GenerateRecipeRequest(BaseModel):
     ingredients: list[str] = Field(min_length=1)
     candidate: Candidate
     guestSessionId: str | None = None
+    # Slice 8 で追加。未指定なら ENRO がデフォルト (resolve_oven_profile が解決)。
+    # 未知 ID も resolve 側でデフォルトに丸めるため安全。
+    ovenProfile: str | None = None
 
 
 @router.post("/recipes/{candidate_id}")
@@ -57,6 +61,7 @@ async def generate_recipe(
     llm = get_llm_client()
     imagen = get_imagen_client()
     storage = get_storage_client()
+    oven_profile = resolve_oven_profile(req.ovenProfile)
 
     async def gen() -> AsyncIterator[bytes]:
         events = generate_recipe_detail(
@@ -67,6 +72,7 @@ async def generate_recipe(
             locale=locale,
             selected=selected,
             candidate=req.candidate,
+            oven_profile=oven_profile,
         )
         async for chunk in encode_ndjson_stream(events):
             yield chunk

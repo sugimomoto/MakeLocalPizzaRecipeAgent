@@ -33,6 +33,8 @@ const RequestBodySchema = z.object({
   localeId: z.string().min(1),
   ingredients: z.array(z.string().min(1)).min(1),
   candidate: CandidateSchema,
+  // Slice 8: 機材プロファイル ID (省略可、未知 ID は agent 側でデフォルトに丸める)
+  ovenProfile: z.enum(['enro_450c_90s', 'home_oven_280c_10m']).optional(),
 });
 
 const agent = createAgentClient();
@@ -64,6 +66,7 @@ export const POST = withAuthOptional(async (request, ctx) => {
     localeId: parsed.data.localeId,
     ingredients: parsed.data.ingredients,
     candidate: parsed.data.candidate,
+    ...(parsed.data.ovenProfile !== undefined && { ovenProfile: parsed.data.ovenProfile }),
     ...(ctx.subject.kind === 'guest' && { guestSessionId: ctx.subject.guestSessionId }),
   });
 

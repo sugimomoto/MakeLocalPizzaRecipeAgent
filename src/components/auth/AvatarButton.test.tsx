@@ -102,12 +102,13 @@ describe('AvatarButton', () => {
     // Dropdown が出現
     const menu = await screen.findByRole('menu', { name: 'ユーザーメニュー' });
     expect(menu).toBeInTheDocument();
-    // 3 つの menuitem (library / journal / サインアウト)
+    // 4 つの menuitem (library / journal / 機材ガイド (Slice 8) / サインアウト)
     const items = screen.getAllByRole('menuitem');
-    expect(items).toHaveLength(3);
+    expect(items).toHaveLength(4);
     expect(items[0]).toHaveTextContent('ピザ帳 (保存)');
     expect(items[1]).toHaveTextContent('振り返り帳 (作った)');
-    expect(items[2]).toHaveTextContent('サインアウト');
+    expect(items[2]).toHaveTextContent('機材ガイド');
+    expect(items[3]).toHaveTextContent('サインアウト');
   });
 
   it('Dropdown 内「振り返り帳」クリックで router.push("/journal")', async () => {

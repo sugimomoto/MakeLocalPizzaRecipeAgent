@@ -14,6 +14,7 @@ from ..deps import LlmClient
 from ..domain.candidate import STRATEGY_LABELS, Candidate
 from ..domain.ingredient import Ingredient
 from ..domain.locale import Locale
+from ..domain.oven_profile import ENRO_PROFILE, OvenProfile
 from ..domain.recipe import RecipeDetailLlmOutput
 from ..lib.settings import get_settings
 
@@ -30,11 +31,16 @@ def build_detail_prompt(
     locale: Locale,
     selected: list[Ingredient],
     candidate: Candidate,
+    oven_profile: OvenProfile = ENRO_PROFILE,
 ) -> str:
     """detail_agent に渡す user prompt を組み立てる。
 
     候補のメタ (title / concept / strategy / why) を再提示して、
     LLM が「同じ候補の延長線上の詳細レシピ」を出すよう誘導する。
+
+    Slice 8 で `oven_profile` (機材プロファイル) を引数追加。
+    デフォルトは ENRO (`enro_450c_90s`)。プロファイルに応じて
+    bakingTemp / duration / 生地厚 / 水分指示を切り替える。
     """
     strategy_label = STRATEGY_LABELS[candidate.strategy].japaneseLabel
     selected_lines = "\n".join(
@@ -54,15 +60,18 @@ def build_detail_prompt(
         f"- 主要食材:\n{key_ing_lines}\n"
         f"- why: {candidate.why}\n"
         f"\n"
+        f"{oven_profile.prompt_directive}\n"
+        f"\n"
         f"【出力ルール】\n"
         f"- title: 候補の意図を引き継ぐ (再表現は可)\n"
         f"- meta.servings: 'ピザ 1 枚分' のような表記 (人数ではなくピザ枚数で表現)\n"
         f"- meta.duration: 'Xm' (例 '45m')\n"
-        f"- meta.bakingTemp: 'X°C' (例 '270°C')\n"
+        f"- meta.bakingTemp: 'X°C' "
+        f"(機材前提に従い {oven_profile.temp_line} の範囲で出力。例: '{oven_profile.temp_target_celsius}')\n"
         f"- meta.difficulty: '★★☆' のような 3 段階表記\n"
         f"- materials: 5〜8 品目、name と quantity (g / 個 / 適量 等) を明示。\n"
         f"  ピザ 1 枚を焼くのに必要な分量を基準に記述すること。\n"
-        f"- steps: 4〜6 ステップ、各 1 文で完結\n"
+        f"- steps: 4〜6 ステップ、各 1 文で完結。機材前提に合った焼成手順にすること\n"
         f"- storyEyebrow: 'ゲストに語る' '今夜のひと皿' のような短い見出し\n"
         f"- storyHeadline: 鍵カッコ付き 1 行のキャッチ (10〜25 字)\n"
         f"- storyBody: 50〜100 字の解説\n"
@@ -76,11 +85,17 @@ async def run_recipe_detail(
     locale: Locale,
     selected: list[Ingredient],
     candidate: Candidate,
+    oven_profile: OvenProfile = ENRO_PROFILE,
     model: str | None = None,
 ) -> RecipeDetailLlmOutput:
     """Gemini Flash で詳細レシピ 1 件を構造化出力で生成する。"""
     effective_model = model or get_settings().gemini_model
-    prompt = build_detail_prompt(locale=locale, selected=selected, candidate=candidate)
+    prompt = build_detail_prompt(
+        locale=locale,
+        selected=selected,
+        candidate=candidate,
+        oven_profile=oven_profile,
+    )
     out = await client.run_structured(
         model=effective_model,
         instruction=DETAIL_BASE_INSTRUCTION,

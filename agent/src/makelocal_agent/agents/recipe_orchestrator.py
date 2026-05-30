@@ -18,6 +18,7 @@ from ..deps import LlmClient
 from ..domain.candidate import Candidate
 from ..domain.ingredient import Ingredient
 from ..domain.locale import Locale
+from ..domain.oven_profile import ENRO_PROFILE, OvenProfile
 from ..domain.stream import (
     ErrorEvent,
     ImageErrorEvent,
@@ -50,6 +51,7 @@ async def generate_recipe_detail(
     locale: Locale,
     selected: list[Ingredient],
     candidate: Candidate,
+    oven_profile: OvenProfile = ENRO_PROFILE,
 ) -> AsyncIterator[StreamEvent]:
     """詳細レシピ (テキスト) + 画像を並列生成して NDJSON StreamEvent を yield する。
 
@@ -72,6 +74,7 @@ async def generate_recipe_detail(
                 locale=locale,
                 selected=selected,
                 candidate=candidate,
+                oven_profile=oven_profile,
             )
             await queue.put(RecipeTitleEvent(recipeId=recipe_id, title=out.title))
             await queue.put(RecipeMetaEvent(recipeId=recipe_id, meta=out.meta))

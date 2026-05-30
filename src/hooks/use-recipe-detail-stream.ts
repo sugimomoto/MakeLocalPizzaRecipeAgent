@@ -198,6 +198,8 @@ export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
           localeId: input.localeId,
           ingredients: input.ingredients,
           candidate: input.candidate,
+          // Slice 8: 機材プロファイル (省略時は API 側で ENRO に解決)
+          ...(input.ovenProfile !== undefined && { ovenProfile: input.ovenProfile }),
         }),
         signal: ac.signal,
       });

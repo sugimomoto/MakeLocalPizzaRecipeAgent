@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AvatarButton } from '@/components/auth/AvatarButton';
 import { StrategySeal } from '@/components/candidate/StrategySeal';
 import { FurusatoSection } from '@/components/furusato/FurusatoSection';
+import { OvenProfileBadge } from '@/components/oven/OvenProfileBadge';
 import { SectionLabel } from '@/components/primitives/SectionLabel';
 import { DetailMakeCTA, type DetailMakeCTAState } from '@/components/recipe/DetailMakeCTA';
 import { MaterialList } from '@/components/recipe/MaterialList';
@@ -32,6 +33,7 @@ import { useSavedRecipe } from '@/hooks/use-saved-recipe';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
 import { readRecipeDetailCache, writeRecipeDetailCache } from '@/lib/cache/stream-cache';
+import { readOvenProfile } from '@/lib/localstorage/oven-profile';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
 import styles from './DetailClient.module.css';
@@ -128,11 +130,15 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       return;
     }
 
+    // Slice 8: 機材プロファイルを localStorage から読み、API に注入。
+    // 未設定なら API 側で ENRO (デフォルト) に解決される。
+    const ovenProfile = readOvenProfile()?.id;
     void stream.start({
       candidateId: p.candidateId,
       localeId: p.localeId,
       ingredients: p.ingredients,
       candidate: p.candidate,
+      ...(ovenProfile !== undefined && { ovenProfile }),
     });
   }, [candidateId, router, stream]);
 
@@ -339,6 +345,9 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         )}
 
         <MetaStrip meta={stream.meta} />
+        <div className={styles.ovenBadgeRow}>
+          <OvenProfileBadge />
+        </div>
 
         {/* 上部 CTA — 下まで降りなくても押せるように Slice 7 で追加。
             同じ state / handler を共有するので、下部 CTA と挙動が完全一致する */}

@@ -16,13 +16,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AvatarButton } from '@/components/auth/AvatarButton';
-import { HeaderRow } from '@/components/shell/HeaderRow';
 import { CategoryTab } from '@/components/ingredient/CategoryTab';
 import { IngredientCard } from '@/components/ingredient/IngredientCard';
 import { SeasonTab } from '@/components/ingredient/SeasonTab';
+import { OvenProfileSelector } from '@/components/oven/OvenProfileSelector';
 import { Button } from '@/components/primitives/Button';
 import { Chip } from '@/components/primitives/Chip';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
+import { HeaderRow } from '@/components/shell/HeaderRow';
 import { findPrefecture } from '@/data/prefectures';
 import { isInSeason } from '@/domain/ingredient';
 import { useLocale } from '@/hooks/use-locale';
@@ -181,6 +182,7 @@ export function IngredientSelectClient() {
       <div className={styles.topRow}>
         <LocaleHeader localeId={localeId} locales={locales} />
         <div className={styles.topRowRight}>
+          <OvenProfileSelector />
           <span className={styles.tapBadge}>Tap 2 / 2</span>
         </div>
       </div>

@@ -19,7 +19,9 @@
  */
 
 import { useRouter } from 'next/navigation';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+
+import { useOvenProfile } from '@/hooks/use-oven-profile';
 
 import styles from './HeaderDropdown.module.css';
 
@@ -50,14 +52,25 @@ type Item = {
   id: string;
   icon: string;
   jp: string;
+  /** モノ表記の副題 (機材ガイドのみ profile-aware に上書き) */
   en: string;
-  route: '/library' | '/journal';
+  route: '/library' | '/journal' | '/equipment';
+  /** true なら「NEW」バッジを表示 (per-user の localStorage フラグで抑制) */
+  showNewBadge?: boolean;
 };
 
 const ITEMS: Item[] = [
   { id: 'library', icon: '📔', jp: 'ピザ帳 (保存)', en: 'SAVED', route: '/library' },
   { id: 'journal', icon: '📓', jp: '振り返り帳 (作った)', en: 'JOURNAL', route: '/journal' },
+  { id: 'equipment', icon: '🔥', jp: '機材ガイド', en: 'EQUIPMENT', route: '/equipment' },
 ];
+
+/**
+ * localStorage の equipmentLinkSeen フラグを参照する。
+ * `/equipment` へ訪問するか、Dropdown 経由で機材ガイドを開いたら true になる想定。
+ * SSR 中は false、hydrate 後は実際の値。
+ */
+export const EQUIPMENT_LINK_SEEN_KEY = 'mlpr.equipmentLinkSeen.v1';
 
 function Avatar({
   size,
@@ -127,9 +140,14 @@ export const HeaderDropdown = forwardRef<HTMLDivElement, HeaderDropdownProps>(
     ref,
   ) {
     const router = useRouter();
+    const { profile, isHydrated } = useOvenProfile();
+    const showNewBadge = useEquipmentLinkSeen() === false;
 
     const handleNav = (route: Item['route']) => {
       onSelect?.();
+      if (route === '/equipment') {
+        markEquipmentLinkSeen();
+      }
       router.push(route);
     };
 
@@ -154,6 +172,17 @@ export const HeaderDropdown = forwardRef<HTMLDivElement, HeaderDropdownProps>(
           const itemClass = [styles.item, active && styles['item--active']]
             .filter(Boolean)
             .join(' ');
+          const isEquipment = it.id === 'equipment';
+          // 機材ガイドの副題は「現在のプロファイル名」を表示 (mincho/gothic 寄り)。
+          // hydrate 前は SSR と一致させるため固定の "現在: ENRO" を返す。
+          const subtitle = isEquipment ? (
+            <span className={styles.itemProfile}>
+              {isHydrated ? profile.emoji : '🔥'} 現在:{' '}
+              {isHydrated ? profile.jp : 'ENRO 電気ピザ窯'}
+            </span>
+          ) : (
+            <span className={styles.itemEn}>{it.en}</span>
+          );
           return (
             <button
               key={it.id}
@@ -167,8 +196,15 @@ export const HeaderDropdown = forwardRef<HTMLDivElement, HeaderDropdownProps>(
                 {it.icon}
               </span>
               <span className={styles.itemBody}>
-                <span className={styles.itemJp}>{it.jp}</span>
-                <span className={styles.itemEn}>{it.en}</span>
+                <span className={styles.itemTitleRow}>
+                  <span className={styles.itemJp}>{it.jp}</span>
+                  {isEquipment && showNewBadge ? (
+                    <span aria-label="新機能" className={styles.itemNew}>
+                      NEW
+                    </span>
+                  ) : null}
+                </span>
+                {subtitle}
               </span>
               <Chevron dir="right" />
             </button>
@@ -194,3 +230,36 @@ export const HeaderDropdown = forwardRef<HTMLDivElement, HeaderDropdownProps>(
     );
   },
 );
+
+/**
+ * /equipment 訪問時に localStorage フラグを立てる (NEW バッジ抑制用)。
+ * `/equipment` 側からも呼ぶし、Dropdown 経由でクリックされた時もここで立てる。
+ */
+export function markEquipmentLinkSeen(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(EQUIPMENT_LINK_SEEN_KEY, '1');
+  } catch {
+    /* ignore (Safari private mode 等) */
+  }
+}
+
+/**
+ * フラグの読み取り。SSR と初回 client render は常に true (= NEW を出さない) を返し、
+ * hydrate 後の useEffect で実際の値に切り替える。これにより SSR/CSR 不整合を避ける。
+ *
+ * 未訪問なら false、訪問済なら true。
+ */
+function useEquipmentLinkSeen(): boolean {
+  const [seen, setSeen] = useState<boolean>(true);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSeen(window.localStorage.getItem(EQUIPMENT_LINK_SEEN_KEY) === '1');
+    } catch {
+      setSeen(true);
+    }
+  }, []);
+  return seen;
+}

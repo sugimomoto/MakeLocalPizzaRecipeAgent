@@ -91,6 +91,7 @@ export class HttpAgentClient implements AgentClient {
     };
     if (input.guestSessionId !== undefined) body.guestSessionId = input.guestSessionId;
     if (input.userId !== undefined) body.userId = input.userId;
+    if (input.ovenProfile !== undefined) body.ovenProfile = input.ovenProfile;
     return this.postNdjson(`/agent/recipes/${encodeURIComponent(input.candidateId)}`, body);
   }
 

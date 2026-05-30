@@ -1,0 +1,276 @@
+/* =============================================================================
+ * OvenProfileSheet — 機材プロファイル選択 (Slice 8)
+ * 設計: design/slice8-app.jsx OvenProfileSheet @ L114
+ * =============================================================================*/
+
+.header {
+  padding: 0 4px 4px;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9.5px;
+  color: var(--mlpr-shu);
+  letter-spacing: 4px;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.lede {
+  margin: 8px 0 0;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11.5px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.7;
+}
+
+.lede b {
+  color: var(--mlpr-sumi);
+}
+
+.options {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  position: relative;
+  width: 100%;
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+  font-family: inherit;
+  color: inherit;
+}
+
+.option:hover,
+.option:focus-visible {
+  outline: none;
+  border-color: rgba(200, 65, 42, 0.4);
+}
+
+.option--selected {
+  border: 2px solid var(--mlpr-shu);
+  padding: 15px 15px 13px;
+  box-shadow: 0 8px 22px rgba(200, 65, 42, 0.2);
+}
+
+.optionEmoji {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.optionEmoji[data-kind='enro'] {
+  background: rgba(200, 65, 42, 0.1);
+}
+
+.optionEmoji[data-kind='home'] {
+  background: rgba(220, 138, 42, 0.14);
+}
+
+.optionBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.optionTitleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.optionJp {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  letter-spacing: 0.5px;
+}
+
+.optionBadge {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--mlpr-shu);
+  color: #fff;
+  font-family: var(--mlpr-font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.optionEn {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9.5px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+.optionMetrics {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(31, 26, 18, 0.05);
+  border: 1px solid var(--mlpr-hairline);
+  font-family: var(--mlpr-font-gothic);
+  font-size: 10.5px;
+  color: var(--mlpr-sumi);
+  font-weight: 600;
+}
+
+.metricLabel {
+  font-size: 9px;
+  color: var(--mlpr-sumi-muted);
+  font-family: var(--mlpr-font-mono);
+  letter-spacing: 1px;
+}
+
+.optionDesc {
+  margin-top: 10px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11.5px;
+  color: var(--mlpr-sumi-soft);
+  line-height: 1.7;
+}
+
+.radio {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  border: 1.5px solid var(--mlpr-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: transparent;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease;
+}
+
+.radio--checked {
+  background: var(--mlpr-shu);
+  border-color: var(--mlpr-shu);
+  color: #fff;
+}
+
+.guideLink {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(31, 26, 18, 0.03);
+  border: 1px solid var(--mlpr-hairline);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 140ms ease;
+}
+
+.guideLink:hover,
+.guideLink:focus-visible {
+  background: rgba(31, 26, 18, 0.06);
+  outline: none;
+}
+
+.guideLinkIcon {
+  font-size: 14px;
+}
+
+.guideLinkBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.guideLinkJp {
+  display: block;
+  font-family: var(--mlpr-font-mincho);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+}
+
+.guideLinkEn {
+  display: block;
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-sumi-muted);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.guideLinkChev {
+  color: var(--mlpr-sumi-muted);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.confirm {
+  margin-top: 16px;
+  width: 100%;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--mlpr-shu);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.6px;
+  box-shadow:
+    0 10px 26px rgba(200, 65, 42, 0.32),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  transition: filter 120ms ease;
+}
+
+.confirm:hover,
+.confirm:focus-visible {
+  filter: brightness(1.05);
+  outline: none;
+}
+
+.confirmIcon {
+  font-size: 14px;
+  font-weight: 700;
+}

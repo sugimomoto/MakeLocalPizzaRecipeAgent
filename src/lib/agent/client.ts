@@ -12,6 +12,7 @@
 import type { Candidate } from '@/domain/candidate';
 import type { IngredientId } from '@/domain/ingredient';
 import type { LocaleId } from '@/domain/locale';
+import type { OvenProfileId } from '@/domain/oven-profile';
 
 export type GenerateCandidatesInput = {
   localeId: LocaleId;
@@ -36,6 +37,11 @@ export type GenerateRecipeDetailInput = {
   candidate: Candidate;
   guestSessionId?: string;
   userId?: string;
+  /**
+   * Slice 8 で追加。レシピの温度・時間・生地厚等を機材プロファイルに
+   * 合わせて切り替える。省略時は agent 側でデフォルト (ENRO) に解決。
+   */
+  ovenProfile?: OvenProfileId;
 };
 
 /**

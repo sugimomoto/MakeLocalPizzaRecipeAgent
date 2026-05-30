@@ -16,6 +16,7 @@
  *   - 「サインインしてピザ帳を開く」リンク → openModal()
  *   - footer
  */
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { FurusatoMark } from '@/components/brand/FurusatoMark';
@@ -73,6 +74,22 @@ export function TopClient(): React.JSX.Element | null {
         >
           始める →
         </Button>
+        {/* Slice 8: 主 CTA 直下の 3 ピル — /library, /journal, /equipment への導線。
+            機材ガイドのみ朱トーンで存在を匂わせる。 */}
+        <nav className={styles.subLinks} aria-label="サブナビゲーション">
+          <Link href="/library" className={styles.subPill}>
+            <span aria-hidden>📔</span>
+            ピザ帳
+          </Link>
+          <Link href="/journal" className={styles.subPill}>
+            <span aria-hidden>📓</span>
+            振り返り帳
+          </Link>
+          <Link href="/equipment" className={`${styles.subPill} ${styles['subPill--accent']}`}>
+            <span aria-hidden>🔥</span>
+            機材ガイド
+          </Link>
+        </nav>
         <button type="button" className={styles.signInLink} onClick={openModal}>
           サインインしてピザ帳を開く
         </button>

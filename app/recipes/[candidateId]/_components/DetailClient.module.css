@@ -81,6 +81,13 @@
   gap: 14px;
 }
 
+/* Slice 8: MetaStrip 直下の機材プロファイルバッジ */
+.ovenBadgeRow {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 0;
+}
+
 .errorBox {
   padding: 12px 14px;
   border-radius: 8px;

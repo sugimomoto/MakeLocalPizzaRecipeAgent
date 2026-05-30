@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>ふるさとピザ帳 — Slice 8 提案 (機材ガイド + プロファイル)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #F2E9D6; }
+  body { font-family: "Zen Kaku Gothic New", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  code { font-family: "JetBrains Mono", ui-monospace, monospace; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>window.__MLPR_NO_AUTOMOUNT = true;</script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="pizza-tokens.jsx"></script>
+<script type="text/babel" src="prototype-app.jsx"></script>
+<script type="text/babel" src="pizza-screens.jsx"></script>
+<script type="text/babel" src="slice4-screens.jsx"></script>
+<script type="text/babel" src="slice7-screens.jsx"></script>
+<script type="text/babel" src="slice8-screens.jsx"></script>
+<script type="text/babel" src="slice8-app.jsx"></script>
+
+<script type="text/babel">
+const W = 393;
+const H = 852;
+
+function Intro() {
+  return (
+    <div style={{
+      width: 1040, padding: '24px 36px 28px', marginLeft: 60, marginBottom: 36,
+      background: '#FBF7ED', borderRadius: 4,
+      boxShadow: '0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)',
+      fontFamily: T.gothic, color: T.sumi, lineHeight: 1.7,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 6, height: 26, background: T.shu, borderRadius: 3 }}/>
+        <span style={{ fontFamily: T.mincho, fontSize: 11, color: T.shu, letterSpacing: 6 }}>
+          SLICE 8 · 機材ガイド &amp; 機材プロファイル
+        </span>
+      </div>
+      <div style={{ fontFamily: T.mincho, fontSize: 28, fontWeight: 600, marginTop: 10, letterSpacing: 0.5 }}>
+        ふるさとピザ帳 — Slice 8 デザイン提案
+      </div>
+      <div style={{ marginTop: 14, fontSize: 13.5, color: T.sumiSoft, maxWidth: 920 }}>
+        <b style={{ color: T.sumi }}>「家庭オーブンでは到達できない 400°C の焼成体験を、初心者ホストにも届ける」</b>
+        — Slice 8 のテーマを 5 ブロック + 2 任意ブロックでデザインしました。
+        新規ルート <code>/equipment</code> (LP) を主役に、機材プロファイル切替・統一 Header への追加・
+        詳細画面バッジ・TOP からの動線、そして透明性を担保するアフィリエイト注記まで一気通貫で。
+      </div>
+      <div style={{ marginTop: 16, display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 12 }}>
+        {[
+          ['機材ガイド LP',         '#C8412A', '/equipment — 認証不要・縦長 LP'],
+          ['機材プロファイル',      '#DC8A2A', 'ENRO ⇄ 家庭用オーブン 切替'],
+          ['詳細バッジ',            '#607744', '🔥 プロファイル前提を可視化'],
+          ['アフィリ透明性',        '#3E5670', 'rel="sponsored" + 明示注記'],
+        ].map(([n, c, sub]) => (
+          <div key={n} style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderRadius: 10, background: 'rgba(31,26,18,0.03)',
+            border: '1px solid rgba(31,26,18,0.06)',
+          }}>
+            <div style={{ width: 8, height: 28, borderRadius: 2, background: c }}/>
+            <div>
+              <div style={{ fontFamily: T.mincho, fontSize: 13, fontWeight: 600 }}>{n}</div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.sumiMuted, marginTop: 2 }}>{sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <Intro/>
+
+      <DCSection
+        id="s8-lp"
+        title="① /equipment 機材ガイドページ (★ 最優先・新規ルート)"
+        subtitle="認証不要 LP。Hero → 開発者の声 → 3 体験変化 → 使い方/比較 → 家庭オーブン補足 → CTA → 透明性"
+      >
+        <DCArtboard id="s8-lp-full"     label="01 · EquipmentLP (全体・縦長スクロール)" width={720} height={5200}>
+          <EquipmentLP/>
+        </DCArtboard>
+        <DCArtboard id="s8-lp-hero"     label="02 · Hero クローズアップ"               width={720} height={780}>
+          <EquipmentHero/>
+        </DCArtboard>
+        <DCArtboard id="s8-lp-compare"  label="03 · 比較表クローズアップ"               width={720} height={780}>
+          <EquipmentCompare/>
+        </DCArtboard>
+        <DCArtboard id="s8-lp-footer"   label="04 · アフィリエイト注記クローズアップ"   width={720} height={400}>
+          <EquipmentFooterNote/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="s8-profile"
+        title="② 機材プロファイル切替 UI (新規・全画面共通)"
+        subtitle="ENRO ⇄ 家庭用オーブン。ボトムシート × 2 + 切替直後 Toast"
+      >
+        <DCArtboard id="s8-oven-selector" label="05 · OvenProfileSelector · 3 状態" width={W * 3 + 64} height={H + 220}>
+          <OvenProfileSelector/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="s8-header"
+        title="③ HeaderRow Dropdown V3 (Slice 7 改修)"
+        subtitle="「🔥 機材ガイド」項目を追加。副題で現在のプロファイル名も表示"
+      >
+        <DCArtboard id="s8-header-v3" label="06 · HeaderDropdownV3" width={W} height={H}>
+          <HeaderDropdownV3/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="s8-detail"
+        title="④ (任意) 詳細画面の機材バッジ"
+        subtitle="温度・時間の近くに、控えめなピルで現在のプロファイル前提を可視化"
+      >
+        <DCArtboard id="s8-detail-badge" label="07 · DetailOvenBadge · 2 状態" width={W} height={720}>
+          <DetailOvenBadge/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="s8-top"
+        title="⑤ (任意) TOP からの /equipment 動線"
+        subtitle="フッター小さく (案 A) vs 主 CTA 下の朱ピル (案 B 推奨)"
+      >
+        <DCArtboard id="s8-top-link" label="08 · TopEquipmentLink · 2 案" width={W * 2 + 48} height={H + 80}>
+          <TopEquipmentLink/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection
+        id="s8-spec"
+        title="⑥ 確定した仕様 (handoff)"
+        subtitle="配置・モーダル挙動・注記文言・画像プレースホルダ表現・比較表・バッジ"
+      >
+        <DCArtboard id="s8-spec-card" label="09 · Design Decisions" width={760} height={1700}>
+          <EquipmentSpecCard/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+/* =============================================================================
+ * OvenProfileBadge — 詳細画面の機材プロファイル ピル (Slice 8)
+ * 設計: design/slice8-app.jsx DetailOvenBadge
+ * =============================================================================*/
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition:
+    filter 120ms ease,
+    border-color 120ms ease;
+}
+
+.badge--enro {
+  background: rgba(200, 65, 42, 0.08);
+  border: 1px solid rgba(200, 65, 42, 0.22);
+  color: var(--mlpr-shu-deep);
+}
+
+.badge--home {
+  background: rgba(220, 138, 42, 0.12);
+  border: 1px solid rgba(220, 138, 42, 0.3);
+  color: #7a4c16;
+}
+
+.badge:hover,
+.badge:focus-visible {
+  filter: brightness(0.97);
+  outline: none;
+}
+
+.emoji {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.chev {
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+}
