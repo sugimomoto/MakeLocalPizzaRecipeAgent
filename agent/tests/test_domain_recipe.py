@@ -49,7 +49,12 @@ class TestRecipeMeta:
 
     @pytest.mark.parametrize("field", ["servings", "duration", "bakingTemp", "difficulty"])
     def test_rejects_empty_field(self, field: str) -> None:
-        base = {"servings": "ピザ 1 枚分", "duration": "45m", "bakingTemp": "270°C", "difficulty": "★★☆"}
+        base = {
+            "servings": "ピザ 1 枚分",
+            "duration": "45m",
+            "bakingTemp": "270°C",
+            "difficulty": "★★☆",
+        }
         base[field] = ""
         with pytest.raises(ValidationError):
             RecipeMeta(**base)
