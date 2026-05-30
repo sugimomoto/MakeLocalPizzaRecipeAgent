@@ -68,6 +68,11 @@
 | **取り寄せ品** | `FurusatoItem` | レシピで使う食材に対応する、ふるさと納税で取り寄せ可能な返礼品 1 件分のメタ。`itemUrl` / `donationAmount` / `municipality` / `producer` 等を含む | 「Recipe.furusatoItems に最大 12 件埋まる」 |
 | **キャッシュリフレッシュ** | `refreshFurusatoCache` | 楽天 API を 1 食材ずつ叩いて Firestore キャッシュを更新する手動 / cron スクリプト。**唯一**楽天 API を直接叩く処理 | 「週 1 回 refresh を走らせる」 |
 | **アクセスキー** | `accessKey` | 楽天 Web Service 新エンドポイントの認証ヘッダ用キー。`pk_` プレフィックスを持つ。`applicationId`(UUID 形式)と併用必須 | 「accessKey を Secret Manager に登録」 |
+| **機材プロファイル** (Slice 8) | `ovenProfile` / `oven_profile` | レシピ生成プロンプトに注入する焼成機材の前提。`enro_450c_90s` (デフォルト・推奨) / `home_oven_280c_10m` (補足) の 2 値。`meta.bakingTemp` / `meta.duration` / 生地厚 / 水分指示を切替える | 「機材プロファイルを ENRO に固定」 |
+| **ENRO** (Slice 8) | `enro` | 開発者が個人保有・推奨している電気ピザ窯のブランド名。**400〜450°C / 90〜120 秒**の焼成と**ポータブル運用**が特長。本アプリの推奨機材として `/equipment` ガイドページで紹介 | 「ENRO で焼く前提のレシピ」 |
+| **家庭用オーブン プロファイル** (Slice 8) | `home_oven_280c_10m` | 250〜300°C 上限・8〜15 分焼成を前提にレシピを再生成する補足プロファイル。「機材を揃える前にまず試したい」ユーザ向け (US-11) | 「家庭用オーブンに切替えて再生成」 |
+| **機材ガイド** (Slice 8) | `/equipment` | ENRO を推奨機材として紹介する独立 LP。Hero / 開発者の声 / 3 体験変化 / 5 ステップ + 比較表 / YouTube / 家庭オーブン補足 / アフィリエイト透明性注記で構成 | 「機材ガイドから ENRO を見る」 |
+| **アフィリエイト透明性** (Slice 8) | — | 楽天アフィリエイトを使用する際に「`rel="sponsored"` 付与 + ページ末尾に明示注記 + 個人ユーザとしての立場表明」を**毎回行う**運用ルール。`NEXT_PUBLIC_RAKUTEN_AFFILIATE_ID` で ID を環境変数注入 | 「アフィリエイト透明性を担保」 |
 
 ---
 
@@ -231,3 +236,4 @@ UI 上のユーザー向け表示は **日本語ラベル**:
 | --- | --- | --- |
 | 2026-05-13 | 1.0 | 初版作成(MakeLocalPizzaRecipeAgent のリフレッシュ仕様)。Quick Tap / 候補3案 / Exploit-Tune-Explore / 戦略印 / 地元 / 振り直し / ピザ帳 / 焼成中 を新規定義。旧 dialogUx / chat / wizard / deck / 複数テーマ系を廃止語として明示。 |
 | 2026-05-24 | 1.1 | サービス名「**ふるさとピザ帳**」を確定 (Slice 7、FR-7-8)。エントリとして「ふるさとピザ帳」「MakeLocalPizzaRecipeAgent」(技術名) を追加。エージェント定義の名称参照を「ふるさとピザ帳」に更新。 |
+| 2026-05-30 | 1.2 | **Slice 8: 機材プロファイル / ENRO / 機材ガイド / アフィリエイト透明性** を §2 に追加。F13 / F14 / AC-9 と整合。 |
