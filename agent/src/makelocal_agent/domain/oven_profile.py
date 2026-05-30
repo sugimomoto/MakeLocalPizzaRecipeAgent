@@ -75,5 +75,5 @@ def resolve_oven_profile(profile_id: OvenProfileId | str | None) -> OvenProfile:
     if profile_id is None:
         return OVEN_PROFILES[DEFAULT_OVEN_PROFILE_ID]
     if profile_id in OVEN_PROFILES:
-        return OVEN_PROFILES[profile_id]  # type: ignore[index]
+        return OVEN_PROFILES[profile_id]
     return OVEN_PROFILES[DEFAULT_OVEN_PROFILE_ID]
