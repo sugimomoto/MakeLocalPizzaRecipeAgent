@@ -40,6 +40,9 @@ vi.mock('@/hooks/use-auth', () => ({
 let feedbackState: 'loading' | 'unauthenticated' | 'idle' = 'idle';
 let savedFeedback: Feedback | null = null;
 let recipe: SavedRecipe | null = null;
+// Slice 7 で追加された subscribe 初回 snapshot ガード。デフォルトは true (= 既に届いた状態)。
+// "SavedRecipe 無" のテストでは true のまま recipe=null を維持して warning Toast を発火させる。
+let recipeReady = true;
 const saveMock = vi.fn<(...args: unknown[]) => Promise<void>>();
 vi.mock('@/hooks/use-feedback', async () => {
   const { emptyFeedback } = await import('@/domain/feedback');
@@ -49,6 +52,7 @@ vi.mock('@/hooks/use-feedback', async () => {
       saved: savedFeedback,
       draft: null,
       recipe,
+      recipeReady,
       initial: savedFeedback
         ? {
             overallRating: savedFeedback.overallRating,
@@ -90,6 +94,7 @@ beforeEach(() => {
   feedbackState = 'idle';
   savedFeedback = null;
   recipe = makeRecipe();
+  recipeReady = true;
   pushMock.mockReset();
   replaceMock.mockReset();
   openModalMock.mockReset();

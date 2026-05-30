@@ -38,13 +38,18 @@ describe('parseIngredientsYaml — happy path', () => {
     expect(parsed.locales[0]?.ingredients[0]?.id).toBe('x');
   });
 
-  it('parses the real curated YAML (3 locales × 10 ingredients = 30)', async () => {
+  it('parses the real curated YAML (47 locales × 10 ingredients = 470)', async () => {
+    // 2026-05 に全 47 都道府県 × 10 食材 (470 件) へ拡張済 (c06cae8)。
     const text = await readFile(REAL_YAML_PATH, 'utf8');
     const parsed = parseIngredientsYaml(text);
-    expect(parsed.locales).toHaveLength(3);
+    expect(parsed.locales).toHaveLength(47);
     const total = parsed.locales.reduce((sum, l) => sum + l.ingredients.length, 0);
-    expect(total).toBe(30);
-    expect(parsed.locales.map((l) => l.id)).toEqual(['miyagi', 'nagano', 'kochi']);
+    expect(total).toBe(470);
+    // 初期 3 県は引き続き含まれる
+    const ids = parsed.locales.map((l) => l.id);
+    for (const required of ['miyagi', 'nagano', 'kochi']) {
+      expect(ids).toContain(required);
+    }
   });
 
   it('every ingredient id is globally unique across locales', async () => {

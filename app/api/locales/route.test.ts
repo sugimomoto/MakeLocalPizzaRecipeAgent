@@ -16,10 +16,20 @@ describe('GET /api/locales', () => {
     expect(body.locales.length).toBeGreaterThan(0);
   });
 
-  it('returns the 3 curated prefectures (miyagi/nagano/kochi)', async () => {
+  it('includes the original 3 curated prefectures (miyagi/nagano/kochi)', async () => {
+    // 2026-05 に 47 都道府県へ拡張 (c06cae8)。初期 3 県は引き続き含まれる必要がある。
     const res = await GET(new Request('http://localhost/api/locales'));
     const body = (await res.json()) as LocalesResponse;
-    expect(body.locales.map((l) => l.id)).toEqual(['miyagi', 'nagano', 'kochi']);
+    const ids = body.locales.map((l) => l.id);
+    for (const required of ['miyagi', 'nagano', 'kochi']) {
+      expect(ids).toContain(required);
+    }
+  });
+
+  it('returns all 47 prefectures', async () => {
+    const res = await GET(new Request('http://localhost/api/locales'));
+    const body = (await res.json()) as LocalesResponse;
+    expect(body.locales).toHaveLength(47);
   });
 
   it('each locale has the required Locale shape', async () => {
