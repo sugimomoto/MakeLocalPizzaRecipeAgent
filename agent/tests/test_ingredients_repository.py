@@ -19,7 +19,7 @@ def repo() -> IngredientsRepository:
 
 
 class TestFromYaml:
-    # Slice 7 後: 全 47 都道府県 × 10 食材 = 470 件にスケール
+    # Slice 7 後: 全 47 都道府県 × 10 食材 = 470 件にスケール  # noqa: RUF003
     def test_loads_all_47_prefectures(self, repo: IngredientsRepository) -> None:
         locales = repo.list_locales()
         assert len(locales) == 47

@@ -104,8 +104,10 @@ class TestBuildDetailPromptOvenProfile:
         )
         # ENRO 前提文の鍵フレーズ
         assert "ENRO" in prompt
-        assert "400" in prompt and "450" in prompt
-        assert "90" in prompt and "120" in prompt
+        assert "400" in prompt
+        assert "450" in prompt
+        assert "90" in prompt
+        assert "120" in prompt
         # 機材前提のセクションヘッダ
         assert "機材前提" in prompt
         # 出力ルール側の bakingTemp 範囲指示
@@ -119,8 +121,10 @@ class TestBuildDetailPromptOvenProfile:
             oven_profile=HOME_OVEN_PROFILE,
         )
         # 家庭オーブン側の温度・時間
-        assert "250" in prompt and "300" in prompt
-        assert "8" in prompt and "15" in prompt
+        assert "250" in prompt
+        assert "300" in prompt
+        assert "8" in prompt
+        assert "15" in prompt
         # 範囲指示の文言
         assert "250〜300°C" in prompt
         # ENRO 固有のフレーズは出ない (短時間高温の数字以外で確実な差を見る)

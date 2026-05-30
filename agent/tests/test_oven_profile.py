@@ -21,15 +21,19 @@ def test_two_profiles_registered() -> None:
 
 def test_enro_directive_mentions_high_heat() -> None:
     d = ENRO_PROFILE.prompt_directive
-    assert "400" in d and "450" in d
-    assert "90" in d and "120" in d
+    assert "400" in d
+    assert "450" in d
+    assert "90" in d
+    assert "120" in d
     assert "bakingTemp" in d
 
 
 def test_home_oven_directive_mentions_low_heat() -> None:
     d = HOME_OVEN_PROFILE.prompt_directive
-    assert "250" in d and "300" in d
-    assert "8" in d and "15" in d
+    assert "250" in d
+    assert "300" in d
+    assert "8" in d
+    assert "15" in d
     assert "bakingTemp" in d
 
 
