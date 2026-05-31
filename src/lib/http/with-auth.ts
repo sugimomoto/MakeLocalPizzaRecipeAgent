@@ -16,6 +16,11 @@ export type AuthSubject = { kind: 'guest'; guestSessionId: string } | { kind: 'a
 
 export type AuthedRequestContext = {
   subject: AuthSubject;
+  /**
+   * Slice 9: withRateLimit middleware が 200 通過時に残り回数をセットする。
+   * 各 route handler は任意で `X-RateLimit-Remaining` をレスポンスに反映できる。
+   */
+  rateLimitRemaining?: number;
 };
 
 export type AuthedHandler<T = Response> = (

@@ -87,4 +87,35 @@ describe('POST /api/recipes/[candidateId]', () => {
     const res = await POST(makeRequest('c_x', body));
     expect(res.status).toBe(400);
   });
+
+  // Slice 9: アプリ層レートリミット
+  it('returns 429 with Retry-After after exceeding the per-hour limit (5)', async () => {
+    // テスト専用 guest session id を使い、他テストのカウンタと衝突しないようにする
+    const guestId = `rl-test-${Math.random().toString(36).slice(2, 10)}`;
+    const reqWithGuest = (cid: string) =>
+      new Request(`http://localhost/api/recipes/${cid}`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-mlpr-guest-session-id': guestId,
+        },
+        body: JSON.stringify(VALID_BODY),
+      });
+
+    // limit = 5 (RATE_LIMITS['/api/recipes/[candidateId]']) なので 5 件は通る
+    for (let i = 0; i < 5; i++) {
+      const res = await POST(reqWithGuest(`c_${i}`));
+      expect(res.status).toBe(200);
+      // body を消費しないと test runner で leak することがあるので drain
+      await res.body?.cancel();
+    }
+    // 6 件目は 429
+    const overRes = await POST(reqWithGuest('c_over'));
+    expect(overRes.status).toBe(429);
+    expect(overRes.headers.get('retry-after')).toBeTruthy();
+    expect(overRes.headers.get('x-ratelimit-limit')).toBe('5');
+    const err = (await overRes.json()) as { error: { code: string; retryAfter: number } };
+    expect(err.error.code).toBe('RATE_LIMITED');
+    expect(err.error.retryAfter).toBeGreaterThan(0);
+  });
 });
