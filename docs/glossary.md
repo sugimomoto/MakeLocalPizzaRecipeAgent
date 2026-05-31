@@ -73,6 +73,9 @@
 | **家庭用オーブン プロファイル** (Slice 8) | `home_oven_280c_10m` | 250〜300°C 上限・8〜15 分焼成を前提にレシピを再生成する補足プロファイル。「機材を揃える前にまず試したい」ユーザ向け (US-11) | 「家庭用オーブンに切替えて再生成」 |
 | **機材ガイド** (Slice 8) | `/equipment` | ENRO を推奨機材として紹介する独立 LP。Hero / 開発者の声 / 3 体験変化 / 5 ステップ + 比較表 / YouTube / 家庭オーブン補足 / アフィリエイト透明性注記で構成 | 「機材ガイドから ENRO を見る」 |
 | **アフィリエイト透明性** (Slice 8) | — | 楽天アフィリエイトを使用する際に「`rel="sponsored"` 付与 + ページ末尾に明示注記 + 個人ユーザとしての立場表明」を**毎回行う**運用ルール。`NEXT_PUBLIC_RAKUTEN_AFFILIATE_ID` で ID を環境変数注入 | 「アフィリエイト透明性を担保」 |
+| **レートリミット** (Slice 9) | `rateLimit` / `withRateLimit` | 公開 API を「同 user/IP から 1 時間に N 件まで」に制限し、ボット攻撃で Vertex AI / Imagen のコストが爆発するのを防ぐ仕組み。Firebase Admin SDK + Firestore (`rate_limits/{docId}` collection) で per-hour カウンタを管理 | 「詳細生成は 5/h のレートリミット」 |
+| **hour bucket** (Slice 9) | `hourBucket` | レートリミットの時間枠単位。UTC で 1 時間 (`YYYYMMDDHH`) を 1 つの bucket とし、bucket 跨ぎで自動的にカウンタがリセットされる | 「bucket=2026053015 のカウンタ」 |
+| **rate-limit key** (Slice 9) | `RateLimitKey` | レートリミットの判定単位。優先順位は `auth:{uid}` > `guest:{guestSessionId}` > `ip:{XFF 先頭}` > `anonymous`。NAT 配下の巻き添えを避けるため guest/auth を優先 | 「guest session 単位の rate-limit key」 |
 
 ---
 
@@ -237,3 +240,4 @@ UI 上のユーザー向け表示は **日本語ラベル**:
 | 2026-05-13 | 1.0 | 初版作成(MakeLocalPizzaRecipeAgent のリフレッシュ仕様)。Quick Tap / 候補3案 / Exploit-Tune-Explore / 戦略印 / 地元 / 振り直し / ピザ帳 / 焼成中 を新規定義。旧 dialogUx / chat / wizard / deck / 複数テーマ系を廃止語として明示。 |
 | 2026-05-24 | 1.1 | サービス名「**ふるさとピザ帳**」を確定 (Slice 7、FR-7-8)。エントリとして「ふるさとピザ帳」「MakeLocalPizzaRecipeAgent」(技術名) を追加。エージェント定義の名称参照を「ふるさとピザ帳」に更新。 |
 | 2026-05-30 | 1.2 | **Slice 8: 機材プロファイル / ENRO / 機材ガイド / アフィリエイト透明性** を §2 に追加。F13 / F14 / AC-9 と整合。 |
+| 2026-05-31 | 1.3 | **Slice 9: レートリミット / hour bucket / rate-limit key** を §2 に追加。PRD §5.6 / AC-10 と整合。 |

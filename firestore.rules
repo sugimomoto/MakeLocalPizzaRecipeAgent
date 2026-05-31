@@ -7,6 +7,8 @@ rules_version = '2';
 //   users/{uid}/drafts/{candidateId}         - Slice 7 フィードバック下書き (本人のみ R/W)
 //   furusato_items/{ingredientId}            - Slice 5 楽天ふるさと納税キャッシュ
 //                                              (public read / client write 不可)
+//   rate_limits/{docId}                      - Slice 9 アプリ層レートリミット
+//                                              (Admin SDK のみ R/W、client から完全 deny)
 service cloud.firestore {
   match /databases/{database}/documents {
     // Slice 4: ピザ帳 (Slice 7 で feedback フィールドが追加されるが、
@@ -27,6 +29,13 @@ service cloud.firestore {
     match /furusato_items/{ingredientId} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // Slice 9: アプリ層レートリミット
+    // server-side (Firebase Admin SDK) からのみ R/W。client からは完全 deny。
+    // TTL ポリシー (expiresAt フィールド) で 2 時間後に自動削除される。
+    match /rate_limits/{docId} {
+      allow read, write: if false;
     }
 
     // それ以外は明示的に deny

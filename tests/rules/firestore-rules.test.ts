@@ -256,3 +256,54 @@ describe('firestore.rules — furusato_items/{ingredientId} (Slice 5)', () => {
     await assertFails(deleteDoc(doc(user.firestore(), FURUSATO_PATH('miyagi-oyster'))));
   });
 });
+
+// Slice 9 追加: アプリ層レートリミット (Admin SDK のみ書き込み可能・client は全 deny)
+describe('firestore.rules — rate_limits/{docId} (Slice 9)', () => {
+  const RL_PATH = (docId: string) => `rate_limits/${docId}`;
+
+  const SAMPLE_RATE_LIMIT_DOC = {
+    count: 3,
+    limit: 5,
+    routeKey: '/api/recipes/[candidateId]',
+    bucket: '2026053015',
+    keyKind: 'guest',
+    keyValue: 'abc123',
+    createdAt: new Date('2026-05-30T15:00:00Z'),
+    updatedAt: new Date('2026-05-30T15:30:00Z'),
+    expiresAt: new Date('2026-05-30T17:00:00Z'),
+  };
+
+  it('unauthenticated client cannot read rate_limits', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), RL_PATH('test-doc')), SAMPLE_RATE_LIMIT_DOC);
+    });
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(getDoc(doc(guest.firestore(), RL_PATH('test-doc'))));
+  });
+
+  it('unauthenticated client cannot write rate_limits', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(setDoc(doc(guest.firestore(), RL_PATH('test-doc')), SAMPLE_RATE_LIMIT_DOC));
+  });
+
+  it('authenticated client cannot read rate_limits (admin-only)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), RL_PATH('test-doc')), SAMPLE_RATE_LIMIT_DOC);
+    });
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(getDoc(doc(user.firestore(), RL_PATH('test-doc'))));
+  });
+
+  it('authenticated client cannot write rate_limits (admin-only)', async () => {
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(setDoc(doc(user.firestore(), RL_PATH('test-doc')), SAMPLE_RATE_LIMIT_DOC));
+  });
+
+  it('authenticated client cannot delete rate_limits', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), RL_PATH('test-doc')), SAMPLE_RATE_LIMIT_DOC);
+    });
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(deleteDoc(doc(user.firestore(), RL_PATH('test-doc'))));
+  });
+});

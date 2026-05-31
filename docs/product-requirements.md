@@ -324,6 +324,24 @@ flowchart TD
 - **トーン**: 案件・広告ではなく**個人ユーザの強い推奨**として一人称で語る。アプリ内の他画面 (Tap2 / 詳細 / Dropdown) でもプロファイル選択 / バッジで言及するが、アフィリエイトリンク自体は `/equipment` ページに集約
 - **環境変数**: `NEXT_PUBLIC_RAKUTEN_AFFILIATE_ID` (公開可) で ID を注入。未設定環境では素 URL にフォールバックして動作
 
+### 5.6 アプリ層レートリミット (Slice 9 / 非機能要件)
+
+公開 URL から認証なしで叩ける `/api/recipes/[id]` は 1 リクエストあたり Gemini Flash + Imagen で ≒ \$0.04-0.05 のコストが発生する。Cloud Run max-instances / Vertex AI Quota だけでは「ボット 1 台が月予算 \$30 を一夜で燃やす」リスクを防げないため、**Firebase Admin SDK + Firestore による per-hour レートリミット**をアプリ層で実装する (Issue [#2](https://github.com/sugimomoto/MakeLocalPizzaRecipeAgent/issues/2))。
+
+- **判定 key 優先順位**: `auth:{uid}` > `guest:{guestSessionId}` > `ip:{XFF 先頭}` > `anonymous` (ローカル dev のみ・常に許可)
+- **route 別上限**:
+
+  | route | 上限 / hour | 根拠 |
+  | --- | --- | --- |
+  | `POST /api/quicktap/sessions` | 10 | Gemini Flash × 3 案 = \$0.003/req |
+  | `POST /api/quicktap/sessions/[id]/reroll` | 10 | 同上 |
+  | `POST /api/recipes/[candidateId]` | **5** | Imagen を含むため最も厳しめ。\$0.20/h で頭打ち |
+
+- **Firestore スキーマ**: `rate_limits/{hourBucket}_{keyKind}_{keyValue}_{routeShort}` (TTL 2h で自動削除)
+- **429 レスポンス**: `Retry-After` ヘッダ + `X-RateLimit-{Limit,Remaining}` + `{ error: { code: 'RATE_LIMITED', retryAfter: number } }`
+- **フロント側**: 各 hook (`useRecipeDetailStream` / `useQuickTapStream`) が 429 を catch して `useToast` で「あと約 X 分後にお試しください」を表示
+- **Security Rules**: `rate_limits/{docId}` は client から完全 deny。Admin SDK のみ R/W
+
 ---
 
 ## 6. ユーザーストーリー
@@ -442,6 +460,16 @@ flowchart TD
 - **AC-9-4**: `/equipment` ガイドページが新規ルートとして存在し、TOP の朱ピル / Dropdown / Tap2 シートのいずれからも到達できる
 - **AC-9-5**: `/equipment` 内の外部リンクはすべて `target="_blank" rel="sponsored noopener noreferrer"` で開き、ページ末尾に「楽天アフィリエイト + 個人ユーザとしての推奨」明示の注記がある
 - **AC-9-6**: 詳細画面 (`/recipes/[id]`) の MetaStrip 直下に、現在のプロファイル名を控えめなピル型バッジで表示し、タップで `/equipment` へ遷移する
+
+### AC-10: アプリ層レートリミット (Slice 9 / §5.6 / Issue #2)
+- **AC-10-1**: 同一 guestSessionId / IP から **1 時間 5 件以内**の詳細生成リクエスト (`/api/recipes/[id]`) はすべて 200 で通る
+- **AC-10-2**: 同一 guestSessionId / IP から **1 時間 6 件目以降**の詳細生成は 429 (`RATE_LIMITED`) を返し、ハンドラを呼ばずに Vertex AI / Imagen の課金を防ぐ
+- **AC-10-3**: 429 レスポンスは `Retry-After` ヘッダ (秒) + `X-RateLimit-{Limit,Remaining}` を含み、ボディは `{ error: { code: 'RATE_LIMITED', message, retryAfter } }`
+- **AC-10-4**: hour bucket 境界 (UTC 切替時) でカウンタが自動リセットされ、次の hour で再度 5 件まで許可される
+- **AC-10-5**: 候補生成 (`/api/quicktap/sessions`) と reroll (`/api/quicktap/sessions/[id]/reroll`) は 10/h でカウントされ、詳細生成とは独立
+- **AC-10-6**: フロントは 429 を catch して warning Toast「あと約 X 分後にお試しください」を表示し、それ以外のアプリ動作には影響を与えない
+- **AC-10-7**: Firestore `rate_limits/{docId}` は TTL ポリシー (`expiresAt` フィールド) で 2 時間後に自動削除される (コレクション肥大回避)
+- **AC-10-8**: `rate_limits` は Security Rules で client から完全 deny されており、Admin SDK のみ R/W
 
 ---
 
@@ -573,3 +601,4 @@ flowchart TD
 | 2026-05-12 | 2.0 | **全面リフレッシュ**。プロダクト名を **MakeLocalPizzaRecipeAgent** に変更。対話型/ウィザード UX を廃止し **Local-first Quick Tap (初回2タップ・リピート1タップ)** に一本化。**Exploit / Tune / Explore の三軸並行候補生成**を中心機能に据え、フィードバック活用を「学習」だけでなく「発想拡張」にも明示的に振る設計を導入。原体験(§1.3 仙台ピザパーティ) を追加、なぜピザかの設計判断(§1.2) を明文化。楽天ふるさと納税API を地元食材カタログの主データソースに昇格。地元選択の localStorage 永続化、画像生成の詳細画面遷移時集中によるコスト制御、ストリーム出力による体感レイテンシ最適化を要件化。AC-1〜AC-8 と US-1〜US-8 を再構成。 |
 | 2026-05-24 | 2.1 | **サービス名を「ふるさとピザ帳」に確定** (Slice 7、FR-7-8)。表向きのブランド名としてユーザ露出箇所 (env / metadata / TOP / README) に展開。技術識別子 (リポジトリ名 MakeLocalPizzaRecipeAgent / GCP プロジェクト makelocalpizzarecipeagent / mlpr-\* リソース prefix) は引き続き既存値を保持。 |
 | 2026-05-30 | 2.2 | **Slice 8: 機材ガイド + 機材プロファイル**。ENRO 電気ピザ窯を推奨機材として明示し、レシピ生成プロンプトに `oven_profile` (`enro_450c_90s` デフォルト / `home_oven_280c_10m` 補足) を導入。`/equipment` ガイド LP を新設し、楽天アフィリエイト透明性 (`rel="sponsored"` + 明示注記) を運用化。§1.3 に物理機材の裏付け段落、§2.3 に NEW-1/NEW-2 課題、§3.2 に F13/F14、§5.4 に oven_profile 永続化、§5.5 にアフィリエイト透明性、§6 に US-9/US-10/US-11、§7 に AC-9-1〜AC-9-6 を追加。 |
+| 2026-05-31 | 2.3 | **Slice 9: アプリ層レートリミット** ([Issue #2](https://github.com/sugimomoto/MakeLocalPizzaRecipeAgent/issues/2))。Firebase Admin SDK + Firestore で per-hour カウンタを実装し、詳細生成 5/h / 候補・reroll 10/h で公開 URL を経済的に保護。判定 key は `auth > guest > IP > anonymous` の優先順位。§5.6 にレートリミット仕様、§7 に AC-10-1〜AC-10-8 を追加。Issue [#1](https://github.com/sugimomoto/MakeLocalPizzaRecipeAgent/issues/1) で判明した「Gemini Flash は per-project Quota 不在 / Imagen 4 default 20 RPM」のリスクに対する直接対策。 |
