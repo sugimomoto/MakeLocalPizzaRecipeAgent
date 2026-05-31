@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
     '@google-cloud/opentelemetry-cloud-trace-exporter',
     '@grpc/grpc-js',
     'require-in-the-middle',
+    // Slice 9: Firebase Admin SDK は Node 専用 (gRPC / firestore-node) 依存のため
+    // webpack バンドル対象から外し、Node 実行時 require で解決させる。
+    'firebase-admin',
+    '@google-cloud/firestore',
   ],
 };
 
