@@ -16,6 +16,9 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
+
+import { useToast } from './use-toast';
 
 import type { PartialCandidate } from '@/domain/candidate';
 import type { GenerateCandidatesInput } from '@/lib/agent/client';
@@ -184,28 +187,41 @@ async function consumeStream(
 export function useQuickTapStream(): UseQuickTapStreamResult {
   const [state, dispatch] = useReducer(reducer, initialState);
   const abortRef = useRef<AbortController | null>(null);
+  const toast = useToast();
 
-  const start = useCallback(async (input: GenerateCandidatesInput) => {
-    abortRef.current?.abort();
-    const ac = new AbortController();
-    abortRef.current = ac;
+  const start = useCallback(
+    async (input: GenerateCandidatesInput) => {
+      abortRef.current?.abort();
+      const ac = new AbortController();
+      abortRef.current = ac;
 
-    const sessionId = generateSessionId();
-    dispatch({ type: 'start', sessionId });
+      const sessionId = generateSessionId();
+      dispatch({ type: 'start', sessionId });
 
-    try {
-      const res = await fetch('/api/quicktap/sessions', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...input, sessionId }),
-        signal: ac.signal,
-      });
-      await consumeStream(res, dispatch, abortRef);
-    } catch (err) {
-      if (ac.signal.aborted) return;
-      dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-    }
-  }, []);
+      try {
+        const res = await fetch('/api/quicktap/sessions', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ...input, sessionId }),
+          signal: ac.signal,
+        });
+        // Slice 9: 429 → Toast + error 状態に
+        if (res.status === 429) {
+          toast.push({
+            kind: 'warning',
+            message: buildRateLimitToastMessage(res, '/api/quicktap/sessions'),
+          });
+          dispatch({ type: 'error', error: 'RATE_LIMITED' });
+          return;
+        }
+        await consumeStream(res, dispatch, abortRef);
+      } catch (err) {
+        if (ac.signal.aborted) return;
+        dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
+      }
+    },
+    [toast],
+  );
 
   const reroll = useCallback(
     async (sourceSessionId: string, context: { localeId: string; ingredients: string[] }) => {
@@ -225,13 +241,22 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
             signal: ac.signal,
           },
         );
+        // Slice 9: 429 → Toast + error 状態に
+        if (res.status === 429) {
+          toast.push({
+            kind: 'warning',
+            message: buildRateLimitToastMessage(res, '/api/quicktap/sessions/[id]/reroll'),
+          });
+          dispatch({ type: 'error', error: 'RATE_LIMITED' });
+          return;
+        }
         await consumeStream(res, dispatch, abortRef);
       } catch (err) {
         if (ac.signal.aborted) return;
         dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
       }
     },
-    [],
+    [toast],
   );
 
   const reset = useCallback(() => {

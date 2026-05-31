@@ -16,6 +16,9 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { RecipeDetailStreamEventSchema, type RecipeDetailStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
+
+import { useToast } from './use-toast';
 
 import type {
   RecipeDetailSnapshot,
@@ -182,33 +185,46 @@ async function consumeStream(
 export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
   const [state, dispatch] = useReducer(reducer, initialState);
   const abortRef = useRef<AbortController | null>(null);
+  const toast = useToast();
 
-  const start = useCallback(async (input: GenerateRecipeDetailInput) => {
-    abortRef.current?.abort();
-    const ac = new AbortController();
-    abortRef.current = ac;
+  const start = useCallback(
+    async (input: GenerateRecipeDetailInput) => {
+      abortRef.current?.abort();
+      const ac = new AbortController();
+      abortRef.current = ac;
 
-    dispatch({ type: 'start', recipeId: input.candidateId });
+      dispatch({ type: 'start', recipeId: input.candidateId });
 
-    try {
-      const res = await fetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          localeId: input.localeId,
-          ingredients: input.ingredients,
-          candidate: input.candidate,
-          // Slice 8: 機材プロファイル (省略時は API 側で ENRO に解決)
-          ...(input.ovenProfile !== undefined && { ovenProfile: input.ovenProfile }),
-        }),
-        signal: ac.signal,
-      });
-      await consumeStream(res, dispatch, abortRef);
-    } catch (err) {
-      if (ac.signal.aborted) return;
-      dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-    }
-  }, []);
+      try {
+        const res = await fetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            localeId: input.localeId,
+            ingredients: input.ingredients,
+            candidate: input.candidate,
+            // Slice 8: 機材プロファイル (省略時は API 側で ENRO に解決)
+            ...(input.ovenProfile !== undefined && { ovenProfile: input.ovenProfile }),
+          }),
+          signal: ac.signal,
+        });
+        // Slice 9: アプリ層レートリミットで 429 が返ったら Toast + error 状態に
+        if (res.status === 429) {
+          toast.push({
+            kind: 'warning',
+            message: buildRateLimitToastMessage(res, '/api/recipes/[candidateId]'),
+          });
+          dispatch({ type: 'error', error: 'RATE_LIMITED' });
+          return;
+        }
+        await consumeStream(res, dispatch, abortRef);
+      } catch (err) {
+        if (ac.signal.aborted) return;
+        dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
+      }
+    },
+    [toast],
+  );
 
   const reset = useCallback(() => {
     abortRef.current?.abort();

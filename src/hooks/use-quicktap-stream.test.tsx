@@ -4,8 +4,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { encodeNdjsonStream } from '@/lib/agent/stream';
 
 import { useQuickTapStream } from './use-quicktap-stream';
+import { ToastProvider } from './use-toast';
 
 import type { StreamEvent } from '@/domain/schemas';
+import type { ReactNode } from 'react';
+
+// Slice 9: useQuickTapStream は内部で useToast を呼ぶため、テストは
+// ToastProvider でラップする。
+function Wrapper({ children }: { children: ReactNode }) {
+  return <ToastProvider>{children}</ToastProvider>;
+}
+const wrapperOption = { wrapper: Wrapper };
 
 const SAMPLE_EVENTS: StreamEvent[] = [
   { type: 'session.start', sessionId: 'sess_x', strategies: ['exploit', 'tune', 'explore'] },
@@ -45,7 +54,7 @@ describe('useQuickTapStream', () => {
   });
 
   it('starts in idle state with empty candidates', () => {
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
     expect(result.current.state).toBe('idle');
     expect(result.current.candidates).toEqual([]);
     expect(result.current.sessionId).toBeNull();
@@ -62,7 +71,7 @@ describe('useQuickTapStream', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['miyagi-seri'] });
@@ -85,7 +94,7 @@ describe('useQuickTapStream', () => {
       makeFetchMock(async () => new Response(streamFromEvents(SAMPLE_EVENTS), { status: 200 })),
     );
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['miyagi-seri'] });
@@ -108,7 +117,7 @@ describe('useQuickTapStream', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['miyagi-seri'] });
@@ -132,7 +141,7 @@ describe('useQuickTapStream', () => {
       ),
     );
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['x'] });
@@ -150,7 +159,7 @@ describe('useQuickTapStream', () => {
       }),
     );
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['x'] });
@@ -171,7 +180,7 @@ describe('useQuickTapStream', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['miyagi-seri'] });
@@ -195,13 +204,57 @@ describe('useQuickTapStream', () => {
     expect(result.current.sessionId).toBe('sess_y');
   });
 
+  it('429 response on start() → error state RATE_LIMITED (Slice 9)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              error: { code: 'RATE_LIMITED', message: '...', retryAfter: 1800 },
+            }),
+            { status: 429, headers: { 'retry-after': '1800' } },
+          ),
+      ),
+    );
+
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
+    await act(async () => {
+      await result.current.start({ localeId: 'miyagi', ingredients: ['x'] });
+    });
+    await waitFor(() => expect(result.current.state).toBe('error'));
+    expect(result.current.error).toBe('RATE_LIMITED');
+  });
+
+  it('429 response on reroll() → error state RATE_LIMITED (Slice 9)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              error: { code: 'RATE_LIMITED', message: '...', retryAfter: 600 },
+            }),
+            { status: 429, headers: { 'retry-after': '600' } },
+          ),
+      ),
+    );
+
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
+    await act(async () => {
+      await result.current.reroll('sess_x', { localeId: 'miyagi', ingredients: ['x'] });
+    });
+    await waitFor(() => expect(result.current.state).toBe('error'));
+    expect(result.current.error).toBe('RATE_LIMITED');
+  });
+
   it('reset() returns the hook to idle/empty', async () => {
     vi.stubGlobal(
       'fetch',
       makeFetchMock(async () => new Response(streamFromEvents(SAMPLE_EVENTS), { status: 200 })),
     );
 
-    const { result } = renderHook(() => useQuickTapStream());
+    const { result } = renderHook(() => useQuickTapStream(), wrapperOption);
     await act(async () => {
       await result.current.start({ localeId: 'miyagi', ingredients: ['x'] });
     });

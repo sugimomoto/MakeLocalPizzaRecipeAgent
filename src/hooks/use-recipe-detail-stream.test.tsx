@@ -4,9 +4,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { encodeNdjsonStream } from '@/lib/agent/stream';
 
 import { useRecipeDetailStream } from './use-recipe-detail-stream';
+import { ToastProvider } from './use-toast';
 
 import type { Candidate } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
+import type { ReactNode } from 'react';
+
+// Slice 9: useRecipeDetailStream は内部で useToast を呼ぶため ToastProvider でラップ
+function Wrapper({ children }: { children: ReactNode }) {
+  return <ToastProvider>{children}</ToastProvider>;
+}
+const wrapperOption = { wrapper: Wrapper };
 
 const CANDIDATE: Candidate = {
   candidateId: 'c_test',
@@ -72,7 +80,7 @@ describe('useRecipeDetailStream', () => {
   });
 
   it('starts in idle state with everything null', () => {
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
     expect(result.current.state).toBe('idle');
     expect(result.current.title).toBeNull();
     expect(result.current.meta).toBeNull();
@@ -82,7 +90,7 @@ describe('useRecipeDetailStream', () => {
 
   it('happy path reaches allDone with title/meta/materials/steps/story/image populated', async () => {
     vi.stubGlobal('fetch', fetchMockFor(HAPPY_EVENTS));
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
@@ -115,7 +123,7 @@ describe('useRecipeDetailStream', () => {
       },
     ];
     vi.stubGlobal('fetch', fetchMockFor(events));
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
@@ -141,7 +149,7 @@ describe('useRecipeDetailStream', () => {
       { type: 'image.ready', recipeId: 'c_test', url: 'https://storage.test/recipes/c_test.png' },
     ];
     vi.stubGlobal('fetch', fetchMockFor(events));
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
@@ -161,7 +169,7 @@ describe('useRecipeDetailStream', () => {
       'fetch',
       vi.fn(async () => new Response('boom', { status: 500 })),
     );
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
@@ -179,7 +187,7 @@ describe('useRecipeDetailStream', () => {
   it('POSTs to /api/recipes/{candidateId} with full body', async () => {
     const fetchMock = fetchMockFor(HAPPY_EVENTS);
     vi.stubGlobal('fetch', fetchMock);
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
@@ -201,9 +209,43 @@ describe('useRecipeDetailStream', () => {
     expect(body.candidate).toEqual(CANDIDATE);
   });
 
+  it('429 response → error state with code "RATE_LIMITED" (Slice 9)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              error: {
+                code: 'RATE_LIMITED',
+                message: 'しばらく時間をおいてから再度お試しください',
+                retryAfter: 1800,
+              },
+            }),
+            {
+              status: 429,
+              headers: { 'content-type': 'application/json', 'retry-after': '1800' },
+            },
+          ),
+      ),
+    );
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
+
+    await act(async () => {
+      await result.current.start({
+        candidateId: 'c_test',
+        localeId: 'miyagi',
+        ingredients: ['miyagi-seri'],
+        candidate: CANDIDATE,
+      });
+    });
+    await waitFor(() => expect(result.current.state).toBe('error'));
+    expect(result.current.error).toBe('RATE_LIMITED');
+  });
+
   it('reset() returns to idle', async () => {
     vi.stubGlobal('fetch', fetchMockFor(HAPPY_EVENTS));
-    const { result } = renderHook(() => useRecipeDetailStream());
+    const { result } = renderHook(() => useRecipeDetailStream(), wrapperOption);
 
     await act(async () => {
       await result.current.start({
