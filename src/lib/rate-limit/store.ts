@@ -9,6 +9,7 @@
  */
 
 import { getAdminFirestore } from '@/lib/firebase/admin';
+import { logger } from '@/lib/observability/logger';
 
 import { buildDocId, keyValueOf, secondsUntilNextHour } from './bucket';
 
@@ -84,42 +85,57 @@ export class FirestoreRateLimitStore implements RateLimitStore {
     // TTL: bucket + 1h バッファ。Firestore TTL ポリシーで自動削除される。
     const expiresAt = new Date(now.getTime() + 2 * 3600 * 1000);
 
-    return this.db.runTransaction(async (tx: Transaction) => {
-      const snap = await tx.get(docRef);
-      const data = snap.exists ? snap.data() : undefined;
-      const currentCount = typeof data?.count === 'number' ? data.count : 0;
+    try {
+      return await this.db.runTransaction(async (tx: Transaction) => {
+        const snap = await tx.get(docRef);
+        const data = snap.exists ? snap.data() : undefined;
+        const currentCount = typeof data?.count === 'number' ? data.count : 0;
 
-      if (currentCount >= limit) {
+        if (currentCount >= limit) {
+          return {
+            allowed: false,
+            retryAfterSeconds: secondsUntilNextHour(now),
+          } satisfies RateLimitDecision;
+        }
+
+        if (snap.exists) {
+          tx.update(docRef, {
+            count: currentCount + 1,
+            updatedAt: now,
+          });
+        } else {
+          tx.set(docRef, {
+            count: 1,
+            limit,
+            routeKey,
+            bucket,
+            keyKind: key.kind,
+            keyValue: keyValueOf(key),
+            createdAt: now,
+            updatedAt: now,
+            expiresAt,
+          });
+        }
+
         return {
-          allowed: false,
-          retryAfterSeconds: secondsUntilNextHour(now),
+          allowed: true,
+          remaining: limit - (currentCount + 1),
         } satisfies RateLimitDecision;
-      }
-
-      if (snap.exists) {
-        tx.update(docRef, {
-          count: currentCount + 1,
-          updatedAt: now,
-        });
-      } else {
-        tx.set(docRef, {
-          count: 1,
-          limit,
-          routeKey,
-          bucket,
-          keyKind: key.kind,
-          keyValue: keyValueOf(key),
-          createdAt: now,
-          updatedAt: now,
-          expiresAt,
-        });
-      }
-
-      return {
-        allowed: true,
-        remaining: limit - (currentCount + 1),
-      } satisfies RateLimitDecision;
-    });
+      });
+    } catch (err) {
+      // Firestore がアクセス不能 (PERMISSION_DENIED / UNAVAILABLE / IAM 反映待ち 等):
+      // ハードフェイル (500) するより、rate-limit を一時停止して通す方が安全。
+      // Cloud Run max-instances=5 が物理上の最後の砦として効く。
+      // Cloud Logging に WARNING ログを出して運用通知 (jsonPayload.message で絞れる)。
+      logger.warn('rate_limit_firestore_error', {
+        routeKey,
+        keyKind: key.kind,
+        bucket,
+        errorType: err instanceof Error ? err.constructor.name : typeof err,
+        errorMessage: err instanceof Error ? err.message : String(err),
+      });
+      return { allowed: true, remaining: 0 };
+    }
   }
 }
 
