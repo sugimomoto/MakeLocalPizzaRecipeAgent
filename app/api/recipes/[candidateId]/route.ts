@@ -19,7 +19,7 @@ import { createAgentClient } from '@/lib/agent/factory';
 import { apiError } from '@/lib/http/error';
 import { withAuthOptional } from '@/lib/http/with-auth';
 import { withRateLimit } from '@/lib/http/with-rate-limit';
-import { RATE_LIMITS } from '@/lib/rate-limit/limits';
+import { RATE_LIMIT_CONFIG } from '@/lib/rate-limit/limits';
 
 const CandidateSchema = z.object({
   candidateId: z.string().min(1),
@@ -44,48 +44,42 @@ const agent = createAgentClient();
 export const dynamic = 'force-dynamic';
 
 export const POST = withAuthOptional(
-  withRateLimit(
-    {
-      limit: RATE_LIMITS['/api/recipes/[candidateId]'],
-      routeKey: '/api/recipes/[candidateId]',
-    },
-    async (request, ctx) => {
-      const url = new URL(request.url);
-      const segments = url.pathname.split('/').filter(Boolean);
-      // /api/recipes/{candidateId} → segments[2]
-      const candidateId = segments[2];
-      if (!candidateId) {
-        throw apiError.badRequest('BAD_REQUEST', 'candidate id is required');
-      }
+  withRateLimit(RATE_LIMIT_CONFIG['/api/recipes/[candidateId]'], async (request, ctx) => {
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/').filter(Boolean);
+    // /api/recipes/{candidateId} → segments[2]
+    const candidateId = segments[2];
+    if (!candidateId) {
+      throw apiError.badRequest('BAD_REQUEST', 'candidate id is required');
+    }
 
-      let raw: unknown;
-      try {
-        raw = await request.json();
-      } catch {
-        throw apiError.badRequest('BAD_BODY', 'request body must be valid JSON');
-      }
-      const parsed = RequestBodySchema.safeParse(raw);
-      if (!parsed.success) {
-        throw apiError.badRequest('BAD_BODY', parsed.error.issues.map((i) => i.message).join('; '));
-      }
+    let raw: unknown;
+    try {
+      raw = await request.json();
+    } catch {
+      throw apiError.badRequest('BAD_BODY', 'request body must be valid JSON');
+    }
+    const parsed = RequestBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      throw apiError.badRequest('BAD_BODY', parsed.error.issues.map((i) => i.message).join('; '));
+    }
 
-      const stream = await agent.generateRecipeDetail({
-        candidateId,
-        localeId: parsed.data.localeId,
-        ingredients: parsed.data.ingredients,
-        candidate: parsed.data.candidate,
-        ...(parsed.data.ovenProfile !== undefined && { ovenProfile: parsed.data.ovenProfile }),
-        ...(ctx.subject.kind === 'guest' && { guestSessionId: ctx.subject.guestSessionId }),
-      });
+    const stream = await agent.generateRecipeDetail({
+      candidateId,
+      localeId: parsed.data.localeId,
+      ingredients: parsed.data.ingredients,
+      candidate: parsed.data.candidate,
+      ...(parsed.data.ovenProfile !== undefined && { ovenProfile: parsed.data.ovenProfile }),
+      ...(ctx.subject.kind === 'guest' && { guestSessionId: ctx.subject.guestSessionId }),
+    });
 
-      return new Response(stream, {
-        status: 200,
-        headers: {
-          'content-type': 'application/x-ndjson; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-mlpr-recipe-id': decodeURIComponent(candidateId),
-        },
-      });
-    },
-  ),
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'content-type': 'application/x-ndjson; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-mlpr-recipe-id': decodeURIComponent(candidateId),
+      },
+    });
+  }),
 );

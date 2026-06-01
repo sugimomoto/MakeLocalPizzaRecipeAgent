@@ -23,7 +23,7 @@ import { createAgentClient } from '@/lib/agent/factory';
 import { apiError } from '@/lib/http/error';
 import { withAuthOptional } from '@/lib/http/with-auth';
 import { withRateLimit } from '@/lib/http/with-rate-limit';
-import { RATE_LIMITS } from '@/lib/rate-limit/limits';
+import { RATE_LIMIT_CONFIG } from '@/lib/rate-limit/limits';
 
 // AGENT_MODE で MockAgentClient / HttpAgentClient を切替
 const agent = createAgentClient();
@@ -36,44 +36,38 @@ const RerollBodySchema = z.object({
 });
 
 export const POST = withAuthOptional(
-  withRateLimit(
-    {
-      limit: RATE_LIMITS['/api/quicktap/sessions/[id]/reroll'],
-      routeKey: '/api/quicktap/sessions/[id]/reroll',
-    },
-    async (request) => {
-      const url = new URL(request.url);
-      const segments = url.pathname.split('/').filter(Boolean);
-      // /api/quicktap/sessions/{id}/reroll → segments[3] が id
-      const sessionId = segments[3];
+  withRateLimit(RATE_LIMIT_CONFIG['/api/quicktap/sessions/[id]/reroll'], async (request) => {
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/').filter(Boolean);
+    // /api/quicktap/sessions/{id}/reroll → segments[3] が id
+    const sessionId = segments[3];
 
-      if (!sessionId) {
-        throw apiError.badRequest('BAD_REQUEST', 'session id is required');
-      }
+    if (!sessionId) {
+      throw apiError.badRequest('BAD_REQUEST', 'session id is required');
+    }
 
-      let payload: z.infer<typeof RerollBodySchema>;
-      try {
-        const json = (await request.json()) as unknown;
-        payload = RerollBodySchema.parse(json);
-      } catch (e) {
-        const message = e instanceof Error ? e.message : 'invalid body';
-        throw apiError.badRequest('BAD_REQUEST', `reroll body invalid: ${message}`);
-      }
+    let payload: z.infer<typeof RerollBodySchema>;
+    try {
+      const json = (await request.json()) as unknown;
+      payload = RerollBodySchema.parse(json);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'invalid body';
+      throw apiError.badRequest('BAD_REQUEST', `reroll body invalid: ${message}`);
+    }
 
-      const stream = await agent.reroll({
-        sourceSessionId: sessionId,
-        localeId: payload.localeId,
-        ingredients: payload.ingredients,
-      });
+    const stream = await agent.reroll({
+      sourceSessionId: sessionId,
+      localeId: payload.localeId,
+      ingredients: payload.ingredients,
+    });
 
-      return new Response(stream, {
-        status: 200,
-        headers: {
-          'content-type': 'application/x-ndjson; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-mlpr-source-session-id': sessionId,
-        },
-      });
-    },
-  ),
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'content-type': 'application/x-ndjson; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-mlpr-source-session-id': sessionId,
+      },
+    });
+  }),
 );
