@@ -16,6 +16,7 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+import { apiFetch } from '@/lib/http/api-fetch';
 import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
 
 import { useToast } from './use-toast';
@@ -199,9 +200,8 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
       dispatch({ type: 'start', sessionId });
 
       try {
-        const res = await fetch('/api/quicktap/sessions', {
+        const res = await apiFetch('/api/quicktap/sessions', {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ ...input, sessionId }),
           signal: ac.signal,
         });
@@ -232,11 +232,10 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
       dispatch({ type: 'start', sessionId: sourceSessionId });
 
       try {
-        const res = await fetch(
+        const res = await apiFetch(
           `/api/quicktap/sessions/${encodeURIComponent(sourceSessionId)}/reroll`,
           {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
             body: JSON.stringify(context),
             signal: ac.signal,
           },

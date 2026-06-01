@@ -16,6 +16,7 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { RecipeDetailStreamEventSchema, type RecipeDetailStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+import { apiFetch } from '@/lib/http/api-fetch';
 import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
 
 import { useToast } from './use-toast';
@@ -196,9 +197,8 @@ export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
       dispatch({ type: 'start', recipeId: input.candidateId });
 
       try {
-        const res = await fetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
+        const res = await apiFetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
             localeId: input.localeId,
             ingredients: input.ingredients,
