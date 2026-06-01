@@ -27,11 +27,16 @@ function getAffiliateId(): string | null {
 /**
  * 与えられた楽天系 URL をアフィリエイト形式に変換する。
  * affiliate ID 未設定なら素 URL のまま返す。
+ *
+ * 防御 (defense-in-depth): ID 値は環境変数 (運営者管理) だが、誤って `/` や
+ * 特殊文字を含む値が入っても URL 構造が壊れないよう encodeURIComponent で
+ * escape する。
  */
 export function toAffiliateUrl(rakutenUrl: string): string {
   const id = getAffiliateId();
   if (id === null) return rakutenUrl;
-  return `${RAKUTEN_AFFILIATE_BASE}/${id}/?pc=${encodeURIComponent(rakutenUrl)}`;
+  const safeId = encodeURIComponent(id);
+  return `${RAKUTEN_AFFILIATE_BASE}/${safeId}/?pc=${encodeURIComponent(rakutenUrl)}`;
 }
 
 /** ENRO 店舗 TOP へのアフィリエイトリンク */
