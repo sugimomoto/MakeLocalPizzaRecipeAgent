@@ -2,19 +2,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { encodeNdjsonStream } from '@/lib/agent/stream';
+import { withToastProvider as wrapperOption } from '@/test-utils/wrappers';
 
 import { useRecipeDetailStream } from './use-recipe-detail-stream';
-import { ToastProvider } from './use-toast';
 
 import type { Candidate } from '@/domain/candidate';
 import type { StreamEvent } from '@/domain/schemas';
-import type { ReactNode } from 'react';
-
-// Slice 9: useRecipeDetailStream は内部で useToast を呼ぶため ToastProvider でラップ
-function Wrapper({ children }: { children: ReactNode }) {
-  return <ToastProvider>{children}</ToastProvider>;
-}
-const wrapperOption = { wrapper: Wrapper };
 
 const CANDIDATE: Candidate = {
   candidateId: 'c_test',

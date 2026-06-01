@@ -2,19 +2,11 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { encodeNdjsonStream } from '@/lib/agent/stream';
+import { withToastProvider as wrapperOption } from '@/test-utils/wrappers';
 
 import { useQuickTapStream } from './use-quicktap-stream';
-import { ToastProvider } from './use-toast';
 
 import type { StreamEvent } from '@/domain/schemas';
-import type { ReactNode } from 'react';
-
-// Slice 9: useQuickTapStream は内部で useToast を呼ぶため、テストは
-// ToastProvider でラップする。
-function Wrapper({ children }: { children: ReactNode }) {
-  return <ToastProvider>{children}</ToastProvider>;
-}
-const wrapperOption = { wrapper: Wrapper };
 
 const SAMPLE_EVENTS: StreamEvent[] = [
   { type: 'session.start', sessionId: 'sess_x', strategies: ['exploit', 'tune', 'explore'] },

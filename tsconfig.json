@@ -33,7 +33,8 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/stores/*": ["./src/stores/*"],
       "@/styles/*": ["./src/styles/*"],
-      "@/data/*": ["./src/data/*"]
+      "@/data/*": ["./src/data/*"],
+      "@/test-utils/*": ["./src/test-utils/*"]
     }
   },
   "include": [
