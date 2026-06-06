@@ -61,13 +61,16 @@ export function JournalCard({ recipe, onOpen, maxWorkedTags = 2 }: JournalCardPr
   const sealClass = `seal--${recipe.strategy}` as 'seal--exploit' | 'seal--tune' | 'seal--explore';
   const worked = fb.whatWorked.slice(0, maxWorkedTags);
 
+  // 「作ってみた」写真があればそちらを優先表示、無ければ AI 生成画像 (recipe.imageUrl)。
+  const heroImageUrl = fb.photoUrls?.[0] ?? recipe.imageUrl;
+
   return (
     <button type="button" className={styles.card} onClick={handleClick}>
       <div className={styles.head}>
         <div className={styles.hero}>
-          {recipe.imageUrl ? (
+          {heroImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={recipe.imageUrl} alt="" referrerPolicy="no-referrer" />
+            <img src={heroImageUrl} alt="" referrerPolicy="no-referrer" />
           ) : null}
         </div>
         <div className={styles.body}>
