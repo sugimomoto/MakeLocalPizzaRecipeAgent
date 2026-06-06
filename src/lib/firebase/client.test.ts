@@ -92,6 +92,22 @@ describe('firebase/client', () => {
     });
   });
 
+  it('uses NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET when set (2024-10 以降の新形式)', async () => {
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID = 'mlpr-local';
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY = 'fake';
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = 'mlpr-local.firebaseapp.com';
+    process.env.NEXT_PUBLIC_FIREBASE_APP_ID = '1:0:web:0';
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = 'mlpr-local.firebasestorage.app';
+    process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR = 'false';
+
+    const mod = await loadClient();
+    mod.getFirebaseStorage();
+
+    expect(initializeAppMock).toHaveBeenCalledWith(
+      expect.objectContaining({ storageBucket: 'mlpr-local.firebasestorage.app' }),
+    );
+  });
+
   it('reuses an existing FirebaseApp via getApps() (HMR safe)', async () => {
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID = 'mlpr-local';
     process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR = 'false';

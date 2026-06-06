@@ -49,11 +49,17 @@ function readEnv(): {
   const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '';
   const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? '';
   const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+  // 2024-10 以降に作られた Firebase プロジェクトは Storage バケットの suffix が
+  // `.appspot.com` ではなく `.firebasestorage.app` になる。projectId からの推測
+  // ではどちらか一意に決まらないので、`NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` で
+  // 明示できるようにする。未指定時は旧来通り `appspot.com` フォールバック。
+  const storageBucket =
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${projectId}.appspot.com`;
   return {
     apiKey,
     authDomain,
     projectId,
-    storageBucket: `${projectId}.appspot.com`,
+    storageBucket,
     appId,
     useEmulator,
     authEmulator: parseHostPort(process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST, {
