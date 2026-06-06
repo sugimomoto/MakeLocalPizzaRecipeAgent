@@ -105,7 +105,7 @@
 .hero {
   position: relative;
   padding: 64px 32px 56px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -158,7 +158,7 @@
 .heroImage {
   margin-top: 40px;
   width: 100%;
-  max-width: 608px;
+  max-width: 100%;
   aspect-ratio: 608 / 400;
   border-radius: 18px;
   overflow: hidden;
@@ -259,7 +259,7 @@
 /* ── DeveloperVoice ─────────────────────────────────────────────── */
 .developerSection {
   padding: 32px 32px 56px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -387,7 +387,7 @@
 /* ── Benefits ───────────────────────────────────────────────────── */
 .benefitsSection {
   padding: 32px 32px 64px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -414,16 +414,11 @@
 }
 
 .benefitsGrid {
+  /* Slice 9.x: 全画面と max-width 480px に統一したため、3 体験変化は常に縦並び */
   margin-top: 32px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-}
-
-@media (min-width: 720px) {
-  .benefitsGrid {
-    grid-template-columns: 1fr 1.15fr 1fr;
-  }
 }
 
 .benefitCard {
@@ -547,7 +542,7 @@
 /* ── UsageSteps ─────────────────────────────────────────────────── */
 .usageSection {
   padding: 32px 32px 32px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -645,7 +640,7 @@
 /* ── CompareTable ───────────────────────────────────────────────── */
 .compareSection {
   margin: 36px auto 0;
-  max-width: 720px;
+  max-width: 480px;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--mlpr-hairline);
@@ -793,7 +788,7 @@
 /* ── YoutubeList ────────────────────────────────────────────────── */
 .youtubeSection {
   padding: 36px 32px 32px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -837,15 +832,10 @@
 }
 
 .youtubeGrid {
+  /* Slice 9.x: 480px 統一に伴い、動画 3 件は常に縦並び */
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
-}
-
-@media (min-width: 720px) {
-  .youtubeGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .youtubeCard {
@@ -937,7 +927,7 @@
 /* ── HomeOvenSection ────────────────────────────────────────────── */
 .homeOvenSection {
   padding: 24px 32px 56px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -959,18 +949,12 @@
 }
 
 .homeOvenBody {
+  /* Slice 9.x: 480px 統一に伴い、家庭オーブン補足セクションも縦並び */
   margin-top: 24px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
   align-items: center;
-}
-
-@media (min-width: 720px) {
-  .homeOvenBody {
-    grid-template-columns: 1.2fr 1fr;
-    gap: 32px;
-  }
 }
 
 .homeOvenLede {
@@ -1097,7 +1081,7 @@
 /* ── FinalCta ───────────────────────────────────────────────────── */
 .finalCtaSection {
   padding: 48px 32px 32px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -1147,7 +1131,7 @@
 /* ── FooterNotice ───────────────────────────────────────────────── */
 .footerNoticeSection {
   padding: 0 32px 56px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -1228,7 +1212,7 @@
   font-size: 10px;
   color: var(--mlpr-sumi-muted);
   letter-spacing: 2px;
-  max-width: 720px;
+  max-width: 480px;
   margin: 0 auto;
   flex-wrap: wrap;
   gap: 12px;
