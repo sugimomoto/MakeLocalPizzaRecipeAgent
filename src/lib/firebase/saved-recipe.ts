@@ -29,6 +29,7 @@ import {
   clampScore,
   FEEDBACK_AXIS_ORDER,
   normalizeChipList,
+  normalizePhotoUrls,
   type Feedback,
   type FeedbackAxisKey,
 } from '@/domain/feedback';
@@ -65,7 +66,9 @@ function normalizeFeedback(raw: unknown): Feedback | undefined {
     updatedAt,
   };
   if (typeof data['note'] === 'string') feedback.note = data['note'];
-  if (typeof data['photoUrl'] === 'string') feedback.photoUrl = data['photoUrl'];
+  // photoUrls (新) > photoUrl (旧) の優先順で 1 つに正規化
+  const photoUrls = normalizePhotoUrls(data['photoUrls'], data['photoUrl']);
+  if (photoUrls !== undefined) feedback.photoUrls = photoUrls;
   return feedback;
 }
 

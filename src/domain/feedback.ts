@@ -25,7 +25,13 @@ export type Feedback = {
   guestCount: number | null;
   /** 自由入力メモ (Slice 7 後追加で UI 化) */
   note?: string;
-  /** ユーザが撮影した「作ってみた写真」の Storage URL (Slice 7 後追加) */
+  /**
+   * ユーザが撮影した「作ってみた写真」(Slice 9 後追加 / Claude Design 反映)。
+   * 最大 4 枚、photoUrls[0] が画面のメインヒーロー。
+   * 旧 `photoUrl` は read 互換のみ維持 — read 側で `[photoUrl]` に展開する。
+   */
+  photoUrls?: string[];
+  /** @deprecated photoUrls[0] に統合。read 互換のためのみ保持 (新規 write は行わない)。 */
   photoUrl?: string;
   /** 初回保存時の Firestore serverTimestamp を Date に正規化したもの */
   cookedAt: Date;
@@ -95,6 +101,26 @@ export function clampGuestCount(v: unknown): number | null {
   if (n < FEEDBACK_GUEST_COUNT_MIN) return null;
   if (n > FEEDBACK_GUEST_COUNT_MAX) return FEEDBACK_GUEST_COUNT_MAX;
   return n;
+}
+
+/** 写真枚数の上限 (UI / 保存ともに 4 まで) */
+export const FEEDBACK_PHOTO_MAX = 4;
+
+/**
+ * Firestore 値を photoUrls 配列に正規化。
+ * - 新スキーマ: `photoUrls` 配列を採用
+ * - 旧スキーマ: `photoUrl` (単一文字列) → `[photoUrl]` に昇格
+ * - 最大 4 件で truncate、空文字 / 非 string は除外
+ */
+export function normalizePhotoUrls(photoUrls: unknown, photoUrl: unknown): string[] | undefined {
+  if (Array.isArray(photoUrls)) {
+    const cleaned = photoUrls.filter((x): x is string => typeof x === 'string' && x.length > 0);
+    return cleaned.slice(0, FEEDBACK_PHOTO_MAX);
+  }
+  if (typeof photoUrl === 'string' && photoUrl.length > 0) {
+    return [photoUrl];
+  }
+  return undefined;
 }
 
 /** チップ配列をマスタでフィルタ + 重複排除 (順序はマスタ優先) */

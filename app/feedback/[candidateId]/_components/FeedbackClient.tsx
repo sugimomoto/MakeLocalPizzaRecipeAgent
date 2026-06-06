@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react';
 
 import { AvatarButton } from '@/components/auth/AvatarButton';
-import { CameraPlaceholder } from '@/components/feedback/CameraPlaceholder';
 import { ChipGroup } from '@/components/feedback/ChipGroup';
 import { DotsInput } from '@/components/feedback/DotsInput';
 import { StarInput } from '@/components/feedback/StarInput';
@@ -25,6 +24,7 @@ import {
   FEEDBACK_AXIS_LABELS,
   FEEDBACK_AXIS_ORDER,
   FEEDBACK_CHIP_OPTIONS,
+  FEEDBACK_PHOTO_MAX,
   type FeedbackAxisKey,
   type FeedbackScore,
 } from '@/domain/feedback';
@@ -129,26 +129,63 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
   const handleChipChange = (group: keyof typeof FEEDBACK_CHIP_OPTIONS) => (next: string[]) =>
     setForm((f) => ({ ...f, [group]: next }));
 
-  const handlePhotoPick = (): void => photoInputRef.current?.click();
+  const photoUrls = useMemo(() => form.photoUrls ?? [], [form.photoUrls]);
+  const photoCount = photoUrls.length;
+  const photoSlotsLeft = FEEDBACK_PHOTO_MAX - photoCount;
+
+  const handlePhotoPick = (): void => {
+    if (photoSlotsLeft <= 0) {
+      toast.push({ kind: 'info', message: `写真は最大 ${FEEDBACK_PHOTO_MAX} 枚までです` });
+      return;
+    }
+    photoInputRef.current?.click();
+  };
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const file = e.target.files?.[0];
+    const files = Array.from(e.target.files ?? []);
     // 1 回使ったら input を空にして同じファイル再選択でも change が発火するようにする
     e.target.value = '';
-    if (!file) return;
+    if (files.length === 0) return;
     if (!user) {
       toast.push({ kind: 'warning', message: 'サインインが必要です' });
       return;
     }
-    if (file.size > 12 * 1024 * 1024) {
+    // 残スロット分だけ取り、それ以外は捨てる
+    const remaining = FEEDBACK_PHOTO_MAX - photoCount;
+    if (remaining <= 0) {
+      toast.push({ kind: 'info', message: `写真は最大 ${FEEDBACK_PHOTO_MAX} 枚までです` });
+      return;
+    }
+    const accepted = files.slice(0, remaining);
+    // 12MB 上限チェック (Storage 側は 5MB だがクライアント側はリサイズ前なので 12MB)
+    const oversize = accepted.find((f) => f.size > 12 * 1024 * 1024);
+    if (oversize) {
       toast.push({ kind: 'warning', message: '画像は 12MB 以内でお願いします' });
       return;
     }
     setPhotoUploading(true);
     try {
-      const { url } = await uploadFeedbackPhoto(getFirebaseStorage(), user.uid, candidateId, file);
-      setForm((f) => ({ ...f, photoUrl: url }));
-      toast.push({ kind: 'success', message: '写真をアップロードしました' });
+      const uploaded: string[] = [];
+      for (const file of accepted) {
+        const { url } = await uploadFeedbackPhoto(
+          getFirebaseStorage(),
+          user.uid,
+          candidateId,
+          file,
+        );
+        uploaded.push(url);
+      }
+      setForm((f) => ({
+        ...f,
+        photoUrls: [...(f.photoUrls ?? []), ...uploaded].slice(0, FEEDBACK_PHOTO_MAX),
+      }));
+      toast.push({
+        kind: 'success',
+        message:
+          uploaded.length === 1
+            ? '写真をアップロードしました'
+            : `${uploaded.length} 枚アップロードしました`,
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'unknown';
       toast.push({ kind: 'warning', message: `写真のアップロードに失敗しました (${msg})` });
@@ -157,10 +194,15 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
     }
   };
 
-  const handlePhotoRemove = (): void => {
+  const handlePhotoRemoveAt = (index: number): void => {
     // Storage 上のファイル本体は残るが (容量は小さいので許容)、Firestore 上の URL を外す
-    setForm((f) => ({ ...f, photoUrl: '' }));
+    setForm((f) => {
+      const next = (f.photoUrls ?? []).filter((_, i) => i !== index);
+      return { ...f, photoUrls: next };
+    });
   };
+
+  const handleHeroRemove = (): void => handlePhotoRemoveAt(0);
 
   const handleSubmit = async (): Promise<void> => {
     if (form.overallRating === 0 || submitting) return;
@@ -237,78 +279,158 @@ export function FeedbackClient({ candidateId }: FeedbackClientProps): JSX.Elemen
         ) : null}
       </div>
 
-      {/* mini hero */}
-      <div className={styles.hero}>
-        <div className={styles.heroCard}>
-          <div className={styles.heroImage}>
-            {recipe?.imageUrl ? (
-              // 70px の小さなプレビュー、Imagen の Cloud Storage URL
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={recipe.imageUrl} alt="" referrerPolicy="no-referrer" />
-            ) : null}
-          </div>
-          <div className={styles.heroBody}>
-            <div className={styles.heroTitle}>{recipe?.title ?? '読み込み中...'}</div>
-            <div className={styles.heroMeta}>{cookedAtText}</div>
-            <div className={styles.starsRow}>
-              <StarInput
-                value={form.overallRating}
-                onChange={(v) => setForm((f) => ({ ...f, overallRating: v }))}
-                size={22}
-              />
-              {form.overallRating === 0 ? (
-                <span className={styles.starsHint}>タップで総合評価</span>
-              ) : null}
+      {/* 作ってみた写真 — ヒーロー表示 (Claude Design 反映)。
+          - 未アップロード: 大型ダッシュ枠の dropzone (4:3) を表示
+          - 1 枚以上 : 1 枚目をヒーロー (overlay にタイトル + 星 + 差し替え/外すピル)
+          - 2 枚以上 : 60×60 サムネ列を下に並べ、各 × で個別削除、＋ で追加 */}
+      <div className={styles.photoZone}>
+        {photoCount === 0 ? (
+          <button
+            type="button"
+            className={styles.photoDropzone}
+            onClick={handlePhotoPick}
+            disabled={photoUploading || !user}
+            aria-label="作ってみた写真をアップロード"
+          >
+            <svg
+              className={styles.photoDropzoneIcon}
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <rect x="3" y="6" width="18" height="14" rx="2.5" />
+              <path d="M8 6l1.5-2h5L16 6" />
+              <circle cx="12" cy="13" r="3.6" />
+            </svg>
+            <div className={styles.photoDropzoneTitle}>
+              {photoUploading ? 'アップロード中…' : '今夜の一枚を、写真で残す'}
             </div>
-          </div>
-          {/* 作ってみた写真 (Slice 7 後追加)。未設定なら CameraPlaceholder のままで撮影アイコン
-              + ファイル選択ボタンを出す。設定済なら写真サムネ + 差し替え/削除ボタン。 */}
-          {form.photoUrl ? (
-            <div className={styles.userPhotoWrap}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={form.photoUrl} alt="作ってみた写真" className={styles.userPhoto} />
-              <div className={styles.userPhotoActions}>
-                <button
-                  type="button"
-                  className={styles.userPhotoBtn}
-                  onClick={handlePhotoPick}
-                  disabled={photoUploading}
-                >
-                  差し替え
-                </button>
-                <button
-                  type="button"
-                  className={styles.userPhotoBtnGhost}
-                  onClick={handlePhotoRemove}
-                  disabled={photoUploading}
-                >
-                  外す
-                </button>
+            <div className={styles.photoDropzoneSub}>
+              タップして追加 · 最大 {FEEDBACK_PHOTO_MAX} 枚
+            </div>
+          </button>
+        ) : (
+          <div className={styles.photoHero}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoUrls[0]}
+              alt="作ってみた写真"
+              className={styles.photoHeroImage}
+              referrerPolicy="no-referrer"
+            />
+            <div className={styles.photoHeroActions}>
+              <button
+                type="button"
+                className={styles.photoPill}
+                onClick={handlePhotoPick}
+                disabled={photoUploading || photoSlotsLeft <= 0}
+              >
+                {photoSlotsLeft > 0 ? '追加' : '満杯'}
+              </button>
+              <button
+                type="button"
+                className={styles.photoPill}
+                onClick={handleHeroRemove}
+                disabled={photoUploading}
+              >
+                外す
+              </button>
+            </div>
+            <div className={styles.photoHeroOverlay}>
+              <div className={styles.photoHeroTitle}>{recipe?.title ?? '読み込み中...'}</div>
+              <div className={styles.photoHeroStars}>
+                <StarInput
+                  value={form.overallRating}
+                  onChange={(v) => setForm((f) => ({ ...f, overallRating: v }))}
+                  size={26}
+                />
               </div>
             </div>
-          ) : (
-            <button
-              type="button"
-              className={styles.cameraButton}
-              onClick={handlePhotoPick}
-              disabled={photoUploading || !user}
-              aria-label="作ってみた写真をアップロード"
-            >
-              <CameraPlaceholder />
-              <span className={styles.cameraLabel}>
-                {photoUploading ? 'アップロード中…' : '写真を追加'}
-              </span>
-            </button>
-          )}
-          <input
-            ref={photoInputRef}
-            type="file"
-            accept="image/*"
-            className={styles.hiddenFile}
-            onChange={(e) => void handlePhotoChange(e)}
-          />
-        </div>
+          </div>
+        )}
+
+        {/* extra-photo thumbnail strip (2 枚以上) */}
+        {photoCount > 1 || (photoCount >= 1 && photoSlotsLeft > 0) ? (
+          <div className={styles.photoThumbs}>
+            {photoUrls.slice(1).map((src, i) => (
+              <div key={src + i} className={styles.photoThumb}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  className={styles.photoThumbImage}
+                />
+                <button
+                  type="button"
+                  className={styles.photoThumbDelete}
+                  onClick={() => handlePhotoRemoveAt(i + 1)}
+                  aria-label="この写真を外す"
+                  disabled={photoUploading}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {photoSlotsLeft > 0 ? (
+              <button
+                type="button"
+                className={styles.photoThumbAdd}
+                onClick={handlePhotoPick}
+                disabled={photoUploading}
+                aria-label="写真を追加"
+              >
+                +
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className={styles.hiddenFile}
+          onChange={(e) => void handlePhotoChange(e)}
+        />
       </div>
+
+      {/* 未アップロード時のみ、AI 生成画像 + タイトル + 星 のミニヒーローを残す。
+          1 枚以上アップ済なら photoHeroOverlay 側に title+star が乗るのでミニヒーローは隠す。 */}
+      {photoCount === 0 ? (
+        <div className={styles.hero}>
+          <div className={styles.heroCard}>
+            <div className={styles.heroImage}>
+              {recipe?.imageUrl ? (
+                // 70px の小さなプレビュー、Imagen の Cloud Storage URL
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={recipe.imageUrl} alt="" referrerPolicy="no-referrer" />
+              ) : null}
+            </div>
+            <div className={styles.heroBody}>
+              <div className={styles.heroTitle}>{recipe?.title ?? '読み込み中...'}</div>
+              <div className={styles.heroMeta}>{cookedAtText}</div>
+              <div className={styles.starsRow}>
+                <StarInput
+                  value={form.overallRating}
+                  onChange={(v) => setForm((f) => ({ ...f, overallRating: v }))}
+                  size={22}
+                />
+                {form.overallRating === 0 ? (
+                  <span className={styles.starsHint}>タップで総合評価</span>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* axes */}
       <div className={styles.axesCard}>

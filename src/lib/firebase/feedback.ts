@@ -26,6 +26,7 @@ import {
   clampScore,
   FEEDBACK_AXIS_ORDER,
   normalizeChipList,
+  normalizePhotoUrls,
 } from '@/domain/feedback';
 
 import type {
@@ -49,7 +50,7 @@ function draftDocRef(db: Firestore, uid: string, candidateId: string) {
 
 /** Firestore 書き込み用に余計なフィールドを落とす */
 function sanitizeFeedbackPayload(
-  payload: Omit<Feedback, 'cookedAt' | 'updatedAt'> & Partial<Pick<Feedback, 'note' | 'photoUrl'>>,
+  payload: Omit<Feedback, 'cookedAt' | 'updatedAt'> & Partial<Pick<Feedback, 'note' | 'photoUrls'>>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {
     overallRating: clampScore(payload.overallRating),
@@ -62,7 +63,11 @@ function sanitizeFeedbackPayload(
     guestCount: clampGuestCount(payload.guestCount),
   };
   if (payload.note !== undefined) out.note = payload.note;
-  if (payload.photoUrl !== undefined) out.photoUrl = payload.photoUrl;
+  // photoUrls は配列で write。空配列のときは Firestore に書かない (= 既存削除は別経路想定だが
+  // ここでは write しない方が draft 上でも安全)。
+  if (payload.photoUrls !== undefined) {
+    out.photoUrls = (payload.photoUrls ?? []).slice(0, 4);
+  }
   return out;
 }
 
@@ -116,7 +121,9 @@ export async function saveDraft(
     payload.guestCount = clampGuestCount(partial.guestCount);
   }
   if (partial.note !== undefined) payload.note = partial.note;
-  if (partial.photoUrl !== undefined) payload.photoUrl = partial.photoUrl;
+  if (partial.photoUrls !== undefined) {
+    payload.photoUrls = (partial.photoUrls ?? []).slice(0, 4);
+  }
   await setDoc(draftDocRef(db, uid, candidateId), payload, { merge: true });
 }
 
@@ -178,7 +185,9 @@ function normalizeDraft(data: DocumentData): FeedbackDraft {
     draft.guestCount = clampGuestCount(data['guestCount']);
   }
   if (typeof data['note'] === 'string') draft.note = data['note'];
-  if (typeof data['photoUrl'] === 'string') draft.photoUrl = data['photoUrl'];
+  // photoUrls (新) > photoUrl (旧) の優先順で 1 つに正規化
+  const photoUrls = normalizePhotoUrls(data['photoUrls'], data['photoUrl']);
+  if (photoUrls !== undefined) draft.photoUrls = photoUrls;
   return draft;
 }
 
