@@ -27,6 +27,32 @@ const nextConfig: NextConfig = {
     'firebase-admin',
     '@google-cloud/firestore',
   ],
+  /**
+   * 2026-06: 独自ドメイン furusato-pizza.jp を本番運用 URL として導入。
+   * 旧 Cloud Run のデフォルト URL (mlpr-web-...run.app) にアクセスされた場合は
+   * 301 で furusato-pizza.jp にリダイレクトすることで:
+   *   - SEO: 検索エンジンが新ドメインを正規 URL として認識
+   *   - UX: ブックマーク等の旧 URL アクセス者を自動誘導
+   *   - 検証: Cloud Run の URL からのアクセスは将来的に減らす
+   *
+   * `permanent: true` = 301 (恒久的)。後で運用方針を変えるときは慎重に
+   * (検索エンジンのキャッシュが残る)。
+   */
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'mlpr-web-343527548585.asia-northeast1.run.app',
+          },
+        ],
+        destination: 'https://furusato-pizza.jp/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

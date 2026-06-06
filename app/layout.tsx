@@ -45,6 +45,15 @@ export const metadata = {
   description: '地元の食材と季節から、AI があなただけのピザを 3 案提案。',
   applicationName: 'ふるさとピザ帳',
   authors: [{ name: 'Make Local Pizza Recipe Agent' }],
+  /**
+   * 2026-06: 独自ドメイン furusato-pizza.jp を本番運用 URL として導入。
+   * metadataBase を設定することで、各ページの OGP / Twitter Card で生成される
+   * 画像 URL や canonical 等が absolute URL として組み立てられる
+   * (例: <Image src="/equipment/enro-hero.png"> → https://furusato-pizza.jp/equipment/enro-hero.png)。
+   *
+   * 環境変数 NEXT_PUBLIC_APP_URL で上書き可能 (dev 環境では http://localhost:3000)。
+   */
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://furusato-pizza.jp'),
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
