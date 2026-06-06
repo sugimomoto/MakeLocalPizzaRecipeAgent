@@ -111,21 +111,32 @@ export default function PrivacyPage() {
 
         <Section title="5. データの削除">
           <p>
-            アカウント削除・データ削除を希望される場合は、ヘッダーの問い合わせ先 (
-            <a href="mailto:sugimomoto@gmail.com" style={{ color: 'var(--mlpr-shu)' }}>
-              sugimomoto@gmail.com
+            アカウント削除・データ削除を希望される場合は、お問い合わせフォームの「個人情報の開示・削除依頼」よりご連絡ください。
+            本人確認のため、ご登録の Google アカウント (メールアドレス) を併せてご記入ください。
+          </p>
+          <p>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdETiVCGvKfLImaf8p_ru9csiBESF0JB5rPHDVAZvjonOol4g/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--mlpr-shu)' }}
+            >
+              お問い合わせフォームを開く →
             </a>
-            ) までご連絡ください。
           </p>
         </Section>
 
         <Section title="6. お問い合わせ">
+          <p>本ポリシーに関するご質問・バグ報告・機能要望は、下記フォームよりお寄せください。</p>
           <p>
-            本ポリシーに関するご質問は、
-            <a href="mailto:sugimomoto@gmail.com" style={{ color: 'var(--mlpr-shu)' }}>
-              sugimomoto@gmail.com
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdETiVCGvKfLImaf8p_ru9csiBESF0JB5rPHDVAZvjonOol4g/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--mlpr-shu)' }}
+            >
+              お問い合わせフォームを開く →
             </a>
-            までお願いします。
           </p>
         </Section>
 
