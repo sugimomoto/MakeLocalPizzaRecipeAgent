@@ -854,18 +854,47 @@
   overflow: hidden;
   background: var(--mlpr-kinari);
   border: 1px solid var(--mlpr-hairline);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.youtubeCard:hover,
+.youtubeCard:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(31, 26, 18, 0.16);
+  border-color: rgba(200, 65, 42, 0.35);
+  outline: none;
 }
 
 .youtubeThumb {
   height: 108px;
-  background: linear-gradient(135deg, #2a1b12 0%, #5c3110 70%, #8e2f18 100%);
+  /* fallback: 朱寄りグラデーション (サムネ load 失敗時) */
+  background-color: #2a1b12;
+  background-image: linear-gradient(135deg, #2a1b12 0%, #5c3110 70%, #8e2f18 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* サムネ上に薄いダーク overlay を載せて ▶ボタン/タグの可読性を確保 */
+.youtubeThumbDim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.32) 100%);
+  pointer-events: none;
+}
+
 .youtubePlay {
+  position: relative;
+  z-index: 1;
   width: 42px;
   height: 42px;
   border-radius: 21px;
@@ -878,21 +907,9 @@
   font-size: 14px;
 }
 
-.youtubeDur {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  font-family: var(--mlpr-font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.5px;
-}
-
 .youtubeTag {
   position: absolute;
+  z-index: 1;
   top: 8px;
   left: 8px;
   padding: 2px 7px;

@@ -368,20 +368,36 @@ function CompareTable() {
 }
 
 // ── YoutubeList ─────────────────────────────────────────────────────
+// ENRO ピザ大学 (https://www.youtube.com/@enro2442) の公式動画を 3 本紹介。
+// 動画 ID から YouTube の hqdefault サムネを背景画像として読み込み、カード
+// 全体を <a target="_blank"> でリンク化する (動画削除リスクはあるが ID 単位の
+// 差し替えで対応可能、埋め込みではなくリンクなので oEmbed 規約も不要)。
 function YoutubeList() {
-  const vids = [
-    { jp: 'ENRO 開封 & 初焼成 — 仙台のキッチンで', dur: '12:48', tag: '基本' },
-    { jp: '90 秒で焼く・コツ 5 つ', dur: '08:21', tag: '実践' },
-    { jp: 'ピールの使い方と庫内回転', dur: '06:04', tag: '実践' },
+  const vids: { id: string; jp: string; tag: string }[] = [
+    {
+      id: '25YVc-l92g4',
+      jp: '【窯焼名人 レシピ】2 時間で作れて当日使える時短だけど本格ピザ生地レシピ',
+      tag: '時短',
+    },
+    {
+      id: 'gy0L14MKO00',
+      jp: '【ピザ作り完全版動画】ピザ生地作りの全てのコツ、窯での焼成まで全て解説!',
+      tag: '完全版',
+    },
+    {
+      id: 'Kj_apev_I34',
+      jp: '【ピザ生地作りのコツ】生地を作るときにやってしまいがちなミス 5 選!',
+      tag: 'コツ',
+    },
   ];
   return (
     <section className={styles.youtubeSection}>
       <div className={styles.youtubeHead}>
         <span className={styles.youtubeTitle}>動画で見る</span>
-        <span className={styles.youtubeSub}>YOUTUBE · 公式</span>
+        <span className={styles.youtubeSub}>YOUTUBE · ENRO ピザ大学</span>
         <span aria-hidden className={styles.youtubeRule} />
         <a
-          href="https://www.youtube.com/@enro_jp"
+          href="https://www.youtube.com/@enro2442"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.youtubeChannelLink}
@@ -391,16 +407,29 @@ function YoutubeList() {
       </div>
       <div className={styles.youtubeGrid}>
         {vids.map((v) => (
-          <div key={v.jp} className={styles.youtubeCard}>
-            <div className={styles.youtubeThumb} aria-hidden>
+          <a
+            key={v.id}
+            href={`https://www.youtube.com/watch?v=${v.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.youtubeCard}
+            aria-label={`YouTube で見る: ${v.jp}`}
+          >
+            <div
+              className={styles.youtubeThumb}
+              style={{
+                backgroundImage: `url(https://img.youtube.com/vi/${v.id}/hqdefault.jpg)`,
+              }}
+              aria-hidden
+            >
+              <div className={styles.youtubeThumbDim} aria-hidden />
               <div className={styles.youtubePlay}>▶</div>
-              <div className={styles.youtubeDur}>{v.dur}</div>
               <div className={styles.youtubeTag}>{v.tag}</div>
             </div>
             <div className={styles.youtubeBody}>
               <div className={styles.youtubeVideoTitle}>{v.jp}</div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>
