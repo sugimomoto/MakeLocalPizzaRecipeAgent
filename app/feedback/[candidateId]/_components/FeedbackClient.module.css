@@ -130,7 +130,8 @@
 }
 
 .photoZone {
-  margin-top: 16px;
+  /* 他カード (axesCard / noteCard) と同じ 20px インセットでセンター揃え */
+  margin: 16px 20px 0;
 }
 
 /* ── 未アップロード時のダッシュ枠ドロップゾーン ──────────────── */
