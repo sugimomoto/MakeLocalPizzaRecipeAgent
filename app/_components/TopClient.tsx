@@ -95,8 +95,8 @@ export function TopClient(): React.JSX.Element | null {
         </button>
       </div>
 
-      <p className={styles.footer} aria-hidden>
-        FURUSATO PIZZA-CHŌ · 2026
+      <p className={styles.footer}>
+        FURUSATO PIZZA-CHŌ · 2026 · <Link href="/privacy">プライバシー</Link>
       </p>
     </div>
   );

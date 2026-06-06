@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { JetBrains_Mono, Shippori_Mincho_B1, Zen_Kaku_Gothic_New } from 'next/font/google';
 
 import { AuthProvider } from '@/hooks/use-auth';
@@ -7,6 +8,13 @@ import { ToastProvider } from '@/hooks/use-toast';
 import type { ReactNode } from 'react';
 
 import './globals.css';
+
+/**
+ * Google Analytics 4 計測 ID。
+ * `.env.production` で `G-XXXXXXXX` を設定し、本番 build 時のみ bundle に入る。
+ * 未設定 (dev / preview) 時は <GoogleAnalytics /> を描画しないので、gtag.js も読まれない。
+ */
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 // 日本語 Google Fonts は subset 数が膨大 (漢字を細分割) で preload を全 subset 分発行すると
 // 数百〜数千の woff2 link を生成してハイドレーションが詰まる。
@@ -71,6 +79,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SignInModalProvider>{children}</SignInModalProvider>
           </ToastProvider>
         </AuthProvider>
+        {GA_MEASUREMENT_ID ? <GoogleAnalytics gaId={GA_MEASUREMENT_ID} /> : null}
       </body>
     </html>
   );

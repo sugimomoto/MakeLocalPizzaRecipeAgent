@@ -21,7 +21,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/equipment', '/local', '/ingredients'],
+        allow: ['/', '/equipment', '/local', '/ingredients', '/privacy'],
         disallow: [
           // 認証必須・本人専用
           '/library',

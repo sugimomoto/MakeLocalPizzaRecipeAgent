@@ -21,6 +21,7 @@ import { Button } from '@/components/primitives/Button';
 import { ScreenHero } from '@/components/primitives/ScreenHero';
 import { HeaderRow } from '@/components/shell/HeaderRow';
 import { useQuickTapStream } from '@/hooks/use-quicktap-stream';
+import { trackEvent } from '@/lib/analytics/track';
 import {
   clearCandidatesCache,
   readCandidatesCache,
@@ -225,6 +226,10 @@ export function CandidatesClient({ sessionId }: CandidatesClientProps) {
                       },
                     };
                     window.sessionStorage.setItem(PENDING_RECIPE_KEY, JSON.stringify(snapshot));
+                    trackEvent('select_candidate', {
+                      strategy: active.strategy,
+                      prefecture: pending.localeId,
+                    });
                     router.push(`/recipes/${encodeURIComponent(active.candidateId)}`);
                   }}
                 >

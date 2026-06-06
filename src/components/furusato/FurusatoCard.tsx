@@ -14,6 +14,8 @@
  * - 在庫切れ時は opacity 0.65 + 「在庫切れ」バッジ
  * - 朱 CTA は使わない (詳細画面の「作ってみる →」と競合させない、sumi BG)
  */
+import { trackEvent } from '@/lib/analytics/track';
+
 import styles from './FurusatoCard.module.css';
 
 import type { FurusatoItem } from '@/domain/furusato';
@@ -48,6 +50,13 @@ export function FurusatoCard({ item }: FurusatoCardProps): React.JSX.Element {
       rel="noopener noreferrer sponsored"
       className={`${styles.card} ${outOfStock ? styles.outOfStock : ''}`.trim()}
       aria-label={`${item.title} を楽天で開く`}
+      onClick={() => {
+        trackEvent('click_affiliate_link', {
+          merchant: 'rakuten_furusato',
+          position: 'recipe_detail',
+          municipality: item.municipality ?? undefined,
+        });
+      }}
     >
       <div className={styles.thumb}>
         {item.imageUrl ? (

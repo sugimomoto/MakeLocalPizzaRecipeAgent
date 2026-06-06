@@ -16,6 +16,7 @@ import { useCallback, useReducer, useRef } from 'react';
 
 import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
 import { decodeNdjsonStream } from '@/lib/agent/stream';
+import { trackEvent } from '@/lib/analytics/track';
 import { apiFetch } from '@/lib/http/api-fetch';
 import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
 
@@ -198,6 +199,11 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
 
       const sessionId = generateSessionId();
       dispatch({ type: 'start', sessionId });
+      trackEvent('generate_candidates', {
+        mode: 'initial',
+        prefecture: input.localeId,
+        ingredients_count: input.ingredients.length,
+      });
 
       try {
         const res = await apiFetch('/api/quicktap/sessions', {
@@ -230,6 +236,11 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
       abortRef.current = ac;
 
       dispatch({ type: 'start', sessionId: sourceSessionId });
+      trackEvent('generate_candidates', {
+        mode: 'reroll',
+        prefecture: context.localeId,
+        ingredients_count: context.ingredients.length,
+      });
 
       try {
         const res = await apiFetch(

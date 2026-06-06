@@ -8,6 +8,7 @@
  *   - `/equipment`   機材ガイド LP (ENRO 電気ピザ窯)
  *   - `/local`       地元選択画面 (Tap 1)
  *   - `/ingredients` 食材選択画面 (Tap 2)
+ *   - `/privacy`     プライバシーポリシー (GA4・アフィリエイト透明性開示用)
  *
  * 非公開 (= サイトマップから除外、robots.ts で disallow):
  *   - `/library` / `/journal`         認証必須・本人専用画面
@@ -52,6 +53,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified,
+      changeFrequency: 'yearly',
+      priority: 0.3,
     },
   ];
 }

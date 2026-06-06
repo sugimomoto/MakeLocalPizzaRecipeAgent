@@ -32,6 +32,7 @@ import { useRecipeDetailStream } from '@/hooks/use-recipe-detail-stream';
 import { useSavedRecipe } from '@/hooks/use-saved-recipe';
 import { useSignInModal } from '@/hooks/use-sign-in-modal';
 import { useToast } from '@/hooks/use-toast';
+import { trackEvent } from '@/lib/analytics/track';
 import { readRecipeDetailCache, writeRecipeDetailCache } from '@/lib/cache/stream-cache';
 import { readOvenProfile } from '@/lib/localstorage/oven-profile';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
@@ -106,6 +107,11 @@ export function DetailClient({ candidateId }: DetailClientProps) {
     // 初回マウントの初期化なので setState を effect 内で行う (startedRef でガード済)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPending(p);
+    trackEvent('view_recipe_detail', {
+      strategy: p.candidate.strategy,
+      prefecture: p.localeId,
+      source: p.savedSnapshot ? 'library' : 'candidates',
+    });
 
     // 復元優先順 (Slice 7 でキャッシュ層を追加):
     //   1. savedSnapshot (/library 経由、Firestore 永続データ)
@@ -239,6 +245,11 @@ export function DetailClient({ candidateId }: DetailClientProps) {
           ...(stream.steps && { steps: stream.steps }),
           ...(stream.story && { story: stream.story }),
         });
+        trackEvent('save_recipe', {
+          source: 'heart',
+          strategy: candidate.strategy,
+          prefecture,
+        });
         toast.push({ kind: 'success', message: 'ピザ帳に保存しました' });
       }
     } catch (err) {
@@ -294,6 +305,11 @@ export function DetailClient({ candidateId }: DetailClientProps) {
           ...(stream.materials && { materials: stream.materials }),
           ...(stream.steps && { steps: stream.steps }),
           ...(stream.story && { story: stream.story }),
+        });
+        trackEvent('save_recipe', {
+          source: 'make_cta',
+          strategy: candidate.strategy,
+          prefecture,
         });
         toast.push({ kind: 'success', message: 'ピザ帳に保存しました' });
       } catch (err) {

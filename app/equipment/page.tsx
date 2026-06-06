@@ -121,6 +121,8 @@ function Hero({ storeUrl }: { storeUrl: string }) {
           target="_blank"
           rel="sponsored noopener noreferrer"
           className={`${styles.cta} ${styles['cta--shu']}`}
+          data-affiliate="enro"
+          data-affiliate-position="hero"
         >
           ENRO を見る (楽天)
           <ExternalArrow />
@@ -520,6 +522,8 @@ function FinalCta({ storeUrl }: { storeUrl: string }) {
             target="_blank"
             rel="sponsored noopener noreferrer"
             className={`${styles.cta} ${styles['cta--shu-light']}`}
+            data-affiliate="enro"
+            data-affiliate-position="final-cta"
           >
             ENRO を見る (楽天) <ExternalArrow color="#9F3220" />
           </a>
@@ -559,7 +563,9 @@ function PageEndMark() {
   return (
     <div className={styles.pageEnd}>
       <span>FURUSATO PIZZA-CHŌ · 2026 · /equipment</span>
-      <span>v0.8 · ENRO RECOMMENDED</span>
+      <span>
+        v0.8 · ENRO RECOMMENDED · <Link href="/privacy">プライバシー</Link>
+      </span>
     </div>
   );
 }
