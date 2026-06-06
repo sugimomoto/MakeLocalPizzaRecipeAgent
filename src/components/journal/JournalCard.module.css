@@ -146,6 +146,9 @@
 }
 
 .axisBarFill {
+  /* <span> をそのまま使っているため inline。`width: NN%` を効かせるために block 化する。
+     これが無いと全得点で見た目が同じ長さになる (旧バグ)。 */
+  display: block;
   height: 100%;
   border-radius: 2px;
   background: var(--mlpr-yamabuki);
