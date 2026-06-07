@@ -62,7 +62,6 @@ export function ShareConfirmModal({
           公開すると、<b>誰でも閲覧できる URL</b> が作成され、X / Facebook /
           メッセージアプリなどで共有できるようになります。
         </p>
-        <p className={styles.note}>※ 現バージョンでは、公開した URL を取り消す機能はありません。</p>
         <div className={styles.actions}>
           <button
             ref={cancelRef}
