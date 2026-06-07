@@ -61,3 +61,56 @@
   margin: 10px 0 0;
   line-height: 1.5;
 }
+
+/* multi-target ボタン群 (publish 後) */
+.targets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.target {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--mlpr-hairline);
+  background: var(--mlpr-kinari);
+  color: var(--mlpr-sumi);
+  cursor: pointer;
+}
+
+.target:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.targetIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* 各ターゲットのアクセント (色味) */
+.target--x {
+  background: var(--mlpr-sumi);
+  border-color: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+}
+
+.target--fb {
+  background: #1877f2;
+  border-color: #1877f2;
+  color: #fff;
+}
+
+.target--native,
+.target--copy {
+  /* kinari + sumi 地のニュートラル */
+}

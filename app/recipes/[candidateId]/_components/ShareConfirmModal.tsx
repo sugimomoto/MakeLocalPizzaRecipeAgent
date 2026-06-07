@@ -54,13 +54,13 @@ export function ShareConfirmModal({
       }}
     >
       <div className={styles.panel}>
-        <p className={styles.eyebrow}>SHARE TO X</p>
+        <p className={styles.eyebrow}>SHARE · 公開する</p>
         <h2 id="share-confirm-title" className={styles.title}>
-          このレシピを <span className={styles.shu}>X</span> で共有しますか？
+          このレシピを<span className={styles.shu}>公開</span>しますか？
         </h2>
         <p className={styles.body}>
-          公開すると、<b>誰でも閲覧できる URL</b> がインターネット上に作成され、 X
-          のタイムラインに画像入りカードで展開されます。
+          公開すると、<b>誰でも閲覧できる URL</b> が作成され、X / Facebook /
+          メッセージアプリなどで共有できるようになります。
         </p>
         <p className={styles.note}>※ 現バージョンでは、公開した URL を取り消す機能はありません。</p>
         <div className={styles.actions}>
@@ -79,7 +79,7 @@ export function ShareConfirmModal({
             onClick={onConfirm}
             disabled={publishing}
           >
-            {publishing ? '公開中…' : '公開して X で共有'}
+            {publishing ? '公開中…' : '公開する'}
           </button>
         </div>
       </div>

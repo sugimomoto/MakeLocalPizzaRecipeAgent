@@ -1,21 +1,23 @@
 'use client';
 
 /**
- * ShareCard — 詳細画面の「X で共有」セカンダリ CTA (Slice 10)
+ * ShareCard — 詳細画面の共有 CTA (Slice 10 + multi-target 拡張)
  *
- * 状態遷移:
- *   生成中             : disabled (description: 詳細レシピが揃ってから)
- *   生成完了 / 未共有  : 「X で共有」をタップ → 確認モーダル → publish → X intent
- *   公開済 (同セッション内)
- *                       : 「X で再共有」+ POST はべき等なので同じ URL が返る
+ * フロー:
+ *   1) 詳細生成中     : disabled (description: 詳細レシピが揃ってから)
+ *   2) 生成完了 / 未公開: 「公開して共有」→ ShareConfirmModal → publish
+ *   3) 公開済        : 4 ターゲットボタンを表示 (X / Facebook / その他 / URL コピー)
  *
- * 同 candidateId で 2 回目以降の publish は API がべき等で同 shareId を返す。
- * client 側でも shareUrl をローカル state に持ち、不要な POST を避ける。
+ * publish は API がべき等。`useShare` が成功で shareUrl をキャッシュするので
+ * 2 回目以降の publish はそもそも呼ばない。
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { useToast } from '@/hooks/use-toast';
 import { trackEvent } from '@/lib/analytics/track';
+import { buildFacebookShareUrl } from '@/lib/share/build-fb-share';
 import { buildXIntentUrl } from '@/lib/share/build-x-intent';
+import { canUseWebShare, copyToClipboard, webShare } from '@/lib/share/web-share';
 
 import { ShareConfirmModal } from './ShareConfirmModal';
 import styles from './ShareCard.module.css';
@@ -33,7 +35,15 @@ export type ShareCardProps = {
 
 export function ShareCard({ ready, buildPayload }: ShareCardProps): React.JSX.Element {
   const share = useShare();
+  const toast = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  // クライアントマウント前は navigator.share の有無が不明なので Web Share ボタンを隠す
+  const [webShareAvailable, setWebShareAvailable] = useState(false);
+  useEffect(() => {
+    // マウント時に 1 回判定する副作用なので setState を effect 内で呼ぶ
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWebShareAvailable(canUseWebShare());
+  }, []);
 
   const openConfirm = useCallback((): void => {
     if (!ready) return;
@@ -46,39 +56,77 @@ export function ShareCard({ ready, buildPayload }: ShareCardProps): React.JSX.El
     setConfirmOpen(false);
   }, [share.state]);
 
+  /** publish 確定 (= モーダルの「公開する」)。発行のみ、ターゲット遷移はしない。 */
   const confirm = useCallback(async (): Promise<void> => {
     const payload = buildPayload();
     if (!payload) return;
-
-    let url: string | null = share.shareUrl;
-    if (!url) {
-      const res = await share.publish(payload);
-      if (!res) return; // 失敗時は publish 内で Toast 済
-      url = res.url;
-      trackEvent('share_published', {
-        share_id: res.shareId,
-        prefecture: payload.prefecture,
-        strategy: payload.strategy,
-      });
+    if (share.shareUrl) {
+      setConfirmOpen(false);
+      return;
     }
+    const res = await share.publish(payload);
+    if (!res) return;
+    trackEvent('share_published', {
+      share_id: res.shareId,
+      prefecture: payload.prefecture,
+      strategy: payload.strategy,
+    });
+    setConfirmOpen(false);
+  }, [buildPayload, share]);
 
-    const intentUrl = buildXIntentUrl({
+  /** ターゲット別の起動。share.shareUrl が無い場合は何もしない (ガード)。 */
+  const shareToX = useCallback(() => {
+    const url = share.shareUrl;
+    const payload = buildPayload();
+    if (!url || !payload || typeof window === 'undefined') return;
+    const intent = buildXIntentUrl({
       title: payload.title,
       storyHeadline: payload.story.headline,
       shareUrl: url,
     });
-    if (typeof window !== 'undefined') {
-      window.open(intentUrl, '_blank', 'noopener,noreferrer');
-    }
-    setConfirmOpen(false);
-  }, [buildPayload, share]);
+    trackEvent('share_target', { target: 'x' });
+    window.open(intent, '_blank', 'noopener,noreferrer');
+  }, [share.shareUrl, buildPayload]);
 
-  const buttonLabel =
-    share.state === 'publishing' ? '公開中…' : share.state === 'shared' ? 'X で再共有' : 'X で共有';
+  const shareToFacebook = useCallback(() => {
+    const url = share.shareUrl;
+    if (!url || typeof window === 'undefined') return;
+    trackEvent('share_target', { target: 'facebook' });
+    window.open(buildFacebookShareUrl(url), '_blank', 'noopener,noreferrer');
+  }, [share.shareUrl]);
+
+  const shareNative = useCallback(async () => {
+    const url = share.shareUrl;
+    const payload = buildPayload();
+    if (!url || !payload) return;
+    trackEvent('share_target', { target: 'native' });
+    try {
+      await webShare({
+        title: payload.title,
+        text: payload.story.headline,
+        url,
+      });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return; // ユーザキャンセル
+      toast.push({ kind: 'warning', message: '共有シートを開けませんでした' });
+    }
+  }, [share.shareUrl, buildPayload, toast]);
+
+  const shareCopy = useCallback(async () => {
+    const url = share.shareUrl;
+    if (!url) return;
+    trackEvent('share_target', { target: 'copy' });
+    const ok = await copyToClipboard(url);
+    toast.push({
+      kind: ok ? 'success' : 'warning',
+      message: ok ? 'URL をコピーしました' : 'URL のコピーに失敗しました',
+    });
+  }, [share.shareUrl, toast]);
+
+  const publishedUrl = share.shareUrl;
+  const ctaLabel = share.state === 'publishing' ? '公開中…' : '公開して共有する';
   const hint = ready
-    ? share.state === 'shared'
-      ? '共有 URL は同じものが使い回されます'
-      : 'URL を作成して X の投稿画面を開きます'
+    ? '公開すると、誰でも閲覧できる URL が作成されます'
     : '詳細レシピが揃ってから共有できます';
 
   return (
@@ -86,18 +134,68 @@ export function ShareCard({ ready, buildPayload }: ShareCardProps): React.JSX.El
       <div className={styles.row}>
         <div className={styles.body}>
           <p className={styles.eyebrow}>SHARE · 共有</p>
-          <p className={styles.title}>仕上がりを X で見せる</p>
+          <p className={styles.title}>仕上がりを SNS で見せる</p>
         </div>
-        <button
-          type="button"
-          className={styles.button}
-          onClick={openConfirm}
-          disabled={!ready || share.state === 'publishing'}
-        >
-          {buttonLabel}
-        </button>
+        {publishedUrl ? null : (
+          <button
+            type="button"
+            className={styles.button}
+            onClick={openConfirm}
+            disabled={!ready || share.state === 'publishing'}
+          >
+            {ctaLabel}
+          </button>
+        )}
       </div>
-      <p className={styles.hint}>{hint}</p>
+
+      {publishedUrl ? (
+        <div className={styles.targets} role="group" aria-label="シェア先を選ぶ">
+          <button
+            type="button"
+            className={`${styles.target} ${styles['target--x']}`}
+            onClick={shareToX}
+          >
+            <span aria-hidden className={styles.targetIcon}>
+              𝕏
+            </span>
+            X
+          </button>
+          <button
+            type="button"
+            className={`${styles.target} ${styles['target--fb']}`}
+            onClick={shareToFacebook}
+          >
+            <span aria-hidden className={styles.targetIcon}>
+              f
+            </span>
+            Facebook
+          </button>
+          {webShareAvailable ? (
+            <button
+              type="button"
+              className={`${styles.target} ${styles['target--native']}`}
+              onClick={() => void shareNative()}
+            >
+              <span aria-hidden className={styles.targetIcon}>
+                ⇪
+              </span>
+              その他
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className={`${styles.target} ${styles['target--copy']}`}
+            onClick={() => void shareCopy()}
+          >
+            <span aria-hidden className={styles.targetIcon}>
+              ⎘
+            </span>
+            URL をコピー
+          </button>
+        </div>
+      ) : null}
+
+      <p className={styles.hint}>{publishedUrl ? '公開済 · 共有先を選んでください' : hint}</p>
 
       <ShareConfirmModal
         open={confirmOpen}

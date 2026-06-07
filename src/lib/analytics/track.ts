@@ -38,7 +38,8 @@ export type TrackEventName =
   | 'view_equipment_guide' // /equipment LP 到達
   | 'click_affiliate_link' // 楽天アフィリエイトリンクのクリック
   | 'share_intent' // Slice 10 「X で共有」CTA 押下 → 確認モーダル表示
-  | 'share_published' // Slice 10 shareId 発行成功 (X intent 起動直前)
+  | 'share_published' // Slice 10 shareId 発行成功
+  | 'share_target' // Slice 10 拡張: シェア先ボタン (X / Facebook / native / copy) のタップ
   | 'share_page_view'; // Slice 10 /share/[shareId] 公開ページ表示
 
 /** GA4 イベントパラメータ。値は string / number / boolean のみ受ける (GA4 仕様)。 */

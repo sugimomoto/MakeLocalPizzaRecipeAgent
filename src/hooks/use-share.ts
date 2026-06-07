@@ -66,7 +66,6 @@ export function useShare(): UseShareResult {
             kind: 'warning',
             message: `共有 URL の発行に失敗しました (${res.status})`,
           });
-          // eslint-disable-next-line no-console
           if (detail) console.warn('[useShare] non-ok body', detail);
           setState('error');
           return null;
