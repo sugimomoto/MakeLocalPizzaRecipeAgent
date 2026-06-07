@@ -40,6 +40,13 @@ export const RATE_LIMIT_CONFIG: Record<RateLimitRouteKey, RateLimitConfigEntry> 
     limit: 5,
     routeKey: '/api/recipes/[candidateId]',
   },
+  // 共有 URL 発行 (Slice 10): Firestore 書き込みのみで LLM コストなし。
+  // 主目的は「同一ユーザが大量の shared_recipes を作って Firestore を埋める悪用」防止。
+  // 1 時間 5 件は通常利用 (= 同セッションで複数レシピを共有) に十分余裕がある。
+  '/api/share': {
+    limit: 5,
+    routeKey: '/api/share',
+  },
 };
 
 /**

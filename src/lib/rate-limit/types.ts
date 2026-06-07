@@ -9,7 +9,8 @@
 export type RateLimitRouteKey =
   | '/api/quicktap/sessions'
   | '/api/quicktap/sessions/[id]/reroll'
-  | '/api/recipes/[candidateId]';
+  | '/api/recipes/[candidateId]'
+  | '/api/share';
 
 /**
  * rate-limit の判定 key。優先順位: auth > guest > ip > anonymous

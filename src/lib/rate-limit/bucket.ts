@@ -12,6 +12,7 @@ const ROUTE_SHORT: Record<RateLimitRouteKey, string> = {
   '/api/quicktap/sessions': 'qt-sessions',
   '/api/quicktap/sessions/[id]/reroll': 'qt-reroll',
   '/api/recipes/[candidateId]': 'recipes',
+  '/api/share': 'share',
 };
 
 /**

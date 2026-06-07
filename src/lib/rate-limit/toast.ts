@@ -11,6 +11,7 @@ const ROUTE_LABEL: Record<RateLimitRouteKey, string> = {
   '/api/quicktap/sessions': '候補生成',
   '/api/quicktap/sessions/[id]/reroll': '振り直し',
   '/api/recipes/[candidateId]': '詳細生成',
+  '/api/share': '共有 URL の発行',
 };
 
 /**
