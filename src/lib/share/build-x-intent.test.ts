@@ -70,7 +70,7 @@ describe('buildXIntentUrl', () => {
       storyHeadline: '一文',
       shareUrl: 'https://furusato-pizza.jp/share/abc',
     });
-    expect(url.startsWith('https://x.com/intent/post?')).toBe(true);
+    expect(url.startsWith('https://x.com/intent/tweet?')).toBe(true);
     const u = new URL(url);
     expect(u.searchParams.get('url')).toBe('https://furusato-pizza.jp/share/abc');
     const text = u.searchParams.get('text') ?? '';

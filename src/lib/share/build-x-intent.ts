@@ -1,11 +1,15 @@
 /**
  * X (Twitter) Web Intent URL builder — Slice 10
  *
- * https://x.com/intent/post?text=...&url=...
+ * https://x.com/intent/tweet?text=...&url=...
  * - text と url は URLEncode
  * - text 部分は X 仕様 280 字内 (URL は t.co で 23 字に短縮) を超えないよう
  *   title 40 字 / headline 80 字でクライアント側で truncate
  * - 改行は `\n`、ハッシュタグは固定 "#ふるさとピザ帳 #地元ピザ"
+ *
+ * NOTE: 2026 年時点で X 公式が docs に載せているのは `/intent/tweet`。
+ *   リブランディング後の `/intent/post` は **モバイルアプリのアプリ内
+ *   ブラウザ ↔ Safari 間で無限ループ**する不具合があるため使わない。
  *
  * 単体テスト: `build-x-intent.test.ts`
  */
@@ -56,5 +60,5 @@ export function buildXIntentUrl(args: {
 }): string {
   const text = buildShareText({ title: args.title, storyHeadline: args.storyHeadline });
   const params = new URLSearchParams({ text, url: args.shareUrl });
-  return `https://x.com/intent/post?${params.toString()}`;
+  return `https://x.com/intent/tweet?${params.toString()}`;
 }
