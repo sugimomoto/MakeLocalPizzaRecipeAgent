@@ -7,6 +7,7 @@
  */
 import Link from 'next/link';
 
+import { FurusatoSection } from '@/components/furusato/FurusatoSection';
 import { MaterialList } from '@/components/recipe/MaterialList';
 import { MetaStrip } from '@/components/recipe/MetaStrip';
 import { StepList } from '@/components/recipe/StepList';
@@ -77,6 +78,11 @@ export function SharePageView({ snapshot }: SharePageViewProps): React.JSX.Eleme
         </section>
 
         <StoryCard story={snapshot.story} />
+
+        {/* ふるさと納税: snapshot.ingredients は Tap2 で選んだ食材 ID 配列。
+            FurusatoSection は furusato_items/{id} を Web SDK で購読する Client
+            Component。Firestore Rules で public read 許可済なので未認証でも動く。 */}
+        <FurusatoSection ingredientIds={snapshot.ingredients} />
 
         <section className={styles.footerCta}>
           <p className={styles.footerEyebrow}>あなたの地元でも、AI と一緒に。</p>

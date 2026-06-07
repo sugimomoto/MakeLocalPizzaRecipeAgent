@@ -431,6 +431,7 @@ export function DetailClient({ candidateId }: DetailClientProps) {
               prefecture,
               strategy: candidate.strategy,
               localeId: pending.localeId,
+              ingredients: pending.ingredients,
             };
           }}
         />

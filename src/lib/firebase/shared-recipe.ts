@@ -69,6 +69,7 @@ export async function createSharedRecipe(
       prefecture: args.payload.prefecture,
       strategy: args.payload.strategy,
       localeId: args.payload.localeId,
+      ingredients: args.payload.ingredients,
       sharedAt: FieldValue.serverTimestamp(),
     });
     tx.set(indexRef, { shareId });
@@ -130,6 +131,11 @@ export async function getSharedRecipe(
       ? (data['strategy'] as 'exploit' | 'tune' | 'explore')
       : 'exploit',
     localeId: String(data['localeId'] ?? ''),
+    ingredients: Array.isArray(data['ingredients'])
+      ? (data['ingredients'] as unknown[])
+          .filter((x): x is string => typeof x === 'string' && x.length > 0)
+          .slice(0, 20)
+      : [],
     sharedAt,
   };
 }

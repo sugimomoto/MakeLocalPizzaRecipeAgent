@@ -42,6 +42,12 @@ export const ShareRequestSchema = z.object({
   prefecture: z.string().max(40),
   strategy: z.enum(['exploit', 'tune', 'explore']),
   localeId: z.string().max(80),
+  /**
+   * Tap2 で選択した食材 ID 配列 (例: `["miyagi-oyster", "miyagi-seri"]`)。
+   * 公開ページ側の `FurusatoSection` がこれを購読してふるさと納税返礼品を出す。
+   * 既存共有 (ingredients を持たない旧 doc) は read 時に空配列で hydrate される。
+   */
+  ingredients: z.array(z.string().max(80)).max(20).default([]),
 });
 
 export type ShareRequest = z.infer<typeof ShareRequestSchema>;
