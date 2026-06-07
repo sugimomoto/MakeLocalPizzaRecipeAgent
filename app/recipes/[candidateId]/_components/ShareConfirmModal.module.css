@@ -1,0 +1,93 @@
+/* ShareConfirmModal — Slice 10 */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 10, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.panel {
+  width: 100%;
+  max-width: 380px;
+  background: var(--mlpr-kinari);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--mlpr-hairline);
+  box-shadow: 0 12px 48px rgba(20, 16, 10, 0.25);
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.3em;
+  margin: 0 0 8px;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+.shu {
+  color: var(--mlpr-shu);
+}
+
+.body {
+  font-size: 13.5px;
+  color: var(--mlpr-sumi-soft);
+  margin: 0 0 8px;
+  line-height: 1.65;
+}
+
+.note {
+  font-size: 11.5px;
+  color: var(--mlpr-sumi-muted);
+  margin: 0 0 18px;
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
+.cancel,
+.confirm {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid var(--mlpr-hairline);
+}
+
+.cancel {
+  background: transparent;
+  color: var(--mlpr-sumi-soft);
+}
+
+.confirm {
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border-color: var(--mlpr-sumi);
+}
+
+.cancel:disabled,
+.confirm:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

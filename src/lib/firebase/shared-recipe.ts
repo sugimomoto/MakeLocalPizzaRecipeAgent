@@ -103,18 +103,20 @@ export async function getSharedRecipe(
     title: String(data['title'] ?? ''),
     concept: String(data['concept'] ?? ''),
     story: {
+      eyebrow: String(data['story']?.eyebrow ?? ''),
       headline: String(data['story']?.headline ?? ''),
       body: String(data['story']?.body ?? ''),
     },
     meta: {
       servings: String(data['meta']?.servings ?? ''),
+      duration: String(data['meta']?.duration ?? ''),
+      bakingTemp: String(data['meta']?.bakingTemp ?? ''),
       difficulty: String(data['meta']?.difficulty ?? ''),
-      time: String(data['meta']?.time ?? ''),
     },
     materials: Array.isArray(data['materials'])
-      ? (data['materials'] as Array<{ name?: unknown; amount?: unknown }>).map((m) => ({
+      ? (data['materials'] as Array<{ name?: unknown; quantity?: unknown }>).map((m) => ({
           name: String(m?.name ?? ''),
-          amount: String(m?.amount ?? ''),
+          quantity: String(m?.quantity ?? ''),
         }))
       : [],
     steps: Array.isArray(data['steps'])

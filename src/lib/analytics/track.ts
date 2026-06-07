@@ -36,7 +36,10 @@ export type TrackEventName =
   | 'view_recipe_detail' // 詳細画面 (レシピ全文) 表示
   | 'save_recipe' // ピザ帳に保存
   | 'view_equipment_guide' // /equipment LP 到達
-  | 'click_affiliate_link'; // 楽天アフィリエイトリンクのクリック
+  | 'click_affiliate_link' // 楽天アフィリエイトリンクのクリック
+  | 'share_intent' // Slice 10 「X で共有」CTA 押下 → 確認モーダル表示
+  | 'share_published' // Slice 10 shareId 発行成功 (X intent 起動直前)
+  | 'share_page_view'; // Slice 10 /share/[shareId] 公開ページ表示
 
 /** GA4 イベントパラメータ。値は string / number / boolean のみ受ける (GA4 仕様)。 */
 export type TrackEventParams = Record<string, string | number | boolean | undefined>;

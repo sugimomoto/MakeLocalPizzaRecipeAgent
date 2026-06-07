@@ -1,0 +1,63 @@
+/* ShareCard — Slice 10 secondary CTA */
+
+.card {
+  margin: 14px 0 0;
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.3em;
+  margin: 0;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.button {
+  flex-shrink: 0;
+  font-family: var(--mlpr-font-gothic);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--mlpr-sumi);
+  color: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-sumi);
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 10.5px;
+  color: var(--mlpr-sumi-muted);
+  margin: 10px 0 0;
+  line-height: 1.5;
+}

@@ -19,19 +19,21 @@ export const ShareRequestSchema = z.object({
   title: z.string().min(1).max(SHARE_TITLE_MAX),
   concept: z.string().max(SHARE_HEADLINE_MAX),
   story: z.object({
+    eyebrow: z.string().max(80).default(''),
     headline: z.string().max(SHARE_HEADLINE_MAX),
     body: z.string().max(SHARE_BODY_MAX),
   }),
   meta: z.object({
     servings: z.string().max(40),
+    duration: z.string().max(40),
+    bakingTemp: z.string().max(40),
     difficulty: z.string().max(40),
-    time: z.string().max(40),
   }),
   materials: z
     .array(
       z.object({
         name: z.string().max(80),
-        amount: z.string().max(80),
+        quantity: z.string().max(80),
       }),
     )
     .max(30),

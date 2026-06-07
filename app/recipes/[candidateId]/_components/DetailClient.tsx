@@ -37,7 +37,10 @@ import { readRecipeDetailCache, writeRecipeDetailCache } from '@/lib/cache/strea
 import { readOvenProfile } from '@/lib/localstorage/oven-profile';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
+import { ShareCard } from './ShareCard';
 import styles from './DetailClient.module.css';
+
+import type { ShareRequest } from '@/domain/share';
 
 import type { Candidate } from '@/domain/candidate';
 import type { RecipeMaterial, RecipeMeta, RecipeStory } from '@/domain/recipe';
@@ -388,6 +391,49 @@ export function DetailClient({ candidateId }: DetailClientProps) {
         <StoryCard story={stream.story} />
 
         <FurusatoSection ingredientIds={pending?.ingredients ?? []} />
+
+        {/* Slice 10: X 共有 (公開リンク + Twitter Card)。詳細生成完了後にだけ active。 */}
+        <ShareCard
+          ready={
+            stream.state === 'allDone' &&
+            !!pending &&
+            !!candidate &&
+            !!displayTitle &&
+            !!stream.meta &&
+            !!stream.materials &&
+            !!stream.steps &&
+            !!stream.story &&
+            !!stream.imageUrl
+          }
+          buildPayload={(): ShareRequest | null => {
+            if (
+              !pending ||
+              !candidate ||
+              !displayTitle ||
+              !stream.meta ||
+              !stream.materials ||
+              !stream.steps ||
+              !stream.story ||
+              !stream.imageUrl
+            ) {
+              return null;
+            }
+            const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
+            return {
+              candidateId,
+              title: displayTitle,
+              concept: candidate.concept ?? '',
+              story: stream.story,
+              meta: stream.meta,
+              materials: stream.materials,
+              steps: stream.steps,
+              imageUrl: stream.imageUrl,
+              prefecture,
+              strategy: candidate.strategy,
+              localeId: pending.localeId,
+            };
+          }}
+        />
       </div>
 
       <div className={styles.makeCtaWrap}>
