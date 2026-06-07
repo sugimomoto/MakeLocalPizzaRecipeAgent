@@ -1,0 +1,158 @@
+/* SharePageView — Slice 10 公開閲覧ページ */
+
+.shell {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.brandBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--mlpr-hairline);
+  background: var(--mlpr-kinari);
+}
+
+.brandLeft {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brandMark {
+  font-size: 16px;
+}
+
+.brandName {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+}
+
+.brandTag {
+  font-family: var(--mlpr-font-mono);
+  font-size: 9px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.2em;
+  margin-left: 4px;
+}
+
+.brandCta {
+  font-family: var(--mlpr-font-gothic);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--mlpr-shu);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mlpr-shu) 30%, transparent);
+}
+
+.body {
+  padding: 18px 20px 32px;
+}
+
+.eyebrow {
+  font-family: var(--mlpr-font-mono);
+  font-size: 10px;
+  color: var(--mlpr-shu);
+  letter-spacing: 0.3em;
+  margin: 0;
+}
+
+.title {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--mlpr-sumi);
+  margin: 8px 0 6px;
+  line-height: 1.35;
+}
+
+.locale {
+  font-size: 12px;
+  color: var(--mlpr-sumi-soft);
+  margin: 0 0 14px;
+}
+
+.heroImageWrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--mlpr-washi-deep);
+  border: 1px solid var(--mlpr-hairline);
+  margin-bottom: 16px;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.concept {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  color: var(--mlpr-sumi);
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.section {
+  margin-top: 22px;
+}
+
+.sectionLabel {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--mlpr-sumi);
+  margin: 0 0 8px;
+}
+
+.footerCta {
+  margin-top: 36px;
+  padding: 22px 18px;
+  border-radius: 18px;
+  background: var(--mlpr-kinari);
+  border: 1px solid var(--mlpr-hairline);
+  text-align: center;
+}
+
+.footerEyebrow {
+  font-family: var(--mlpr-font-mincho);
+  font-size: 14px;
+  color: var(--mlpr-sumi);
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+
+.footerCtaButton {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--mlpr-shu);
+  color: var(--mlpr-kinari);
+  text-decoration: none;
+  font-family: var(--mlpr-font-gothic);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+}
+
+.footerNote {
+  font-size: 10.5px;
+  color: var(--mlpr-sumi-muted);
+  margin: 18px 0 0;
+  text-align: center;
+  line-height: 1.6;
+}
