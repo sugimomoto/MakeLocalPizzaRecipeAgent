@@ -9,6 +9,10 @@ rules_version = '2';
 //                                              (public read / client write 不可)
 //   rate_limits/{docId}                      - Slice 9 アプリ層レートリミット
 //                                              (Admin SDK のみ R/W、client から完全 deny)
+//   shared_recipes/{shareId}                 - Slice 10 共有レシピ snapshot
+//                                              (public read / Admin SDK のみ write)
+//   share_index/{indexKey}                   - Slice 10 べき等インデックス
+//                                              (Admin SDK のみ R/W)
 service cloud.firestore {
   match /databases/{database}/documents {
     // Slice 4: ピザ帳 (Slice 7 で feedback フィールドが追加されるが、
@@ -35,6 +39,17 @@ service cloud.firestore {
     // server-side (Firebase Admin SDK) からのみ R/W。client からは完全 deny。
     // TTL ポリシー (expiresAt フィールド) で 2 時間後に自動削除される。
     match /rate_limits/{docId} {
+      allow read, write: if false;
+    }
+
+    // Slice 10: 共有レシピ (公開閲覧 + べき等インデックス)
+    // 書き込みは Admin SDK 経由のみ (POST /api/share)、誰でも read 可。
+    match /shared_recipes/{shareId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    // 同 owner + candidateId のべき等性ガード。Admin SDK のみ R/W。
+    match /share_index/{indexKey} {
       allow read, write: if false;
     }
 

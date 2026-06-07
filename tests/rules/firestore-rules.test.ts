@@ -307,3 +307,57 @@ describe('firestore.rules — rate_limits/{docId} (Slice 9)', () => {
     await assertFails(deleteDoc(doc(user.firestore(), RL_PATH('test-doc'))));
   });
 });
+
+describe('firestore.rules — shared_recipes/{shareId} (Slice 10)', () => {
+  const SHARED_PATH = (shareId: string) => `shared_recipes/${shareId}`;
+  const SAMPLE_SHARED_DOC = {
+    shareId: 'sample-id',
+    ownerUid: null,
+    ownerGuestSessionId: 'guest_xxx',
+    candidateId: 'c_x',
+    title: 't',
+    concept: 'c',
+    story: { headline: 'h', body: 'b' },
+    meta: { servings: '1', difficulty: 'easy', time: '60m' },
+    materials: [],
+    steps: [],
+    imageUrl: 'https://example.com/x.png',
+    prefecture: '宮城県',
+    strategy: 'exploit',
+    localeId: 'miyagi',
+  };
+
+  it('anyone can read shared_recipes (public)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), SHARED_PATH('s1')), SAMPLE_SHARED_DOC);
+    });
+    const guest = testEnv.unauthenticatedContext();
+    await assertSucceeds(getDoc(doc(guest.firestore(), SHARED_PATH('s1'))));
+  });
+
+  it('client cannot write shared_recipes (Admin SDK only)', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(setDoc(doc(guest.firestore(), SHARED_PATH('s2')), SAMPLE_SHARED_DOC));
+    const user = testEnv.authenticatedContext('user-a');
+    await assertFails(setDoc(doc(user.firestore(), SHARED_PATH('s3')), SAMPLE_SHARED_DOC));
+  });
+});
+
+describe('firestore.rules — share_index/{indexKey} (Slice 10)', () => {
+  const INDEX_PATH = (key: string) => `share_index/${key}`;
+
+  it('client cannot read share_index (admin-only)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), INDEX_PATH('guest__g1__c1')), { shareId: 's1' });
+    });
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(getDoc(doc(guest.firestore(), INDEX_PATH('guest__g1__c1'))));
+  });
+
+  it('client cannot write share_index', async () => {
+    const guest = testEnv.unauthenticatedContext();
+    await assertFails(
+      setDoc(doc(guest.firestore(), INDEX_PATH('guest__g1__c2')), { shareId: 's2' }),
+    );
+  });
+});
