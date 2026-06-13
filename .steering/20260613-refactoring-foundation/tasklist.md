@@ -8,56 +8,45 @@
 
 ## Phase 0 — 即時対応 (独立・低リスク)
 
-- [ ] **T0-1** `js-yaml` を `dependencies` へ移動 (`@types/js-yaml` は要否確認)
-  - `pnpm build` (prebuild の `scripts/build-ingredient-data.ts` 含む) が成功すること
-  - 完了条件: `pnpm typecheck` + build 成功
+- [x] **T0-1** `js-yaml` を `dependencies` へ移動 (`@types/js-yaml` は型のみのため devDeps 据え置き)
+  - `pnpm build:data` (prebuild の `scripts/build-ingredient-data.ts`) 成功を確認済
 
 ---
 
 ## Phase 1 — フロントエンド共通基盤 【高 / L】
 
 ### 1a. ストリーミング基盤
-- [ ] **T1a-1** characterization テスト追加: ストリーム進行中 unmount で AbortSignal が
-  aborted になることを検証 (現状 RED を確認)
-- [ ] **T1a-2** `src/hooks/use-stream-controller.ts` を新規作成 (`useStreamController` +
-  `StreamControlAction` + unmount cleanup)
-- [ ] **T1a-3** `use-quicktap-stream.ts` を `useStreamController` ベースに移行
-  (`consumeStream` / abortRef / 429 / catch を撤去、`start` / `reroll` / `reset` / `hydrate` を
-  `run` / `abort` で書き換え)
-- [ ] **T1a-4** `use-recipe-detail-stream.ts` を同様に移行
-- [ ] **T1a-5** 既存 + 新規テストがグリーン (`use-quicktap-stream.test` /
-  `use-recipe-detail-stream.test` / unmount テスト)
+- [x] **T1a-1** characterization テスト追加 (unmount → AbortSignal aborted)。RED 確認済
+- [x] **T1a-2** `src/hooks/use-stream-controller.ts` 新規作成 (unmount cleanup 含む)
+- [x] **T1a-3** `use-quicktap-stream.ts` を `useStreamController` ベースに移行
+- [x] **T1a-4** `use-recipe-detail-stream.ts` を同様に移行 (両 hook に unmount テスト追加)
+- [x] **T1a-5** 既存 + 新規テスト 20 件グリーン
 
 ### 1b. Firestore 購読基盤
-- [ ] **T1b-1** `src/hooks/use-firestore-subscription.ts` を新規作成
-  (`useFirestoreSubscription<T>` + `SubscribeFn<T>` + 認証ゲート + error)
-- [ ] **T1b-2** `use-saved-recipes.ts` を移行 (`status → state` そのまま)
-- [ ] **T1b-3** `use-saved-recipe.ts` を移行 (`status`+`data` から `saved`/`unsaved` 導出、
-  save/unsave は据え置き)
-- [ ] **T1b-4** `use-feedback.ts` の recipe 購読部分を可能なら移行 (3 箇所目の確認)
-- [ ] **T1b-5** 既存テスト (`use-saved-recipes.test` / `use-saved-recipe.test` /
-  `use-feedback.test`) がグリーン
-  - 注: `use-furusato-items` は複数購読のため対象外 (据え置き)
+- [x] **T1b-1** `src/hooks/use-firestore-subscription.ts` 新規作成
+- [x] **T1b-2** `use-saved-recipes.ts` を移行 (`status → state`)
+- [x] **T1b-3** `use-saved-recipe.ts` を移行 (saved/unsaved 導出、save/unsave の opError 統合)
+- [~] **T1b-4** `use-feedback.ts`: dual-sub + エラー時 settled の別形状のため **対象外** と判断
+  (基盤を歪めない)。`use-furusato-items` も複数購読のため据え置き
+- [x] **T1b-5** 既存テスト 13 件グリーン
 
 ### 1c. localStorage 購読基盤
-- [ ] **T1c-1** `src/lib/localstorage/create-storage-store.ts` を新規作成
-  (`createStorageStore<T>` / `useSyncExternalStore` 機構を内包)
-- [ ] **T1c-2** `use-locale.ts` を移行 (公開シグネチャ不変)
-- [ ] **T1c-3** `use-oven-profile.ts` を移行
-- [ ] **T1c-4** `use-feedback-draft.ts` の localStorage 機構が同型か精査、該当すれば移行
-- [ ] **T1c-5** 既存テスト (`use-locale.test` / `use-oven-profile.test` /
-  `use-feedback-draft.test`) がグリーン
+- [x] **T1c-1** `src/lib/localstorage/create-storage-store.ts` 新規作成
+- [x] **T1c-2** `use-locale.ts` を移行 (公開シグネチャ不変)
+- [x] **T1c-3** `use-oven-profile.ts` を移行
+- [~] **T1c-4** `use-feedback-draft.ts` は debounce writer で購読機構ではないため **非該当**
+- [x] **T1c-5** 既存テスト 13 件グリーン
 
 ---
 
 ## Phase 3 — TS ⇔ Python スキーマ同期保証 【高 / M】
 
-- [ ] **T3-1** Python: 全 `StreamEvent` サブタイプの代表インスタンスを `model_dump_json()` で
-  出力するスクリプト/テストを作成 → `src/domain/__fixtures__/stream-events.generated.json`
-- [ ] **T3-2** TS: `src/domain/schemas.contract.test.ts` で fixture 各行を zod パース検証
-- [ ] **T3-3** 網羅性 assert: fixture の `type` 集合 == zod union の全 `type` リテラル
-- [ ] **T3-4** CI: fixture 再生成で差分が出ないこと (Python generate → git diff) を確認する手順を
-  README/CI に追記
+- [x] **T3-1** Python: 全 20 サブタイプの代表インスタンスを NDJSON 出力する pytest
+  (`agent/tests/test_stream_contract.py`) → `src/domain/__fixtures__/stream-events.generated.ndjson`
+- [x] **T3-2** TS: `src/domain/schemas.contract.test.ts` で fixture 各行を zod パース検証
+- [x] **T3-3** 網羅性 assert: 両側で `type` 集合 == union の全 `type` リテラルを検証
+- [x] **T3-4** CI: 既存 `pnpm test` / `uv run pytest` が両テストを実行 (最新性ガード内蔵)。
+  ワークフロー変更不要。再生成手順はテストの docstring に記載
 
 ---
 
