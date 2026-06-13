@@ -12,14 +12,12 @@
  * (テキストは表示できるので画面は成立する)。
  */
 
-import { useCallback, useReducer, useRef } from 'react';
+import { useCallback, useReducer } from 'react';
 
 import { RecipeDetailStreamEventSchema, type RecipeDetailStreamEvent } from '@/domain/schemas';
-import { decodeNdjsonStream } from '@/lib/agent/stream';
 import { apiFetch } from '@/lib/http/api-fetch';
-import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
 
-import { useToast } from './use-toast';
+import { useStreamController } from './use-stream-controller';
 
 import type {
   RecipeDetailSnapshot,
@@ -163,78 +161,45 @@ export type UseRecipeDetailStreamResult = {
   reset: () => void;
 };
 
-async function consumeStream(
-  res: Response,
-  dispatch: React.Dispatch<Action>,
-  abortRef: React.RefObject<AbortController | null>,
-): Promise<void> {
-  if (!res.ok || !res.body) {
-    dispatch({ type: 'error', error: `HTTP ${res.status}` });
-    return;
-  }
-  try {
-    for await (const event of decodeNdjsonStream(res.body, RecipeDetailStreamEventSchema)) {
-      if (abortRef.current?.signal.aborted) return;
-      dispatch({ type: 'event', event });
-    }
-    dispatch({ type: 'done' });
-  } catch (err) {
-    dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-  }
-}
-
 export function useRecipeDetailStream(): UseRecipeDetailStreamResult {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const abortRef = useRef<AbortController | null>(null);
-  const toast = useToast();
+  const { run, abort } = useStreamController(RecipeDetailStreamEventSchema, dispatch);
 
   const start = useCallback(
     async (input: GenerateRecipeDetailInput) => {
-      abortRef.current?.abort();
-      const ac = new AbortController();
-      abortRef.current = ac;
-
       dispatch({ type: 'start', recipeId: input.candidateId });
 
-      try {
-        const res = await apiFetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
-          method: 'POST',
-          body: JSON.stringify({
-            localeId: input.localeId,
-            ingredients: input.ingredients,
-            candidate: input.candidate,
-            // Slice 8: 機材プロファイル (省略時は API 側で ENRO に解決)
-            ...(input.ovenProfile !== undefined && { ovenProfile: input.ovenProfile }),
+      await run(
+        (signal) =>
+          apiFetch(`/api/recipes/${encodeURIComponent(input.candidateId)}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              localeId: input.localeId,
+              ingredients: input.ingredients,
+              candidate: input.candidate,
+              // Slice 8: 機材プロファイル (省略時は API 側で ENRO に解決)
+              ...(input.ovenProfile !== undefined && { ovenProfile: input.ovenProfile }),
+            }),
+            signal,
           }),
-          signal: ac.signal,
-        });
-        // Slice 9: アプリ層レートリミットで 429 が返ったら Toast + error 状態に
-        if (res.status === 429) {
-          toast.push({
-            kind: 'warning',
-            message: buildRateLimitToastMessage(res, '/api/recipes/[candidateId]'),
-          });
-          dispatch({ type: 'error', error: 'RATE_LIMITED' });
-          return;
-        }
-        await consumeStream(res, dispatch, abortRef);
-      } catch (err) {
-        if (ac.signal.aborted) return;
-        dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-      }
+        { rateLimitRoute: '/api/recipes/[candidateId]' },
+      );
     },
-    [toast],
+    [run],
   );
 
   const reset = useCallback(() => {
-    abortRef.current?.abort();
+    abort();
     dispatch({ type: 'reset' });
-  }, []);
+  }, [abort]);
 
-  const hydrate = useCallback((snapshot: HydrateSnapshot) => {
-    abortRef.current?.abort();
-    dispatch({ type: 'hydrate', snapshot });
-  }, []);
+  const hydrate = useCallback(
+    (snapshot: HydrateSnapshot) => {
+      abort();
+      dispatch({ type: 'hydrate', snapshot });
+    },
+    [abort],
+  );
 
   return {
     state: state.state,

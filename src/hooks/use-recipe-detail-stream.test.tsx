@@ -255,4 +255,47 @@ describe('useRecipeDetailStream', () => {
     expect(result.current.title).toBeNull();
     expect(result.current.imageUrl).toBeNull();
   });
+
+  it('aborts the in-flight stream when the component unmounts', async () => {
+    // 1 イベント emit 後に閉じない ReadableStream を返し、unmount 時に
+    // 進行中の AbortController が abort される (signal.aborted) ことを検証する。
+    function pendingStream(): ReadableStream<Uint8Array> {
+      const enc = new TextEncoder();
+      return new ReadableStream({
+        start(controller) {
+          controller.enqueue(
+            enc.encode(JSON.stringify({ type: 'recipe.start', recipeId: 'c_test' }) + '\n'),
+          );
+          // close を呼ばない = ストリームは開いたまま
+        },
+      });
+    }
+
+    let capturedSignal: AbortSignal | undefined;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, init?: RequestInit) => {
+        capturedSignal = init?.signal ?? undefined;
+        return new Response(pendingStream(), { status: 200 });
+      }),
+    );
+
+    const { result, unmount } = renderHook(() => useRecipeDetailStream(), wrapperOption);
+
+    act(() => {
+      void result.current.start({
+        candidateId: 'c_test',
+        localeId: 'miyagi',
+        ingredients: ['miyagi-seri'],
+        candidate: CANDIDATE,
+      });
+    });
+
+    await waitFor(() => expect(capturedSignal).toBeDefined());
+    expect(capturedSignal!.aborted).toBe(false);
+
+    unmount();
+
+    expect(capturedSignal!.aborted).toBe(true);
+  });
 });
