@@ -16,7 +16,6 @@ import {
   query,
   serverTimestamp,
   setDoc,
-  Timestamp,
   type DocumentData,
   type DocumentSnapshot,
   type Firestore,
@@ -34,16 +33,12 @@ import {
   type FeedbackAxisKey,
 } from '@/domain/feedback';
 
+import { timestampToDate } from './normalize';
+
 import type { SavedRecipe, SavedRecipeSnapshot } from '@/domain/saved-recipe';
 
 export const USERS_COLLECTION = 'users';
 export const SAVED_RECIPES_SUBCOLLECTION = 'savedRecipes';
-
-function timestampToDate(value: unknown, fallback: Date): Date {
-  if (value instanceof Timestamp) return value.toDate();
-  if (value instanceof Date) return value;
-  return fallback;
-}
 
 function normalizeFeedback(raw: unknown): Feedback | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -86,11 +81,7 @@ function savedRecipesCollectionRef(db: Firestore, uid: string) {
  * - 未知フィールドは無視する (forward compat 寄せ)
  */
 function normalizeSavedRecipe(data: DocumentData): SavedRecipe {
-  const savedAtRaw = data['savedAt'];
-  let savedAt: Date;
-  if (savedAtRaw instanceof Timestamp) savedAt = savedAtRaw.toDate();
-  else if (savedAtRaw instanceof Date) savedAt = savedAtRaw;
-  else savedAt = new Date();
+  const savedAt = timestampToDate(data['savedAt'], new Date());
 
   const base: SavedRecipe = {
     candidateId: String(data['candidateId'] ?? ''),

@@ -11,6 +11,7 @@
 import generatedData from '@/data/ingredients.generated.json';
 import { isInSeason, isIngredientCategory, isSeason } from '@/domain/ingredient';
 import { apiError } from '@/lib/http/error';
+import { getPathParam } from '@/lib/http/path-param';
 import { withAuthOptional } from '@/lib/http/with-auth';
 
 import type { Ingredient, IngredientCategory, Season } from '@/domain/ingredient';
@@ -24,9 +25,8 @@ export const dynamic = 'force-dynamic';
 
 export const GET = withAuthOptional(async (request) => {
   const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
   // /api/locales/{id}/ingredients → segments[2] が id
-  const id = segments[2];
+  const id = getPathParam(request, 2);
 
   if (!id) {
     throw apiError.badRequest('BAD_REQUEST', 'locale id is required');

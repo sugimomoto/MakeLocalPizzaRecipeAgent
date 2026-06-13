@@ -18,13 +18,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
-import { z } from 'zod';
 
 import {
   CandidateStreamEventSchema,
   RecipeDetailStreamEventSchema,
   StreamEventSchema,
 } from './schemas';
+
+import type { z } from 'zod';
 
 const FIXTURE_PATH = join(import.meta.dirname, '__fixtures__', 'stream-events.generated.ndjson');
 
