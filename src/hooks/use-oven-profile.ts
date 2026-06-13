@@ -11,14 +11,13 @@
  * 設計は useLocale (src/hooks/use-locale.ts) と同パターン。
  */
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
-
 import {
   DEFAULT_OVEN_PROFILE_ID,
   getOvenProfile,
   type OvenProfile,
   type OvenProfileId,
 } from '@/domain/oven-profile';
+import { createStorageStore } from '@/lib/localstorage/create-storage-store';
 import {
   OVEN_PROFILE_STORAGE_KEY,
   readOvenProfile,
@@ -26,48 +25,11 @@ import {
   type StoredOvenProfile,
 } from '@/lib/localstorage/oven-profile';
 
-type Listener = () => void;
-
-const listeners = new Set<Listener>();
-
-function subscribe(listener: Listener): () => void {
-  listeners.add(listener);
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === OVEN_PROFILE_STORAGE_KEY || event.key === null) {
-      listener();
-    }
-  };
-  if (typeof window !== 'undefined') {
-    window.addEventListener('storage', onStorage);
-  }
-  return () => {
-    listeners.delete(listener);
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('storage', onStorage);
-    }
-  };
-}
-
-let cachedRaw: string | null | undefined = undefined;
-let cachedSnapshot: StoredOvenProfile | null = null;
-
-function notify(): void {
-  cachedRaw = undefined;
-  for (const l of listeners) l();
-}
-
-function getSnapshot(): StoredOvenProfile | null {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(OVEN_PROFILE_STORAGE_KEY);
-  if (raw === cachedRaw) return cachedSnapshot;
-  cachedRaw = raw;
-  cachedSnapshot = readOvenProfile();
-  return cachedSnapshot;
-}
-
-function getServerSnapshot(): StoredOvenProfile | null {
-  return null;
-}
+// モジュールスコープで 1 回だけ生成 (listeners / キャッシュを全コンシューマで共有)。
+const ovenProfileStore = createStorageStore<StoredOvenProfile>({
+  key: OVEN_PROFILE_STORAGE_KEY,
+  read: readOvenProfile,
+});
 
 export type UseOvenProfileResult = {
   /** 現在選択中のプロファイル ID。localStorage が空ならデフォルト */
@@ -83,12 +45,7 @@ export type UseOvenProfileResult = {
 };
 
 export function useOvenProfile(): UseOvenProfileResult {
-  const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const [isHydrated, setIsHydrated] = useState(false);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsHydrated(true);
-  }, []);
+  const { value: stored, isHydrated } = ovenProfileStore.use();
 
   const profileId: OvenProfileId = stored?.id ?? DEFAULT_OVEN_PROFILE_ID;
 
@@ -99,7 +56,7 @@ export function useOvenProfile(): UseOvenProfileResult {
     selectedAt: stored?.selectedAt ?? null,
     setProfile: (id: OvenProfileId) => {
       writeOvenProfile(id);
-      notify();
+      ovenProfileStore.notify();
     },
   };
 }
