@@ -13,9 +13,13 @@
  * onSnapshot で state が再評価される。未サインイン時に save()/unsave() を呼ぶと
  * Error を投げる (呼び出し側は state を確認してから呼ぶこと)。
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useAuth } from '@/hooks/use-auth';
+import {
+  useFirestoreSubscription,
+  type FirestoreSubscribeFn,
+} from '@/hooks/use-firestore-subscription';
 import { getFirebaseDb } from '@/lib/firebase/client';
 import { saveRecipe, subscribeSavedRecipe, unsaveRecipe } from '@/lib/firebase/saved-recipe';
 
@@ -34,46 +38,17 @@ export type UseSavedRecipeResult = {
 };
 
 export function useSavedRecipe(candidateId: string): UseSavedRecipeResult {
-  const { status, user } = useAuth();
-  const [state, setState] = useState<SavedRecipeState>('loading');
-  const [recipe, setRecipe] = useState<SavedRecipe | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const { user } = useAuth();
+  // 操作 (save/unsave) 起因のエラー。購読エラー (subError) とは別管理し、return 時に統合する。
+  const [opError, setOpError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    // 入力 (status / user) の変化に応じて状態を再評価する純粋な同期処理。
-    // React 19 の `set-state-in-effect` 警告は invariant 維持目的なので
-    // ここでは意図通り disable する (subscribe の lifecycle と setState を
-    // 同じ effect に閉じ込めるのが最も読みやすい)。
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setError(null);
+  const subscribe = useCallback<FirestoreSubscribeFn<SavedRecipe | null>>(
+    (db, uid, onData, onError) => subscribeSavedRecipe(db, uid, candidateId, onData, onError),
+    [candidateId],
+  );
+  const { status, data: recipe, error: subError } = useFirestoreSubscription(subscribe);
 
-    if (status === 'loading') {
-      setState('loading');
-      setRecipe(null);
-      return;
-    }
-    if (status === 'unauthenticated' || !user) {
-      setState('unauthenticated');
-      setRecipe(null);
-      return;
-    }
-
-    const db = getFirebaseDb();
-    const unsub = subscribeSavedRecipe(
-      db,
-      user.uid,
-      candidateId,
-      (next) => {
-        setRecipe(next);
-        setState(next ? 'saved' : 'unsaved');
-      },
-      (err) => {
-        setError(err);
-      },
-    );
-    return unsub;
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, [status, user, candidateId]);
+  const state: SavedRecipeState = status === 'ready' ? (recipe ? 'saved' : 'unsaved') : status;
 
   const save = useCallback(
     async (snapshot: SavedRecipeSnapshot): Promise<void> => {
@@ -82,7 +57,7 @@ export function useSavedRecipe(candidateId: string): UseSavedRecipeResult {
         await saveRecipe(getFirebaseDb(), user.uid, snapshot);
       } catch (err) {
         const e = err instanceof Error ? err : new Error(String(err));
-        setError(e);
+        setOpError(e);
         throw e;
       }
     },
@@ -95,10 +70,10 @@ export function useSavedRecipe(candidateId: string): UseSavedRecipeResult {
       await unsaveRecipe(getFirebaseDb(), user.uid, candidateId);
     } catch (err) {
       const e = err instanceof Error ? err : new Error(String(err));
-      setError(e);
+      setOpError(e);
       throw e;
     }
   }, [user, candidateId]);
 
-  return { state, recipe, error, save, unsave };
+  return { state, recipe, error: opError ?? subError, save, unsave };
 }
