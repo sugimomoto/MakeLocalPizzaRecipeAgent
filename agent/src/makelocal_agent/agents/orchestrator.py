@@ -10,9 +10,8 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 from collections.abc import AsyncIterator
-from typing import TYPE_CHECKING
+from functools import partial
 
 from ..deps import LlmClient
 from ..domain.candidate import STRATEGIES, Strategy
@@ -32,13 +31,8 @@ from ..domain.stream import (
     StreamEvent,
 )
 from .candidates_agent import run_candidate
+from .parallel_stream import drain_parallel_event_tasks
 from .prompt import build_prompt
-
-if TYPE_CHECKING:
-    pass
-
-
-_SENTINEL: object = object()
 
 
 async def generate_three_candidates(
@@ -86,31 +80,8 @@ async def generate_three_candidates(
                 )
             )
 
-    async def runner() -> None:
-        async with asyncio.TaskGroup() as tg:
-            for i, s in enumerate(STRATEGIES, start=1):
-                tg.create_task(run_one(s, i))
-        # 全タスク完了 → sentinel を入れて drain を終了させる
-        await queue.put(_SENTINEL)
-
-    runner_task = asyncio.create_task(runner())
-    try:
-        while True:
-            item = await queue.get()
-            if item is _SENTINEL:
-                break
-            # item は _SENTINEL でないので必ず StreamEvent
-            yield item  # type: ignore[misc]
-    finally:
-        # runner_task が例外で終わった場合に伝搬させる
-        if not runner_task.done():
-            runner_task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await runner_task
-        else:
-            # 完了済みの場合、例外があれば取り出す
-            exc = runner_task.exception()
-            if exc is not None:
-                raise exc
+    task_factories = [partial(run_one, s, i) for i, s in enumerate(STRATEGIES, start=1)]
+    async for event in drain_parallel_event_tasks(queue, task_factories):
+        yield event
 
     yield SessionDoneEvent(sessionId=session_id)
