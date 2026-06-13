@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -15,6 +15,7 @@ from ..deps import get_llm_client
 from ..domain.ingredient import Ingredient
 from ..lib.ndjson import encode_ndjson_stream
 from ..lib.settings import get_settings
+from .resolve import resolve_locale_and_ingredients
 
 router = APIRouter(prefix="/agent")
 
@@ -46,42 +47,18 @@ def _reset_repo_for_testing() -> None:
 def _resolve_inputs(
     req: GenerateCandidatesRequest,
 ) -> tuple[list[Ingredient], list[Ingredient]]:
-    """ingredients ID 配列を Ingredient リストに解決 + 補完候補 (hints) を組み立てる。
-
-    - locale が未対応なら 404
-    - ingredient ID が未知なら 400
-    - hints は同 locale の中で selected に含まれない最大 5 件
-    """
-    repo = _get_repo()
-    locale = repo.find_locale(req.localeId)
-    if locale is None:
-        raise HTTPException(
-            status_code=404, detail={"error": {"code": "LOCALE_NOT_FOUND", "message": req.localeId}}
-        )
-
-    all_ings = repo.list_ingredients(req.localeId) or []
-    by_id = {ing.id: ing for ing in all_ings}
-    selected: list[Ingredient] = []
-    for ing_id in req.ingredients:
-        ing = by_id.get(ing_id)
-        if ing is None:
-            raise HTTPException(
-                status_code=400,
-                detail={"error": {"code": "INGREDIENT_NOT_FOUND", "message": ing_id}},
-            )
-        selected.append(ing)
-    selected_ids = {i.id for i in selected}
-    hints = [i for i in all_ings if i.id not in selected_ids][:5]
+    """後方互換ラッパ (reroll が利用)。共通リゾルバに委譲し (selected, hints) を返す。"""
+    _, selected, hints = resolve_locale_and_ingredients(
+        _get_repo(), req.localeId, req.ingredients, with_hints=True
+    )
     return selected, hints
 
 
 @router.post("/generate-candidates")
 async def generate_candidates(req: GenerateCandidatesRequest) -> StreamingResponse:
-    selected, hints = _resolve_inputs(req)
-    repo = _get_repo()
-    locale = repo.find_locale(req.localeId)
-    # _resolve_inputs が 404 を throw しているので必ず非 None
-    assert locale is not None
+    locale, selected, hints = resolve_locale_and_ingredients(
+        _get_repo(), req.localeId, req.ingredients, with_hints=True
+    )
 
     client = get_llm_client()
 
