@@ -1,0 +1,20 @@
+{"type":"session.start","sessionId":"sess_fixture","strategies":["exploit","tune","explore"]}
+{"type":"candidate.start","strategy":"exploit","candidateId":"c1"}
+{"type":"candidate.title","candidateId":"c1","title":"王道の牡蠣ピザ"}
+{"type":"candidate.concept","candidateId":"c1","concept":"海の旨味を素直に"}
+{"type":"candidate.ingredients","candidateId":"c1","ingredients":["牡蠣","せり"]}
+{"type":"candidate.sceneTags","candidateId":"c1","sceneTags":["週末家族"]}
+{"type":"candidate.why","candidateId":"c1","why":"王道の組み合わせだから"}
+{"type":"candidate.done","candidateId":"c1"}
+{"type":"session.done","sessionId":"sess_fixture"}
+{"type":"error","code":"AGENT_ERROR","message":"something went wrong"}
+{"type":"recipe.start","recipeId":"c1"}
+{"type":"recipe.title","recipeId":"c1","title":"松島の牡蠣ピザ"}
+{"type":"recipe.meta","recipeId":"c1","meta":{"servings":"ピザ 1 枚分","duration":"45m","bakingTemp":"270°C","difficulty":"★★☆"}}
+{"type":"recipe.materials","recipeId":"c1","materials":[{"name":"強力粉","quantity":"300g"},{"name":"牡蠣","quantity":"10 個"}]}
+{"type":"recipe.steps","recipeId":"c1","steps":["生地を伸ばす","牡蠣をのせる","焼く"]}
+{"type":"recipe.story","recipeId":"c1","eyebrow":"ゲストに語る","headline":"松島の夜。","body":"海と山の境界に置く一枚。"}
+{"type":"recipe.done","recipeId":"c1"}
+{"type":"image.start","recipeId":"c1"}
+{"type":"image.ready","recipeId":"c1","url":"https://storage.test/recipes/c1.png"}
+{"type":"image.error","recipeId":"c1","code":"IMAGE_FAIL","message":"imagen unavailable"}
