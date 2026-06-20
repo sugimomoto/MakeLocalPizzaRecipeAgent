@@ -54,6 +54,22 @@ flowchart LR
 
 ---
 
+## 📸 画面
+
+> 本番環境 <https://furusato-pizza.jp> の実画面（地元 → 食材 → 候補3案 → 詳細レシピ の主動線）。
+
+| 1. TOP | 2. 地元選択 | 3. 食材選択 |
+| :---: | :---: | :---: |
+| [![TOP](docs/images/screenshots/01-top.png)](docs/images/screenshots/01-top.png) | [![地元選択](docs/images/screenshots/02-local.png)](docs/images/screenshots/02-local.png) | [![食材選択](docs/images/screenshots/03-ingredients.png)](docs/images/screenshots/03-ingredients.png) |
+| 「未来の一枚は、あなたの地元にある。」 | 47 都道府県から地元を選ぶ | 旬・カテゴリで食材を絞り複数選択 |
+
+| 4. 候補 3 案 | 5. 詳細レシピ + 画像 | 6. 機材ガイド |
+| :---: | :---: | :---: |
+| [![候補3案](docs/images/screenshots/04-candidates.png)](docs/images/screenshots/04-candidates.png) | [![詳細レシピ](docs/images/screenshots/05-detail.png)](docs/images/screenshots/05-detail.png) | [![機材ガイド](docs/images/screenshots/06-equipment.png)](docs/images/screenshots/06-equipment.png) |
+| 王道 / 一歩外す / 大冒険 を NDJSON で順次生成 | 産地ストーリー + Imagen 仕上がり画像 | ENRO 推奨機材の LP（`/equipment`） |
+
+---
+
 ## 機能
 
 - ✅ **TOP ページ** — 初回訪問者には「未来の一枚は、あなたの地元にある。」+ 「始める →」、リピーターは /local に自動再開、サインイン済は /library に直行
