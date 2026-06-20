@@ -6,6 +6,8 @@
  * - QuickTapSessionPayload は 1 セッションの最終確定形 (3 候補)
  */
 
+import { z } from 'zod';
+
 import type { IngredientId } from './ingredient';
 import type { LocaleId } from './locale';
 
@@ -50,6 +52,32 @@ export type Candidate = {
   sceneTags: string[];
   why: string;
 };
+
+/**
+ * Candidate の Zod スキーマ (API リクエストボディ検証用)。
+ *
+ * POST /api/recipes/[candidateId] が受け取る候補の検証に使う。Route 側で
+ * 重複定義していたものを domain に集約した (単一の contract ソース)。
+ * 下の型レベル assertion で `Candidate` 型と構造が一致することを保証する。
+ */
+export const CandidateSchema = z.object({
+  candidateId: z.string().min(1),
+  strategy: z.enum(['exploit', 'tune', 'explore']),
+  title: z.string().min(1),
+  concept: z.string().min(1),
+  keyIngredients: z.array(z.string().min(1)).min(1),
+  sceneTags: z.array(z.string().min(1)),
+  why: z.string().min(1),
+});
+
+// CandidateSchema の推論型が Candidate と相互代入可能であることをコンパイル時に保証する。
+// どちらかを変更してもう一方を忘れると型エラーになる。
+type _AssertCandidateSchemaMatches = [
+  z.infer<typeof CandidateSchema> extends Candidate ? true : false,
+  Candidate extends z.infer<typeof CandidateSchema> ? true : false,
+];
+const _candidateSchemaMatches: _AssertCandidateSchemaMatches = [true, true];
+void _candidateSchemaMatches;
 
 export type QuickTapSessionPayload = {
   sessionId: string;

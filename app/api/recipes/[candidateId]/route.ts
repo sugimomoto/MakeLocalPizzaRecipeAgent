@@ -15,21 +15,14 @@
 
 import { z } from 'zod';
 
+import { CandidateSchema } from '@/domain/candidate';
 import { createAgentClient } from '@/lib/agent/factory';
 import { apiError } from '@/lib/http/error';
+import { parseJsonBody } from '@/lib/http/parse-body';
+import { getPathParam } from '@/lib/http/path-param';
 import { withAuthOptional } from '@/lib/http/with-auth';
 import { withRateLimit } from '@/lib/http/with-rate-limit';
 import { RATE_LIMIT_CONFIG } from '@/lib/rate-limit/limits';
-
-const CandidateSchema = z.object({
-  candidateId: z.string().min(1),
-  strategy: z.enum(['exploit', 'tune', 'explore']),
-  title: z.string().min(1),
-  concept: z.string().min(1),
-  keyIngredients: z.array(z.string().min(1)).min(1),
-  sceneTags: z.array(z.string().min(1)),
-  why: z.string().min(1),
-});
 
 const RequestBodySchema = z.object({
   localeId: z.string().min(1),
@@ -45,31 +38,20 @@ export const dynamic = 'force-dynamic';
 
 export const POST = withAuthOptional(
   withRateLimit(RATE_LIMIT_CONFIG['/api/recipes/[candidateId]'], async (request, ctx) => {
-    const url = new URL(request.url);
-    const segments = url.pathname.split('/').filter(Boolean);
     // /api/recipes/{candidateId} → segments[2]
-    const candidateId = segments[2];
+    const candidateId = getPathParam(request, 2);
     if (!candidateId) {
       throw apiError.badRequest('BAD_REQUEST', 'candidate id is required');
     }
 
-    let raw: unknown;
-    try {
-      raw = await request.json();
-    } catch {
-      throw apiError.badRequest('BAD_BODY', 'request body must be valid JSON');
-    }
-    const parsed = RequestBodySchema.safeParse(raw);
-    if (!parsed.success) {
-      throw apiError.badRequest('BAD_BODY', parsed.error.issues.map((i) => i.message).join('; '));
-    }
+    const body = await parseJsonBody(request, RequestBodySchema);
 
     const stream = await agent.generateRecipeDetail({
       candidateId,
-      localeId: parsed.data.localeId,
-      ingredients: parsed.data.ingredients,
-      candidate: parsed.data.candidate,
-      ...(parsed.data.ovenProfile !== undefined && { ovenProfile: parsed.data.ovenProfile }),
+      localeId: body.localeId,
+      ingredients: body.ingredients,
+      candidate: body.candidate,
+      ...(body.ovenProfile !== undefined && { ovenProfile: body.ovenProfile }),
       ...(ctx.subject.kind === 'guest' && { guestSessionId: ctx.subject.guestSessionId }),
     });
 

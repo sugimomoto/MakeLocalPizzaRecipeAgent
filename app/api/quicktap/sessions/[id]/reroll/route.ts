@@ -21,6 +21,7 @@ import { z } from 'zod';
 
 import { createAgentClient } from '@/lib/agent/factory';
 import { apiError } from '@/lib/http/error';
+import { getPathParam } from '@/lib/http/path-param';
 import { withAuthOptional } from '@/lib/http/with-auth';
 import { withRateLimit } from '@/lib/http/with-rate-limit';
 import { RATE_LIMIT_CONFIG } from '@/lib/rate-limit/limits';
@@ -37,10 +38,8 @@ const RerollBodySchema = z.object({
 
 export const POST = withAuthOptional(
   withRateLimit(RATE_LIMIT_CONFIG['/api/quicktap/sessions/[id]/reroll'], async (request) => {
-    const url = new URL(request.url);
-    const segments = url.pathname.split('/').filter(Boolean);
     // /api/quicktap/sessions/{id}/reroll → segments[3] が id
-    const sessionId = segments[3];
+    const sessionId = getPathParam(request, 3);
 
     if (!sessionId) {
       throw apiError.badRequest('BAD_REQUEST', 'session id is required');

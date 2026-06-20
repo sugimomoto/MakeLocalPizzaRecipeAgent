@@ -12,15 +12,13 @@
  * 該当候補のフィールドを差分更新 (PartialCandidate)。
  */
 
-import { useCallback, useReducer, useRef } from 'react';
+import { useCallback, useReducer } from 'react';
 
 import { CandidateStreamEventSchema, type CandidateStreamEvent } from '@/domain/schemas';
-import { decodeNdjsonStream } from '@/lib/agent/stream';
 import { trackEvent } from '@/lib/analytics/track';
 import { apiFetch } from '@/lib/http/api-fetch';
-import { buildRateLimitToastMessage } from '@/lib/rate-limit/toast';
 
-import { useToast } from './use-toast';
+import { useStreamController } from './use-stream-controller';
 
 import type { PartialCandidate } from '@/domain/candidate';
 import type { GenerateCandidatesInput } from '@/lib/agent/client';
@@ -166,37 +164,12 @@ export type UseQuickTapStreamResult = {
   hydrate: (sessionId: string, candidates: PartialCandidate[]) => void;
 };
 
-async function consumeStream(
-  res: Response,
-  dispatch: React.Dispatch<Action>,
-  abortRef: React.RefObject<AbortController | null>,
-): Promise<void> {
-  if (!res.ok || !res.body) {
-    dispatch({ type: 'error', error: `HTTP ${res.status}` });
-    return;
-  }
-  try {
-    for await (const event of decodeNdjsonStream(res.body, CandidateStreamEventSchema)) {
-      if (abortRef.current?.signal.aborted) return;
-      dispatch({ type: 'event', event });
-    }
-    dispatch({ type: 'done' });
-  } catch (err) {
-    dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-  }
-}
-
 export function useQuickTapStream(): UseQuickTapStreamResult {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const abortRef = useRef<AbortController | null>(null);
-  const toast = useToast();
+  const { run, abort } = useStreamController(CandidateStreamEventSchema, dispatch);
 
   const start = useCallback(
     async (input: GenerateCandidatesInput) => {
-      abortRef.current?.abort();
-      const ac = new AbortController();
-      abortRef.current = ac;
-
       const sessionId = generateSessionId();
       dispatch({ type: 'start', sessionId });
       trackEvent('generate_candidates', {
@@ -205,36 +178,21 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
         ingredients_count: input.ingredients.length,
       });
 
-      try {
-        const res = await apiFetch('/api/quicktap/sessions', {
-          method: 'POST',
-          body: JSON.stringify({ ...input, sessionId }),
-          signal: ac.signal,
-        });
-        // Slice 9: 429 → Toast + error 状態に
-        if (res.status === 429) {
-          toast.push({
-            kind: 'warning',
-            message: buildRateLimitToastMessage(res, '/api/quicktap/sessions'),
-          });
-          dispatch({ type: 'error', error: 'RATE_LIMITED' });
-          return;
-        }
-        await consumeStream(res, dispatch, abortRef);
-      } catch (err) {
-        if (ac.signal.aborted) return;
-        dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-      }
+      await run(
+        (signal) =>
+          apiFetch('/api/quicktap/sessions', {
+            method: 'POST',
+            body: JSON.stringify({ ...input, sessionId }),
+            signal,
+          }),
+        { rateLimitRoute: '/api/quicktap/sessions' },
+      );
     },
-    [toast],
+    [run],
   );
 
   const reroll = useCallback(
     async (sourceSessionId: string, context: { localeId: string; ingredients: string[] }) => {
-      abortRef.current?.abort();
-      const ac = new AbortController();
-      abortRef.current = ac;
-
       dispatch({ type: 'start', sessionId: sourceSessionId });
       trackEvent('generate_candidates', {
         mode: 'reroll',
@@ -242,42 +200,31 @@ export function useQuickTapStream(): UseQuickTapStreamResult {
         ingredients_count: context.ingredients.length,
       });
 
-      try {
-        const res = await apiFetch(
-          `/api/quicktap/sessions/${encodeURIComponent(sourceSessionId)}/reroll`,
-          {
+      await run(
+        (signal) =>
+          apiFetch(`/api/quicktap/sessions/${encodeURIComponent(sourceSessionId)}/reroll`, {
             method: 'POST',
             body: JSON.stringify(context),
-            signal: ac.signal,
-          },
-        );
-        // Slice 9: 429 → Toast + error 状態に
-        if (res.status === 429) {
-          toast.push({
-            kind: 'warning',
-            message: buildRateLimitToastMessage(res, '/api/quicktap/sessions/[id]/reroll'),
-          });
-          dispatch({ type: 'error', error: 'RATE_LIMITED' });
-          return;
-        }
-        await consumeStream(res, dispatch, abortRef);
-      } catch (err) {
-        if (ac.signal.aborted) return;
-        dispatch({ type: 'error', error: err instanceof Error ? err.message : String(err) });
-      }
+            signal,
+          }),
+        { rateLimitRoute: '/api/quicktap/sessions/[id]/reroll' },
+      );
     },
-    [toast],
+    [run],
   );
 
   const reset = useCallback(() => {
-    abortRef.current?.abort();
+    abort();
     dispatch({ type: 'reset' });
-  }, []);
+  }, [abort]);
 
-  const hydrate = useCallback((sessionId: string, candidates: PartialCandidate[]) => {
-    abortRef.current?.abort();
-    dispatch({ type: 'hydrate', sessionId, candidates });
-  }, []);
+  const hydrate = useCallback(
+    (sessionId: string, candidates: PartialCandidate[]) => {
+      abort();
+      dispatch({ type: 'hydrate', sessionId, candidates });
+    },
+    [abort],
+  );
 
   return {
     state: state.state,

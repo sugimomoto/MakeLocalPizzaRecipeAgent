@@ -14,6 +14,7 @@ from ..domain.candidate import Candidate
 from ..domain.oven_profile import resolve_oven_profile
 from ..lib.ndjson import encode_ndjson_stream
 from .candidates import _get_repo
+from .resolve import resolve_locale_and_ingredients
 
 router = APIRouter(prefix="/agent")
 
@@ -38,25 +39,7 @@ async def generate_recipe(
             status_code=400,
             detail={"error": {"code": "CANDIDATE_ID_MISSING", "message": "candidate_id required"}},
         )
-    repo = _get_repo()
-    locale = repo.find_locale(req.localeId)
-    if locale is None:
-        raise HTTPException(
-            status_code=404,
-            detail={"error": {"code": "LOCALE_NOT_FOUND", "message": req.localeId}},
-        )
-
-    all_ings = repo.list_ingredients(req.localeId) or []
-    by_id = {ing.id: ing for ing in all_ings}
-    selected = []
-    for ing_id in req.ingredients:
-        ing = by_id.get(ing_id)
-        if ing is None:
-            raise HTTPException(
-                status_code=400,
-                detail={"error": {"code": "INGREDIENT_NOT_FOUND", "message": ing_id}},
-            )
-        selected.append(ing)
+    locale, selected, _ = resolve_locale_and_ingredients(_get_repo(), req.localeId, req.ingredients)
 
     llm = get_llm_client()
     imagen = get_imagen_client()

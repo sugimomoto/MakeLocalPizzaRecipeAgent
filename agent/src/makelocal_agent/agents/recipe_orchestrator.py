@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 from collections.abc import AsyncIterator
 
 from ..deps import LlmClient
@@ -38,8 +37,7 @@ from ..lib.storage import StorageClient
 from .detail_agent import run_recipe_detail
 from .image_agent import run_image_for_candidate
 from .imagen_client import ImagenClient
-
-_SENTINEL: object = object()
+from .parallel_stream import drain_parallel_event_tasks
 
 
 async def generate_recipe_detail(
@@ -125,25 +123,5 @@ async def generate_recipe_detail(
                 ),
             )
 
-    async def runner() -> None:
-        async with asyncio.TaskGroup() as tg:
-            tg.create_task(run_detail())
-            tg.create_task(run_image())
-        await queue.put(_SENTINEL)
-
-    runner_task = asyncio.create_task(runner())
-    try:
-        while True:
-            item = await queue.get()
-            if item is _SENTINEL:
-                break
-            yield item  # type: ignore[misc]
-    finally:
-        if not runner_task.done():
-            runner_task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await runner_task
-        else:
-            exc = runner_task.exception()
-            if exc is not None:
-                raise exc
+    async for event in drain_parallel_event_tasks(queue, [run_detail, run_image]):
+        yield event

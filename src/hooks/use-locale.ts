@@ -14,8 +14,7 @@
  * 表示は呼び出し側で /api/locales のレスポンスと突き合わせる。
  */
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
-
+import { createStorageStore } from '@/lib/localstorage/create-storage-store';
 import {
   clearLocale as clearLocaleStorage,
   LOCALE_STORAGE_KEY,
@@ -26,52 +25,11 @@ import {
 import type { LocaleId } from '@/domain/locale';
 import type { StoredLocale } from '@/lib/localstorage/locale';
 
-type Listener = () => void;
-
-const listeners = new Set<Listener>();
-
-function subscribe(listener: Listener): () => void {
-  listeners.add(listener);
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === LOCALE_STORAGE_KEY || event.key === null) {
-      listener();
-    }
-  };
-  if (typeof window !== 'undefined') {
-    window.addEventListener('storage', onStorage);
-  }
-  return () => {
-    listeners.delete(listener);
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('storage', onStorage);
-    }
-  };
-}
-
-// useSyncExternalStore の getSnapshot は **同じ値なら同じ参照を返す** 必要がある。
-// readLocale() は毎回新しいオブジェクトを生成するため、raw 文字列をキーにキャッシュする。
-let cachedRaw: string | null | undefined = undefined; // undefined = 未初期化
-let cachedSnapshot: StoredLocale | null = null;
-
-function notify(): void {
-  // ストアの変化を検知させるため、次の getSnapshot で再評価されるようにキャッシュをクリア
-  cachedRaw = undefined;
-  for (const l of listeners) l();
-}
-
-function getSnapshot(): StoredLocale | null {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (raw === cachedRaw) return cachedSnapshot;
-  cachedRaw = raw;
-  cachedSnapshot = readLocale();
-  return cachedSnapshot;
-}
-
-function getServerSnapshot(): StoredLocale | null {
-  // SSR 中は常に null
-  return null;
-}
+// モジュールスコープで 1 回だけ生成 (listeners / キャッシュを全コンシューマで共有)。
+const localeStore = createStorageStore<StoredLocale>({
+  key: LOCALE_STORAGE_KEY,
+  read: readLocale,
+});
 
 export type UseLocaleResult = {
   localeId: LocaleId | null;
@@ -82,18 +40,7 @@ export type UseLocaleResult = {
 };
 
 export function useLocale(): UseLocaleResult {
-  const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  // hydration-safe: 初回 client render は SSR と同じく false。
-  // mount 後の useEffect で true に切り替えることで、React の SSR/CSR 一致
-  // チェックを通す (`typeof window !== 'undefined'` 即時判定だと SSR=false /
-  // CSR initial render=true で mismatch になる)。
-  const [isHydrated, setIsHydrated] = useState(false);
-  useEffect(() => {
-    // hydration safe フラグ。mount 完了の同期通知が目的のため
-    // set-state-in-effect 警告は意図通り disable する。
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsHydrated(true);
-  }, []);
+  const { value: stored, isHydrated } = localeStore.use();
 
   return {
     localeId: stored?.localeId ?? null,
@@ -101,11 +48,11 @@ export function useLocale(): UseLocaleResult {
     isHydrated,
     setLocale: (localeId) => {
       writeLocale(localeId);
-      notify();
+      localeStore.notify();
     },
     clearLocale: () => {
       clearLocaleStorage();
-      notify();
+      localeStore.notify();
     },
   };
 }

@@ -20,6 +20,7 @@
  */
 
 import { apiError } from '@/lib/http/error';
+import { parseJsonBody } from '@/lib/http/parse-body';
 import { withAuthOptional } from '@/lib/http/with-auth';
 import { withRateLimit } from '@/lib/http/with-rate-limit';
 import { logger } from '@/lib/observability/logger';
@@ -41,27 +42,21 @@ export const POST = withAuthOptional(
     }
     const guestSessionId = ctx.subject.guestSessionId;
 
-    let rawBody: unknown;
-    try {
-      rawBody = await request.json();
-    } catch {
-      throw apiError.badRequest('BAD_BODY', 'JSON ボディが不正です');
-    }
-    const parsed = ShareRequestSchema.safeParse(rawBody);
-    if (!parsed.success) {
-      throw apiError.badRequest('BAD_BODY', `ボディ検証エラー: ${parsed.error.message}`);
-    }
+    const payload = await parseJsonBody(request, ShareRequestSchema, {
+      invalidJsonMessage: 'JSON ボディが不正です',
+      formatZodError: (error) => `ボディ検証エラー: ${error.message}`,
+    });
 
     let result: { shareId: string; isNew: boolean };
     try {
       const adminDb = getAdminFirestore();
       result = await createSharedRecipe(adminDb, {
         owner: { kind: 'guest', guestSessionId },
-        payload: parsed.data,
+        payload,
       });
     } catch (err) {
       logger.error('share_persist_failed', {
-        candidateId: parsed.data.candidateId,
+        candidateId: payload.candidateId,
         error: err instanceof Error ? err.message : String(err),
       });
       throw apiError.internal(
@@ -73,7 +68,7 @@ export const POST = withAuthOptional(
     const url = `${BASE_URL}/share/${result.shareId}`;
     logger.info('share_persisted', {
       shareId: result.shareId,
-      candidateId: parsed.data.candidateId,
+      candidateId: payload.candidateId,
       isNew: result.isNew,
     });
     return new Response(JSON.stringify({ shareId: result.shareId, url }), {

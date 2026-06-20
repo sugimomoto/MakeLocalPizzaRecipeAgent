@@ -240,6 +240,51 @@ describe('useQuickTapStream', () => {
     expect(result.current.error).toBe('RATE_LIMITED');
   });
 
+  it('aborts the in-flight stream when the component unmounts', async () => {
+    // ストリームが完了しないよう、1 イベント emit 後に閉じない ReadableStream を返す。
+    // unmount 時に進行中の AbortController が abort されること (= signal.aborted) を検証する。
+    function pendingStream(): ReadableStream<Uint8Array> {
+      const enc = new TextEncoder();
+      return new ReadableStream({
+        start(controller) {
+          controller.enqueue(
+            enc.encode(
+              JSON.stringify({
+                type: 'session.start',
+                sessionId: 'sess_pending',
+                strategies: ['exploit', 'tune', 'explore'],
+              }) + '\n',
+            ),
+          );
+          // close を呼ばない = ストリームは開いたまま
+        },
+      });
+    }
+
+    let capturedSignal: AbortSignal | undefined;
+    vi.stubGlobal(
+      'fetch',
+      makeFetchMock(async (_url, init) => {
+        capturedSignal = init?.signal ?? undefined;
+        return new Response(pendingStream(), { status: 200 });
+      }),
+    );
+
+    const { result, unmount } = renderHook(() => useQuickTapStream(), wrapperOption);
+
+    act(() => {
+      // 完了しないストリームなので await しない (start の Promise は解決しない)
+      void result.current.start({ localeId: 'miyagi', ingredients: ['miyagi-seri'] });
+    });
+
+    await waitFor(() => expect(capturedSignal).toBeDefined());
+    expect(capturedSignal!.aborted).toBe(false);
+
+    unmount();
+
+    expect(capturedSignal!.aborted).toBe(true);
+  });
+
   it('reset() returns the hook to idle/empty', async () => {
     vi.stubGlobal(
       'fetch',

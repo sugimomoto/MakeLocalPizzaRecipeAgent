@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { trackEvent } from '@/lib/analytics/track';
 import { readRecipeDetailCache, writeRecipeDetailCache } from '@/lib/cache/stream-cache';
 import { readOvenProfile } from '@/lib/localstorage/oven-profile';
+import { buildSavePayload } from '@/lib/recipe-save-payload';
 import { PENDING_RECIPE_KEY } from '@/lib/storage-keys';
 
 import { ShareCard } from './ShareCard';
@@ -229,25 +230,17 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       } else {
         // unsaved → 候補 + 詳細スナップショットを Firestore へ
         const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
-        await saved.save({
-          candidateId,
-          title: displayTitle,
-          localeId: pending.localeId,
-          prefecture,
-          strategy: candidate.strategy,
-          imageUrl: stream.imageUrl ?? '',
-          ingredients: pending.ingredients,
-          // 候補スナップショット
-          concept: candidate.concept,
-          keyIngredients: candidate.keyIngredients,
-          sceneTags: candidate.sceneTags,
-          why: candidate.why,
-          // 詳細スナップショット (recipeDone まで揃ったタイミングのもの)
-          ...(stream.meta && { meta: stream.meta }),
-          ...(stream.materials && { materials: stream.materials }),
-          ...(stream.steps && { steps: stream.steps }),
-          ...(stream.story && { story: stream.story }),
-        });
+        await saved.save(
+          buildSavePayload({
+            candidateId,
+            title: displayTitle,
+            localeId: pending.localeId,
+            prefecture,
+            ingredients: pending.ingredients,
+            candidate,
+            detail: stream,
+          }),
+        );
         trackEvent('save_recipe', {
           source: 'heart',
           strategy: candidate.strategy,
@@ -292,23 +285,17 @@ export function DetailClient({ candidateId }: DetailClientProps) {
       }
       try {
         const prefecture = findPrefecture(pending.localeId)?.prefecture ?? pending.localeId;
-        await saved.save({
-          candidateId,
-          title: displayTitle,
-          localeId: pending.localeId,
-          prefecture,
-          strategy: candidate.strategy,
-          imageUrl: stream.imageUrl ?? '',
-          ingredients: pending.ingredients,
-          concept: candidate.concept,
-          keyIngredients: candidate.keyIngredients,
-          sceneTags: candidate.sceneTags,
-          why: candidate.why,
-          ...(stream.meta && { meta: stream.meta }),
-          ...(stream.materials && { materials: stream.materials }),
-          ...(stream.steps && { steps: stream.steps }),
-          ...(stream.story && { story: stream.story }),
-        });
+        await saved.save(
+          buildSavePayload({
+            candidateId,
+            title: displayTitle,
+            localeId: pending.localeId,
+            prefecture,
+            ingredients: pending.ingredients,
+            candidate,
+            detail: stream,
+          }),
+        );
         trackEvent('save_recipe', {
           source: 'make_cta',
           strategy: candidate.strategy,

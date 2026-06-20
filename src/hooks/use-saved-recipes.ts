@@ -12,10 +12,12 @@
  *
  * /library 画面 (Phase 9) で使う。
  */
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
-import { useAuth } from '@/hooks/use-auth';
-import { getFirebaseDb } from '@/lib/firebase/client';
+import {
+  useFirestoreSubscription,
+  type FirestoreSubscribeFn,
+} from '@/hooks/use-firestore-subscription';
 import { subscribeSavedRecipes } from '@/lib/firebase/saved-recipe';
 
 import type { SavedRecipe } from '@/domain/saved-recipe';
@@ -29,41 +31,10 @@ export type UseSavedRecipesResult = {
 };
 
 export function useSavedRecipes(): UseSavedRecipesResult {
-  const { status, user } = useAuth();
-  const [state, setState] = useState<SavedRecipesState>('loading');
-  const [items, setItems] = useState<SavedRecipe[] | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setError(null);
-
-    if (status === 'loading') {
-      setState('loading');
-      setItems(null);
-      return;
-    }
-    if (status === 'unauthenticated' || !user) {
-      setState('unauthenticated');
-      setItems(null);
-      return;
-    }
-
-    const db = getFirebaseDb();
-    const unsub = subscribeSavedRecipes(
-      db,
-      user.uid,
-      (next) => {
-        setItems(next);
-        setState('ready');
-      },
-      (err) => {
-        setError(err);
-      },
-    );
-    return unsub;
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, [status, user]);
-
-  return { state, items, error };
+  const subscribe = useCallback<FirestoreSubscribeFn<SavedRecipe[]>>(
+    (db, uid, onData, onError) => subscribeSavedRecipes(db, uid, onData, onError),
+    [],
+  );
+  const { status, data, error } = useFirestoreSubscription(subscribe);
+  return { state: status, items: data, error };
 }

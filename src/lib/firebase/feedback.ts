@@ -29,6 +29,8 @@ import {
   normalizePhotoUrls,
 } from '@/domain/feedback';
 
+import { timestampToDate } from './normalize';
+
 import type {
   Feedback,
   FeedbackAxisKey,
@@ -157,15 +159,7 @@ export async function deleteFeedback(
 }
 
 function normalizeDraft(data: DocumentData): FeedbackDraft {
-  const updatedAtRaw = data['updatedAt'];
-  let updatedAt: Date;
-  if (updatedAtRaw && typeof updatedAtRaw === 'object' && 'toDate' in updatedAtRaw) {
-    updatedAt = (updatedAtRaw as { toDate: () => Date }).toDate();
-  } else if (updatedAtRaw instanceof Date) {
-    updatedAt = updatedAtRaw;
-  } else {
-    updatedAt = new Date();
-  }
+  const updatedAt = timestampToDate(data['updatedAt'], new Date());
   const draft: FeedbackDraft = { updatedAt };
   if (data['overallRating'] !== undefined) {
     draft.overallRating = clampScore(data['overallRating']);
