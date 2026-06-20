@@ -1,20 +1,60 @@
-# Make Local Pizza Recipe Agent
+# ふるさとピザ帳 (Make Local Pizza Recipe Agent)
 
-ローカル/旬の食材を活かしたピザレシピを提案する **AI エージェント**。
+地元 × 旬の食材を起点に、**AI エージェント**が「王道 / 一歩外す / 大冒険」の 3 軸でピザレシピを
+即座に提案し、作って・記録して・共有するまでを支える Web アプリ。
 
-> 地元 × 旬 × 戦略 (王道 / 一歩外す / 大冒険) を起点に、ピザの 3 案を即座に提案する Web アプリ。
-> 現状は **Slice 7 (「作ってみた」フィードバック + 振り返り帳 + 統一 Header + ブランド「ふるさとピザ帳」確立)** まで実装済み (v0.7.0)。
+> **DevOps × AI Agent Hackathon 2026** 応募作品。
+> ホストが「今夜の一枚」に迷う時間を、地元食材を活かした独創的な 1 枚との出会いに変える。
 
-## 公開 URL
+## 🔗 公開 URL（審査員向け）
 
-- Web: `https://mlpr-web-<HASH>.a.run.app` (本番 Cloud Run / asia-northeast1)
-- Agent: 公開しない (`internal-only` ingress、Web の SA からのみ ID トークン経由でアクセス)
+- **Web アプリ: <https://furusato-pizza.jp>** （本番 Cloud Run / `asia-northeast1`）
+- Agent: 非公開（`internal-only` ingress、Web の SA からのみ ID トークン経由でアクセス）
 
-> 公開 URL は `terraform output web_url` で取得。ハッカソン審査員に提示するのはこの URL。
+## ✅ ハッカソン必須技術の充足
+
+| 区分 | 要件 | 本作品での利用 |
+| --- | --- | --- |
+| 4.1 アプリ実行基盤 | Cloud Run 等を 1 つ以上 | **Cloud Run × 2**（Web/BFF + Agent を分離、`asia-northeast1`） |
+| 4.2 Google Cloud AI | Vertex / Gemini / Imagen / ADK 等を 1 つ以上 | **Vertex AI Gemini 2.5 Flash**（候補 + 詳細生成）/ **Imagen 4**（仕上がり画像）/ **ADK**（エージェント実装） |
+
+## 🏗️ システムアーキテクチャ
+
+```mermaid
+flowchart LR
+  U[ホスト / ゲスト<br/>ブラウザ] -->|HTTPS| WEB
+
+  subgraph GCP["Google Cloud (asia-northeast1)"]
+    subgraph CR1["Cloud Run: Web (public)"]
+      WEB[Next.js 16<br/>App Router + BFF]
+    end
+    subgraph CR2["Cloud Run: Agent (internal-only)"]
+      AG[Python ADK Agent<br/>FastAPI]
+    end
+    WEB -->|ID トークン認証<br/>NDJSON ストリーム| AG
+    AG -->|構造化出力| GEM[Vertex AI<br/>Gemini 2.5 Flash]
+    AG -->|画像生成| IMG[Imagen 4]
+    AG -->|PNG put| GCS[(Cloud Storage)]
+    WEB -->|保存帳/下書き/共有<br/>レートリミット| FS[(Firestore)]
+    WEB -->|Google Sign-In| AUTH[Firebase Auth]
+    AG -.->|ふるさと納税キャッシュ| FS
+  end
+
+  WEB -.->|手動 refresh CLI のみ| RAK[楽天ふるさと納税 API]
+  OBS[Cloud Trace + Cloud Logging<br/>W3C traceparent 伝播]
+  WEB -.-> OBS
+  AG -.-> OBS
+```
+
+- **AI エージェントが中核**: 食材から 3 戦略を**並列**生成し、詳細レシピとストーリー・画像までを
+  自律的に組み立てる。プロンプト戦略・機材プロファイル・過去フィードバックで出力を出し分ける。
+- **DevOps フルサイクル**: Terraform IaC / GitHub Actions CI + Cloud Build CD（main push → 自動デプロイ、
+  WIF キーレス）/ Cloud Trace + Cloud Logging で Web ⇄ Agent のトレースを相互リンク。
+- 詳細設計は [docs/architecture.md](docs/architecture.md) / [docs/functional-design.md](docs/functional-design.md) を参照。
 
 ---
 
-## 機能 (Slice 7 時点)
+## 機能
 
 - ✅ **TOP ページ** — 初回訪問者には「未来の一枚は、あなたの地元にある。」+ 「始める →」、リピーターは /local に自動再開、サインイン済は /library に直行
 - ✅ **地元選択** — 47 都道府県 (現状はキュレーション 3 県)
@@ -38,7 +78,14 @@
 - ✅ **保存帳 ⇄ 振り返り帳の対** (Slice 7) — `/library` を「保存帳」にリネーム、「作った」サブバッジ表示。両画面間を `CrossLink` ピルで相互ナビ
 - ✅ **統一 HeaderRow + Dropdown** (Slice 7) — 全画面 (TOP 除く) に共通の戻る + タイトル + Avatar+▾。Dropdown に「ピザ帳 (保存)」「振り返り帳 (作った)」「サインアウト」。a11y (Esc / ↑↓ / outside click) 対応
 - ✅ **ブランド「ふるさとピザ帳」確立** (Slice 7) — FurusatoMark コンポーネント (変型 B 採用、≤18px で A にフォールバック) + Wordmark (horizontal / stacked / vertical) + favicon / apple-touch-icon
-- 🚧 Slice 8+: Vertex AI Gen AI Evaluation / 戦略軸別品質モニタリング / 写真添付
+- ✅ **機材プロファイル + 機材ガイド** (Slice 8) — 焼成機材 (`ENRO 電気ピザ窯` / `家庭用オーブン`) を
+  プロンプトに注入し温度・時間・生地を出し分け。`/equipment` 推奨機材 LP（アフィリエイト透明性注記つき）
+- ✅ **アプリ層レートリミット** (Slice 9) — `withRateLimit` で公開 API を `auth > guest > IP` 単位の
+  per-hour 課金に。Firestore `rate_limits` (UTC hour bucket / TTL 2h)、超過時 `429` + `Retry-After`。
+  あわせて GA4 計測 (`trackEvent`) を導入
+- ✅ **共有リンク + OGP** (Slice 10) — 詳細レシピを `/share/[shareId]` の公開ページとして発行
+  (未ログイン可・べき等)。`generateMetadata` で Twitter `summary_large_image` カードを生成、X Web Intent へ導線
+- 🚧 今後: Vertex AI Gen AI Evaluation / 戦略軸別品質モニタリング / 写真添付の拡充
 
 ---
 
@@ -281,7 +328,7 @@ dev (`pnpm dev` の 12MB バンドル) ではなく `pnpm start` (production bui
 使うのは、VS Code ポートフォワード経由で dev バンドル末尾が転送切れする事例の
 回避と、本番に近い構成での回帰検査の両方が目的。CI でも同じパス。
 
-## 画面と動線 (Slice 4 時点)
+## 画面と動線
 
 | ルート            | 役割                                                                                                                      |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -294,7 +341,7 @@ dev (`pnpm dev` の 12MB バンドル) ではなく `pnpm start` (production bui
 
 全 5 画面の右上に AvatarButton (未サインイン: 「サインイン」リンク → SignInModal / サインイン済: イニシャル円 → /library)。
 
-## API エンドポイント (Slice 3 時点)
+## API エンドポイント
 
 | メソッド | パス                                | 用途                                            |
 | -------- | ----------------------------------- | ----------------------------------------------- |
@@ -391,4 +438,7 @@ Agent (Python 側):
 
 ## ライセンス
 
-Private (open source 化は未定)。
+[MIT License](LICENSE) © 2026 Kazuya Sugimoto。
+
+> DevOps × AI Agent Hackathon 2026 応募作品。応募作品に関する知的財産権は参加者に帰属します
+> (規約準拠)。本リポジトリのコードは MIT ライセンスで公開しています。
