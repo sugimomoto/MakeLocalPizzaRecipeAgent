@@ -365,6 +365,9 @@ PRD §4.2.1 と整合。
 ### 8.3 入出力検証
 
 - すべての API 入力は Zod(TS)/ Pydantic(Python)で検証
+  - NDJSON ストリームイベントの Zod / Pydantic 二重定義の同期ずれは、契約テスト
+    (`src/domain/schemas.contract.test.ts` + `agent/tests/test_stream_contract.py`)を CI で実行して検出
+    (リファクタ基盤整備 2026-06)
 - Gemini への入力(コメント等の自由入力)は事前にサニタイズ
 - 地元・食材選択はホワイトリスト方式(ID 一致のみ受理)
 - フロントへの出力は React のデフォルトエスケープに依存
@@ -374,6 +377,21 @@ PRD §4.2.1 と整合。
 - 個人を特定できる情報(メアド・本文)は構造化ログから除外
 - ユーザー UID は記録するが、ログ閲覧者は IAM で制限
 - Gemini への入力プロンプトは「タスク特定可能な範囲」のみログ
+
+### 8.5 アプリ層レートリミット(Slice 9)
+
+- ボット連投で Vertex AI / Imagen のコストが爆発するのを防ぐため、公開 API を
+  `withAuthOptional(withRateLimit(...))` でラップし「同 user/guest/IP から 1 時間に N 件」に制限
+- 判定単位の優先順は `auth:{uid}` > `guest:{guestSessionId}` > `ip:{XFF 先頭}` > `anonymous`
+- カウンタは Firebase Admin SDK + Firestore `rate_limits/{docId}`(UTC hour bucket、`expiresAt` 2h で
+  TTL 自動削除)。超過時は `429` + `Retry-After`。上限値は functional-design §6.4 を参照
+- 匿名導線維持のため未ログインでも `mlpr.guestSessionId.v1`(端末 localStorage)で guest 単位に課金
+
+### 8.6 共有レシピの公開範囲(Slice 10)
+
+- `shared_recipes/{shareId}` は public read(誰でも閲覧可)/ write は API 経由(Admin SDK)のみ
+- `shareId` は UUID v4(推測困難)。UID は URL / OGP に露出させない
+- 発行レート(`/api/share` 5/時)で `shared_recipes` 量産の悪用を抑止
 
 ---
 
@@ -479,3 +497,4 @@ flowchart LR
 | 2026-05-13 | 1.0 | 初版作成(MakeLocalPizzaRecipeAgent のリフレッシュ仕様に基づく)。Web/BFF (Next.js) と Agent (Python ADK) を Cloud Run 2 サービスとして明示的に分離。戦略軸別の評価ループ、楽天 API 3層分離、無認証 Quick Tap、Imagen の詳細遷移時のみ生成を要件化。 |
 | 2026-05-24 | 1.1 | サービス名を「ふるさとピザ帳」に確定 (Slice 7、FR-7-8)。表向きの表記はヘッダ更新のみ。技術スタック・リソース命名は変更なし (mlpr-\* prefix 維持)。 |
 | 2026-05-24 | 1.2 | Slice 7 完了 (v0.7.0)。`/feedback/[id]` 画面 + `/journal` ルート + 統一 HeaderRow + FurusatoMark を追加。Firestore に `users/{uid}/drafts/{candidateId}` subcollection を新設 (3 秒 debounce auto-save)。Security Rules も同 subcollection 用の本人 R/W ルールを追加。新規 routes は全て client-only (force-dynamic 不要)。 |
+| 2026-06-13 | 1.3 | Slice 8〜10 を反映。§8.5 アプリ層レートリミット (Slice 9: `rate_limits` collection + hour bucket + 429/Retry-After)、§8.6 共有レシピの公開範囲 (Slice 10: `shared_recipes` / `share_index` public read + Admin SDK write)、§8.3 に Zod⇔Pydantic 契約テストを追記。機材プロファイル (Slice 8) は functional-design §11.1 を参照。 |

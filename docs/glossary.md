@@ -76,6 +76,11 @@
 | **レートリミット** (Slice 9) | `rateLimit` / `withRateLimit` | 公開 API を「同 user/IP から 1 時間に N 件まで」に制限し、ボット攻撃で Vertex AI / Imagen のコストが爆発するのを防ぐ仕組み。Firebase Admin SDK + Firestore (`rate_limits/{docId}` collection) で per-hour カウンタを管理 | 「詳細生成は 5/h のレートリミット」 |
 | **hour bucket** (Slice 9) | `hourBucket` | レートリミットの時間枠単位。UTC で 1 時間 (`YYYYMMDDHH`) を 1 つの bucket とし、bucket 跨ぎで自動的にカウンタがリセットされる | 「bucket=2026053015 のカウンタ」 |
 | **rate-limit key** (Slice 9) | `RateLimitKey` | レートリミットの判定単位。優先順位は `auth:{uid}` > `guest:{guestSessionId}` > `ip:{XFF 先頭}` > `anonymous`。NAT 配下の巻き添えを避けるため guest/auth を優先 | 「guest session 単位の rate-limit key」 |
+| **共有リンク** (Slice 10) | `shareLink` / `POST /api/share` | 詳細レシピを 1 枚の公開ページとして発行する機能。未ログイン (ゲスト) でも発行でき、サインインの壁なしに SNS 拡散を始められる。発行は永続 (取消はスコープ外) | 「共有リンクを X に貼る」 |
+| **共有レシピ** (Slice 10) | `sharedRecipe` / `shared_recipes/{shareId}` | 共有時に Firestore へ書き込むレシピ snapshot。誰でも read 可、書き込みは API 経由 (Admin SDK) のみ。同 `(owner, candidateId)` からの 2 回目以降はべき等で既存 `shareId` を再利用 | 「共有レシピを SSR で読む」 |
+| **shareId** (Slice 10) | `shareId` | 共有レシピの公開識別子 (UUID v4、推測困難)。公開 URL `/share/{shareId}` のパスに入る。UID は URL / OGP に出さない | 「`/share/{shareId}` を 404 ガード」 |
+| **X Web Intent** (Slice 10) | `webIntent` | `https://x.com/intent/post?text=...&url=...` へ新タブ遷移し、投稿テキスト + 共有 URL をプレフィルする X 公式の投稿導線。文字数 280 内に収まるよう client 側テンプレートで切り詰める | 「確定後に Web Intent を開く」 |
+| **OGP / Twitter Card** (Slice 10) | `openGraph` / `twitter.card` | `/share/[shareId]` の `generateMetadata` で動的生成するメタ。`summary_large_image` で仕上がり画像入りの大型カードとして展開される | 「Twitter Card Validator で確認」 |
 
 ---
 
@@ -241,3 +246,4 @@ UI 上のユーザー向け表示は **日本語ラベル**:
 | 2026-05-24 | 1.1 | サービス名「**ふるさとピザ帳**」を確定 (Slice 7、FR-7-8)。エントリとして「ふるさとピザ帳」「MakeLocalPizzaRecipeAgent」(技術名) を追加。エージェント定義の名称参照を「ふるさとピザ帳」に更新。 |
 | 2026-05-30 | 1.2 | **Slice 8: 機材プロファイル / ENRO / 機材ガイド / アフィリエイト透明性** を §2 に追加。F13 / F14 / AC-9 と整合。 |
 | 2026-05-31 | 1.3 | **Slice 9: レートリミット / hour bucket / rate-limit key** を §2 に追加。PRD §5.6 / AC-10 と整合。 |
+| 2026-06-13 | 1.4 | **Slice 10: 共有リンク / 共有レシピ / shareId / X Web Intent / OGP・Twitter Card** を §2 に追加。`POST /api/share` + `/share/[shareId]` 公開ページと整合。 |
